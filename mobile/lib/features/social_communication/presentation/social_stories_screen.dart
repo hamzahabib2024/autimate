@@ -124,6 +124,9 @@ class _StoryReaderState extends State<_StoryReader> {
     setState(() {
       _lastAnswerCorrect = question.isCorrect(index);
       if (_lastAnswerCorrect ?? false) {
+        // Advancing clears the praise so it cannot linger under an
+        // unanswered question.
+        _lastAnswerCorrect = null;
         if (_questionIndex < widget.story.questions.length - 1) {
           _questionIndex++;
         } else {
@@ -386,9 +389,10 @@ class _ConversationRunnerState extends State<_ConversationRunner> {
   void _choose(ConversationOption option) {
     final outcome = _engine.choose(option);
     setState(() {
-      _feedback = outcome.advanced || outcome.completed
-          ? (option.encouraging ? 'positive' : null)
-          : 'retry';
+      // Only unexpected replies keep a persistent banner; fitting replies
+      // advance (the avatar mood and completion celebration give praise).
+      _feedback =
+          outcome.advanced || outcome.completed ? null : 'retry';
     });
     if (outcome.completed) {
       widget.appState.awardStars(1);
@@ -494,13 +498,6 @@ class _ConversationRunnerState extends State<_ConversationRunner> {
                   l10n.gentleRetry,
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.error,
-                  ),
-                )
-              else if (feedback == 'positive')
-                Text(
-                  l10n.answerCorrect,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
             ],
