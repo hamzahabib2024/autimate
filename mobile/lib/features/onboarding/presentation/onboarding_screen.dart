@@ -1,0 +1,190 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import '../../../core/services/app_services.dart';
+import '../../../l10n/generated/app_localizations.dart';
+
+/// First-run setup: language, child profile, and the caregiver PIN.
+///
+/// `AutiMateApp` swaps this screen for the shell once
+/// [AppState.onboarded] flips, so no manual navigation is needed.
+class OnboardingScreen extends StatefulWidget {
+  const OnboardingScreen({required this.appState, super.key});
+
+  final AppState appState;
+
+  @override
+  State<OnboardingScreen> createState() => _OnboardingScreenState();
+}
+
+class _OnboardingScreenState extends State<OnboardingScreen> {
+  final TextEditingController _name = TextEditingController();
+  final TextEditingController _pin = TextEditingController();
+  Locale _locale = const Locale('en');
+  String _supportLevel = 'Beginner';
+
+  @override
+  void initState() {
+    super.initState();
+    _locale = widget.appState.locale;
+  }
+
+  @override
+  void dispose() {
+    _name.dispose();
+    _pin.dispose();
+    super.dispose();
+  }
+
+  bool get _valid =>
+      _name.text.trim().isNotEmpty &&
+      RegExp(r'^\d{4}$').hasMatch(_pin.text);
+
+  Future<void> _start(AppLocalizations l10n) async {
+    await widget.appState.completeOnboarding(
+      childName: _name.text.trim(),
+      supportLevel: _supportLevel,
+      locale: _locale,
+      parentPin: _pin.text,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return AnimatedBuilder(
+      animation: widget.appState,
+      builder: (context, _) {
+        return Scaffold(
+          body: SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Icon(
+                      Icons.spa_outlined,
+                      size: 56,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      l10n.onboardingTitle,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineSmall
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      l10n.onboardingSubtitle,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 28),
+                    DropdownButtonFormField<Locale>(
+                      key: const ValueKey('onboard-language'),
+                      initialValue: _locale,
+                      decoration: InputDecoration(
+                        labelText: l10n.chooseLanguageLabel,
+                        border: const OutlineInputBorder(),
+                        prefixIcon: const Icon(Icons.language),
+                      ),
+                      items: [
+                        DropdownMenuItem(
+                          value: const Locale('en'),
+                          child: Text(l10n.languageEnglish),
+                        ),
+                        DropdownMenuItem(
+                          value: const Locale('ur'),
+                          child: Text(l10n.languageUrdu),
+                        ),
+                      ],
+                      onChanged: (value) {
+                        if (value == null) return;
+                        setState(() => _locale = value);
+                        widget.appState.setLocale(value);
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      key: const ValueKey('onboard-name'),
+                      controller: _name,
+                      textInputAction: TextInputAction.next,
+                      decoration: InputDecoration(
+                        labelText: l10n.childNameLabel,
+                        border: const OutlineInputBorder(),
+                        prefixIcon: const Icon(Icons.child_care_outlined),
+                      ),
+                      onChanged: (_) => setState(() {}),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(l10n.supportLevel,
+                        style: Theme.of(context).textTheme.titleSmall),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        for (final level in const [
+                          'Beginner',
+                          'Intermediate',
+                          'Advanced',
+                        ])
+                          ChoiceChip(
+                            key: ValueKey('onboard-level-$level'),
+                            label: Text(_levelLabel(l10n, level)),
+                            selected: _supportLevel == level,
+                            onSelected: (_) =>
+                                setState(() => _supportLevel = level),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    TextField(
+                      key: const ValueKey('onboard-pin'),
+                      controller: _pin,
+                      obscureText: true,
+                      keyboardType: TextInputType.number,
+                      maxLength: 4,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                      ],
+                      decoration: InputDecoration(
+                        labelText: l10n.createPinLabel,
+                        border: const OutlineInputBorder(),
+                        prefixIcon: const Icon(Icons.lock_outline),
+                        counterText: '',
+                      ),
+                      onChanged: (_) => setState(() {}),
+                    ),
+                    const SizedBox(height: 24),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(minHeight: 64),
+                      child: FilledButton.icon(
+                        key: const ValueKey('onboard-start'),
+                        onPressed: _valid ? () => _start(l10n) : null,
+                        icon: const Icon(Icons.arrow_forward),
+                        label: Text(
+                          l10n.getStarted,
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  String _levelLabel(AppLocalizations l10n, String level) => switch (level) {
+    'Intermediate' => l10n.intermediateSupportLevel,
+    'Advanced' => l10n.advancedSupportLevel,
+    _ => l10n.beginnerSupportLevel,
+  };
+}

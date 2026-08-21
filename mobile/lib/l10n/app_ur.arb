@@ -116,5 +116,22 @@
   "gamificationTileTitle": "ستارے اور انعامات",
   "gamificationTileSubtitle": "سرگرمیوں سے ملنے والے ستارے دیکھیں",
   "sensorySupportTileTitle": "حسی معاونت",
-  "sensorySupportTileSubtitle": "پُرسکون ہونے اور آواز کے فوری کنٹرول"
+  "sensorySupportTileSubtitle": "پُرسکون ہونے اور آواز کے فوری کنٹرول",
+  "onboardingTitle": "AutiMate میں خوش آمدید",
+  "onboardingSubtitle": "اپنے بچے کے لیے ایک پُرسکون جگہ ترتیب دیں۔",
+  "childNameLabel": "بچے کا نام",
+  "chooseLanguageLabel": "ایپ کی زبان",
+  "createPinLabel": "نگہبان کا PIN (4 ہندسے)",
+  "getStarted": "شروع کریں",
+  "intermediateSupportLevel": "درمیانی سطح کی معاونت",
+  "advancedSupportLevel": "اعلیٰ سطح کی معاونت",
+  "parentLockTitle": "والدین کا لاک",
+  "enterParentPin": "نگہبان کا PIN درج کریں",
+  "pinIncorrect": "PIN غلط ہے۔ دوبارہ کوشش کریں۔",
+  "unlockAction": "کھولیں",
+  "childModeLabel": "بچوں والا موڈ",
+  "childModeSubtitle": "نگہبان کے حصے والدین کے لاک کے پیچھے چھپائیں",
+  "profilesSectionTitle": "بچے",
+  "addChildLabel": "بچہ شامل کریں",
+  "offlineBanner": "آپ آف لائن ہیں۔ کام اس آلے پر محفوظ ہے اور بعد میں سنک ہوگا۔"
 }
