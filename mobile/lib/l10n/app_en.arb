@@ -1,0 +1,133 @@
+{
+  "@@locale": "en",
+  "navHome": "Home",
+  "navCommunicate": "Communicate",
+  "navRoutine": "Routine",
+  "navProgress": "Progress",
+  "settingsTooltip": "Settings",
+  "homeGreeting": "Good morning, caregiver",
+  "homeTagline": "A calm place to communicate, learn, and practise together.",
+  "homeToday": "Today",
+  "emotionPracticeTileTitle": "Emotion practice",
+  "emotionPracticeTileSubtitle": "Learn six everyday expressions",
+  "socialStoriesTileTitle": "Social stories",
+  "socialStoriesTileSubtitle": "Designed and documented for the next phase",
+  "learningPathTileTitle": "Learning path",
+  "learningPathTileSubtitle": "Interest-based activities are coming next",
+  "beginnerSupportLevel": "Beginner support level",
+  "starsEarned": "{count} stars earned",
+  "@starsEarned": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "comingNextPhase": "Coming in the next phase",
+  "safeByDesign": "Safe by design",
+  "safeByDesignMessage": "This module will use fixed, caregiver-approved content. Open-ended child chat is out of scope.",
+  "interestLearningDescription": "Deterministic interest-to-topic mapping will power this learning path.",
+  "socialStoriesDescription": "Short illustrated stories and guided comprehension checks will live here.",
+  "communicateTitle": "Communicate",
+  "speakSentenceTooltip": "Speak sentence",
+  "sentenceHeader": "Sentence",
+  "tapCardToBuild": "Tap a card to build a sentence",
+  "clearSentenceTooltip": "Clear sentence",
+  "frequentlyUsed": "Frequently used",
+  "recentCardsHint": "Your recent cards will appear here.",
+  "coreWords": "Core words",
+  "emotionPracticeTitle": "Emotion practice",
+  "sessionComplete": "Session complete",
+  "sessionSummary": "{score} of {total} correct • {stars} stars earned",
+  "@sessionSummary": {
+    "placeholders": {
+      "score": { "type": "int" },
+      "total": { "type": "int" },
+      "stars": { "type": "int" }
+    }
+  },
+  "practiseAgain": "Practise again",
+  "questionProgress": "Question {index} of {total}",
+  "@questionProgress": {
+    "placeholders": {
+      "index": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "whichFaceFeels": "Which face feels {emotion}?",
+  "@whichFaceFeels": {
+    "placeholders": {
+      "emotion": { "type": "String" }
+    }
+  },
+  "emotionHappy": "Happy",
+  "emotionSad": "Sad",
+  "emotionAngry": "Angry",
+  "emotionSurprised": "Surprised",
+  "emotionScared": "Scared",
+  "emotionNeutral": "Neutral",
+  "beginnerHint": "Hint: look at the face and choose the matching feeling.",
+  "answerCorrect": "That is right.",
+  "answerIncorrect": "Let us try the next one.",
+  "cameraPracticeTitle": "Camera expression practice",
+  "cameraPracticeMessage": "P1 placeholder. Future on-device ML Kit processing will stay in memory and never upload frames.",
+  "routineTitle": "Routine",
+  "oneStepAtATime": "One step at a time",
+  "routineProgressLabel": "Routine progress",
+  "stepsDone": "{done} of {total} steps done",
+  "@stepsDone": {
+    "placeholders": {
+      "done": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "transitionWarnings": "Transition warnings",
+  "transitionWarningsSubtitle": "Speak each step when its time arrives while this screen is open",
+  "resetToday": "Reset today",
+  "progressTitle": "Progress",
+  "childWeekHeader": "{name}'s week",
+  "@childWeekHeader": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "metricActivities": "Activities",
+  "metricRoutine": "Routine",
+  "metricStars": "Stars",
+  "activitiesThisWeek": "Activities this week",
+  "explainableProgress": "Explainable progress",
+  "explainableProgressMessage": "Charts are based on recorded activities and never make clinical claims.",
+  "caregiverNotes": "Caregiver notes",
+  "noObservationsYet": "No observations logged yet.",
+  "logObservation": "Log an observation",
+  "observationButton": "Observation",
+  "observationHint": "What did you notice today?",
+  "cancel": "Cancel",
+  "save": "Save",
+  "settingsTitle": "Settings",
+  "sensoryMode": "Sensory-friendly mode",
+  "sensoryModeSubtitle": "Reduce motion, clutter, and sound intensity",
+  "languageLabel": "Language",
+  "languageEnglish": "English",
+  "languageUrdu": "اردو",
+  "supportLevel": "Support level",
+  "supportLevelSubtitle": "Beginner, controlled by caregiver",
+  "supportLevelDescription": "Adaptive difficulty will be connected to the rule-based controller here.",
+  "privacySafety": "Privacy and safety",
+  "privacySafetySubtitle": "No diagnosis, no child-facing open chat, camera processing stays on-device",
+  "signOut": "Sign out",
+  "authWelcome": "Welcome to AutiMate",
+  "authTagline": "A calm communication and learning space for children and caregivers.",
+  "parentEmail": "Parent email",
+  "password": "Password",
+  "signIn": "Sign in",
+  "signingIn": "Loading...",
+  "createParentAccount": "Create a parent account",
+  "authErrorRequired": "Enter an email and password to continue.",
+  "gamificationComingMessage": "Badges, streaks, and progress rings will connect to completed activities.",
+  "sensorySupportTitle": "Sensory support",
+  "ttsControlsTitle": "Sound and motion controls",
+  "ttsControlsMessage": "Sensory-friendly mode automatically softens speech rate and volume.",
+  "gamificationTileTitle": "Stars and rewards",
+  "gamificationTileSubtitle": "See stars earned from activities",
+  "sensorySupportTileTitle": "Sensory support",
+  "sensorySupportTileSubtitle": "Quick calming and sound controls"
+}
