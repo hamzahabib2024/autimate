@@ -117,12 +117,12 @@ class _AacScreenState extends State<AacScreen> {
                       onTap: () => _addCard(card),
                       borderRadius: BorderRadius.circular(16),
                       child: Padding(
-                        padding: const EdgeInsets.all(12),
+                        padding: const EdgeInsets.all(8),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(_iconFor(card.id), size: 38),
-                            const SizedBox(height: 8),
+                            Icon(_iconFor(card.id), size: 32),
+                            const SizedBox(height: 4),
                             Text(
                               card.labelEn,
                               style: const TextStyle(

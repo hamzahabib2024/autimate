@@ -64,9 +64,9 @@ This is the canonical progress tracker. Update the checkbox only when the work i
 ### Verification
 
 - [x] `flutter analyze` passes.
-- [x] `flutter test` passes: 15 tests.
-- [ ] Widget tests for AAC interactions.
-- [ ] Widget tests for emotion flow.
+- [x] `flutter test` passes: 18 tests.
+- [x] Widget test for AAC sentence interaction.
+- [x] Widget test for emotion activity feedback.
 - [ ] Physical Android smoke test.
 - [ ] Airplane-mode demo run.
 - [ ] Rapid-tap speech test.
