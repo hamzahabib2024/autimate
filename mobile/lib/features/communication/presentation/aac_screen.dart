@@ -24,6 +24,7 @@ class _AacScreenState extends State<AacScreen> {
   final CardRanker _ranker = RecencyWeightedCardRanker();
 
   AacCategory? _category;
+  String? _durableChildId;
 
   SpeakerProfile get _speaker =>
       const SpeakerProfile(gender: UrduGender.masculine);
@@ -40,13 +41,19 @@ class _AacScreenState extends State<AacScreen> {
     _loadDurableUsage();
   }
 
-  /// Restores the frequent-cards ranking across restarts.
+  /// Restores the frequent-cards ranking across restarts and reloads it
+  /// whenever the active child profile changes.
   Future<void> _loadDurableUsage() async {
-    final events = await widget.appState.progressRepository.getCardUsage(
-      widget.appState.selectedChild.id,
-    );
-    if (!mounted || events.isEmpty) return;
-    setState(() => _durableUsage.addAll(events));
+    final childId = widget.appState.selectedChild.id;
+    _durableChildId = childId;
+    final events =
+        await widget.appState.progressRepository.getCardUsage(childId);
+    if (!mounted || _durableChildId != childId) return;
+    setState(() {
+      _durableUsage
+        ..clear()
+        ..addAll(events);
+    });
   }
 
   @override
@@ -55,6 +62,9 @@ class _AacScreenState extends State<AacScreen> {
     return AnimatedBuilder(
       animation: widget.appState,
       builder: (context, _) {
+        if (_durableChildId != widget.appState.selectedChild.id) {
+          _loadDurableUsage();
+        }
         final sentence = _sentence;
         final frequentIds = _ranker.rank([..._durableUsage, ..._usage]);
         final frequentCards = frequentIds

@@ -167,8 +167,68 @@ abstract class AppLocalizations {
   /// No description provided for @socialStoriesTileSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Designed and documented for the next phase'**
+  /// **'Stories and conversation practice'**
   String get socialStoriesTileSubtitle;
+
+  /// No description provided for @tabStories.
+  ///
+  /// In en, this message translates to:
+  /// **'Stories'**
+  String get tabStories;
+
+  /// No description provided for @tabConversations.
+  ///
+  /// In en, this message translates to:
+  /// **'Conversations'**
+  String get tabConversations;
+
+  /// No description provided for @narrateTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Read aloud'**
+  String get narrateTooltip;
+
+  /// No description provided for @nextPageTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Next page'**
+  String get nextPageTooltip;
+
+  /// No description provided for @previousPageTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous page'**
+  String get previousPageTooltip;
+
+  /// No description provided for @comprehensionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s check understanding'**
+  String get comprehensionTitle;
+
+  /// No description provided for @conversationComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'You finished the conversation! A star was earned.'**
+  String get conversationComplete;
+
+  /// No description provided for @conversationHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a situation, then pick the reply that fits.'**
+  String get conversationHint;
+
+  /// No description provided for @gentleRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'That is okay. Let\'s try another way.'**
+  String get gentleRetry;
+
+  /// No description provided for @storyPagesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} pages'**
+  String storyPagesCount(int count);
 
   /// No description provided for @learningPathTileTitle.
   ///

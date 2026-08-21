@@ -82,12 +82,15 @@ class DeterministicEmotionActivityEngine implements EmotionActivityEngine {
        _adaptiveController =
            adaptiveController ?? RuleBasedAdaptiveLevelController();
 
-  final String childId;
+  String childId;
   final bool parentLocked;
   final SupportLevel? parentOverride;
   final Random _random;
   final DateTime Function() _clock;
   final AdaptiveLevelController _adaptiveController;
+
+  /// Re-points future session records when the active profile changes.
+  void updateChildId(String id) => childId = id;
   SupportLevel _level = SupportLevel.beginner;
   int _total = 5;
   int _index = 0;

@@ -19,11 +19,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   late Future<_DashboardData> _data;
   List<ObservationNote> _observations = [];
+  String? _loadedChildId;
 
   @override
   void initState() {
     super.initState();
     _data = _load();
+  }
+
+  /// Reloads metrics when the active profile changes while the tab is kept
+  /// alive by the shell's IndexedStack.
+  void _ensureChildData() {
+    final childId = widget.appState.selectedChild.id;
+    if (_loadedChildId == childId) return;
+    _loadedChildId = childId;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final future = _load();
+      setState(() {
+        _data = future;
+      });
+    });
   }
 
   Future<_DashboardData> _load() async {
@@ -87,14 +103,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
         createdAt: DateTime.now(),
       ),
     );
+    final refreshed = _load();
     setState(() {
-      _data = _load();
+      _data = refreshed;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    return AnimatedBuilder(
+      animation: widget.appState,
+      builder: (context, _) {
+        _ensureChildData();
+        return _buildBody(context, l10n);
+      },
+    );
+  }
+
+  Widget _buildBody(BuildContext context, AppLocalizations l10n) {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.progressTitle)),
       floatingActionButton: FloatingActionButton.extended(

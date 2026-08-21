@@ -8,7 +8,7 @@ Status legend:
 - `[ ]` open
 - `⛔ BLOCKED:` prefix = cannot proceed until the stated external dependency exists (device, SDK, credentials)
 
-Current verified state: `flutter analyze` PASS · `flutter test` PASS (56 tests) · branch `AI`
+Current verified state: `flutter analyze` PASS · `flutter test` PASS (76 tests) · branch `AI`
 
 ---
 
@@ -62,12 +62,12 @@ Current verified state: `flutter analyze` PASS · `flutter test` PASS (56 tests)
 
 ## Module 2 — Social Communication Training (P2)
 
-- [ ] Authored social stories: meeting someone, asking for help, waiting for turn, going to a shop
-- [ ] Story reader UI with narration (TTS) and illustrations
-- [ ] Comprehension checks after each story (fixed questions)
-- [ ] Scripted branching conversation practice (greetings, requesting, turn-taking, closing)
-- [ ] 2D role-play character with expression states
-- [ ] All content bilingual EN/UR, caregiver-approved, fixed (no generative chat)
+- [x] Authored social stories: meeting someone, asking for help, waiting for turn, going to a shop — done
+- [x] Story reader UI with narration (TTS) and illustrations — done
+- [x] Comprehension checks after each story (fixed questions) — done
+- [x] Scripted branching conversation practice (greetings, requesting, turn-taking, closing) — done
+- [x] 2D role-play character with expression states — done
+- [x] All content bilingual EN/UR, caregiver-approved, fixed (no generative chat) — done
 
 ## Module 3 — Emotion & Expression Recognition
 

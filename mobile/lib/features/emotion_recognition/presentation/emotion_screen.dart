@@ -24,13 +24,34 @@ class _EmotionScreenState extends State<EmotionScreen> {
   @override
   void initState() {
     super.initState();
-    _engine = DeterministicEmotionActivityEngine(childId: 'demo-child');
+    _engine = DeterministicEmotionActivityEngine(childId: _boundChildId);
     _question = _engine.start(level: SupportLevel.beginner);
+  }
+
+  /// Sessions must be recorded against the profile that is active.
+  String get _boundChildId =>
+      widget.appState?.selectedChild.id ?? 'demo-child';
+
+  void _rebindChild() {
+    final appState = widget.appState;
+    if (appState == null) return;
+    if (_engine.childId == appState.selectedChild.id) return;
+    _engine.updateChildId(appState.selectedChild.id);
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final appState = widget.appState;
+    if (appState == null) return _buildBody(context, l10n);
+    _rebindChild();
+    return AnimatedBuilder(
+      animation: appState,
+      builder: (context, _) => _buildBody(context, l10n),
+    );
+  }
+
+  Widget _buildBody(BuildContext context, AppLocalizations l10n) {
     final question = _question;
     final result = _result;
     return Scaffold(
