@@ -19,8 +19,11 @@ class AacScreen extends StatefulWidget {
 class _AacScreenState extends State<AacScreen> {
   final List<CardGrammar> _strip = [];
   final List<CardUsageEvent> _usage = [];
+  final List<CardUsageEvent> _durableUsage = [];
   final SentenceRealiser _realiser = RuleBasedSentenceRealiser();
   final CardRanker _ranker = RecencyWeightedCardRanker();
+
+  AacCategory? _category;
 
   SpeakerProfile get _speaker =>
       const SpeakerProfile(gender: UrduGender.masculine);
@@ -32,13 +35,40 @@ class _AacScreenState extends State<AacScreen> {
   String get _sentence => _realiser.realise(_strip, _speaker, _language).text;
 
   @override
+  void initState() {
+    super.initState();
+    _loadDurableUsage();
+  }
+
+  /// Restores the frequent-cards ranking across restarts.
+  Future<void> _loadDurableUsage() async {
+    final events = await widget.appState.progressRepository.getCardUsage(
+      widget.appState.children.first.id,
+    );
+    if (!mounted || events.isEmpty) return;
+    setState(() => _durableUsage.addAll(events));
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return AnimatedBuilder(
       animation: widget.appState,
       builder: (context, _) {
         final sentence = _sentence;
-        final frequent = _ranker.rank(_usage);
+        final frequentIds = _ranker.rank([..._durableUsage, ..._usage]);
+        final frequentCards = frequentIds
+            .map(cardById)
+            .whereType<AacCard>()
+            .toList();
+        final visibleDeck = [
+          ...aacDeck.where((card) => card.category == null),
+          ...aacDeck.where(
+            (card) =>
+                card.category != null &&
+                (_category == null || card.category == _category),
+          ),
+        ];
         return Scaffold(
           appBar: AppBar(
             title: Text(l10n.communicateTitle),
@@ -71,13 +101,18 @@ class _AacScreenState extends State<AacScreen> {
                           liveRegion: true,
                           label: l10n.sentenceHeader,
                           child: Text(
-                            sentence.isEmpty
-                                ? l10n.tapCardToBuild
-                                : sentence,
+                            key: ValueKey('aac-sentence'),
+                            sentence.isEmpty ? l10n.tapCardToBuild : sentence,
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
                         ),
                       ),
+                      if (_strip.isNotEmpty)
+                        IconButton(
+                          tooltip: l10n.removeLastWordTooltip,
+                          onPressed: _removeLastCard,
+                          icon: const Icon(Icons.backspace_outlined),
+                        ),
                       if (_strip.isNotEmpty)
                         IconButton(
                           tooltip: l10n.clearSentenceTooltip,
@@ -94,16 +129,55 @@ class _AacScreenState extends State<AacScreen> {
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 8),
-              Text(
-                frequent.isEmpty
-                    ? l10n.recentCardsHint
-                    : frequent.join('  •  '),
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
+              frequentCards.isEmpty
+                  ? Text(
+                      l10n.recentCardsHint,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    )
+                  : Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        for (final card in frequentCards)
+                          ActionChip(
+                            key: ValueKey('aac-frequent-${card.id}'),
+                            onPressed: () => _addCard(card.grammar),
+                            label: Text(
+                              _language == AppLanguage.ur
+                                  ? card.grammar.labelUr
+                                  : card.grammar.labelEn,
+                            ),
+                          ),
+                      ],
+                    ),
               const SizedBox(height: 20),
               Text(
                 l10n.coreWords,
                 style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 12),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    ChoiceChip(
+                      key: const ValueKey('aac-cat-all'),
+                      label: Text(l10n.allCategories),
+                      selected: _category == null,
+                      onSelected: (_) => setState(() => _category = null),
+                    ),
+                    const SizedBox(width: 8),
+                    for (final category in AacCategory.values) ...[
+                      ChoiceChip(
+                        key: ValueKey('aac-cat-${category.name}'),
+                        label: Text(_categoryLabel(l10n, category)),
+                        selected: _category == category,
+                        onSelected: (_) => setState(() => _category = category),
+                      ),
+                      const SizedBox(width: 8),
+                    ],
+                  ],
+                ),
               ),
               const SizedBox(height: 12),
               GridView.builder(
@@ -115,31 +189,31 @@ class _AacScreenState extends State<AacScreen> {
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
                 ),
-                itemCount: aacCards.length,
+                itemCount: visibleDeck.length,
                 itemBuilder: (context, index) {
-                  final card = aacCards[index];
+                  final card = visibleDeck[index];
                   return Semantics(
+                    key: ValueKey('aac-card-${card.id}'),
                     button: true,
-                    label:
-                        '${card.labelEn}, ${card.labelUr}',
+                    label: '${card.grammar.labelEn}, ${card.grammar.labelUr}',
                     child: Card(
                       child: InkWell(
-                        onTap: () => _addCard(card),
+                        onTap: () => _addCard(card.grammar),
                         borderRadius: BorderRadius.circular(16),
                         child: Padding(
                           padding: const EdgeInsets.all(8),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(_iconFor(card.id), size: 32),
+                              Icon(card.icon, size: 32),
                               const SizedBox(height: 4),
                               Text(
-                                card.labelEn,
+                                card.grammar.labelEn,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              Text(card.labelUr),
+                              Text(card.grammar.labelUr),
                             ],
                           ),
                         ),
@@ -152,6 +226,7 @@ class _AacScreenState extends State<AacScreen> {
               ConstrainedBox(
                 constraints: const BoxConstraints(minHeight: 64),
                 child: FilledButton.icon(
+                  key: const ValueKey('aac-speak'),
                   onPressed: _strip.isEmpty ? null : _speakSentence,
                   icon: const Icon(Icons.volume_up),
                   label: Text(l10n.speakSentenceTooltip),
@@ -180,19 +255,26 @@ class _AacScreenState extends State<AacScreen> {
     }
   }
 
+  void _removeLastCard() {
+    setState(() {
+      if (_strip.isNotEmpty) _strip.removeLast();
+    });
+  }
+
   void _speakSentence() {
     if (_sentence.isEmpty) return;
     widget.appState.ttsService.speak(_sentence, widget.appState.locale);
   }
 
-  IconData _iconFor(String id) => switch (id) {
-    'i_want' => Icons.touch_app,
-    'i_feel' => Icons.psychology_alt_outlined,
-    'apple' => Icons.apple,
-    'water' => Icons.water_drop,
-    'happy' => Icons.sentiment_satisfied,
-    'help' => Icons.pan_tool_outlined,
-    'finished' => Icons.check_circle_outline,
-    _ => Icons.image_outlined,
-  };
+  String _categoryLabel(AppLocalizations l10n, AacCategory category) =>
+      switch (category) {
+        AacCategory.food => l10n.aacCategoryFood,
+        AacCategory.drinks => l10n.aacCategoryDrinks,
+        AacCategory.emotions => l10n.aacCategoryEmotions,
+        AacCategory.activities => l10n.aacCategoryActivities,
+        AacCategory.people => l10n.aacCategoryPeople,
+        AacCategory.places => l10n.aacCategoryPlaces,
+        AacCategory.needs => l10n.aacCategoryNeeds,
+        AacCategory.objects => l10n.aacCategoryObjects,
+      };
 }

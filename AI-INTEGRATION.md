@@ -9,15 +9,15 @@ Existing contracts:
 - `AiEngine.initialise()` loads a model and prepares runtime resources.
 - `AiEngine.predict(Object input)` returns a `PredictionResult` with a label, confidence, and model version.
 - `ExpressionPracticeService` exposes support detection, a stream of `ExpressionReading`, and stop/dispose behavior.
-- `MockAiEngine` and `PlaceholderExpressionPracticeService` keep the app runnable while AI is absent.
+- `MockAiEngine` and `SimulatedExpressionService` keep the app runnable while the camera adapter is absent; the simulated source emits a deterministic smile ramp so the practice flow is demonstrable offline.
+
+The signal pipeline between `ExpressionReading` frames and the UI lives in `features/ai/domain/expression_practice_engine.dart`: `FrameThrottle` (busy-flag + minimum interval), `SmileEmaSmoother` (alpha 0.3), and `ExpressionSessionEngine` (one-second hold above threshold awards one star; three stars complete a session). It is pure Dart and fully tested.
 
 Every unfinished method is marked `TODO: AI IMPLEMENTATION`.
 
 ## Planned P1 expression pipeline
 
-Camera input should be throttled and processed locally through ML Kit face detection. The output is a practice signal such as smile probability, not a claim about a person's true emotional state. Frames must remain in memory only; they must never be uploaded or stored.
-
-The future implementation belongs in `features/ai/data/` and should expose `ExpressionReading` to a state/controller under the relevant presentation feature. Camera permission denial, unsupported devices, model loading, and inference failures must become explicit loading/error states.
+Camera input should be throttled and processed locally through ML Kit face detection. The output is a practice signal such as smile probability, not a claim about a person's true emotional state. Frames must remain in memory only; they must never be uploaded or stored. The processing engine, UI states (unsupported, permission denied, loading, error, practicing, complete), and star integration are implemented; the remaining work is the ML Kit camera adapter in `features/ai/data/` that produces `ExpressionReading` from real frames, gated on physical-device verification.
 
 ## Deferred capabilities
 

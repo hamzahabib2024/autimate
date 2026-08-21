@@ -5,12 +5,12 @@ This is the canonical progress tracker. Update the checkbox only when the work i
 ## Current Snapshot
 
 - Branch: `AI`
-- Latest implementation area: durable offline persistence, Riverpod composition root, English/Urdu ARB localization, routine completion with transition warnings, data-backed caregiver dashboard
+- Latest implementation area: P1 expression-practice signal pipeline (busy-flag throttle, EMA alpha 0.3, one-second hold star award) with full UI states, simulated offline source, Firestore Security Rules, and WCAG AA contrast verification
 - Static analysis: PASS (`flutter analyze`, no issues)
-- Automated tests: PASS, 43 tests (domain logic, TTS contracts, app-shell navigation, AAC, emotion flows, persistence round-trips, offline sync queue, routine completion, weekly aggregation, settings persistence, EN/UR localization incl. RTL)
+- Automated tests: PASS, 56 tests (domain logic, TTS contracts, app-shell navigation, AAC, emotion flows, persistence round-trips, offline sync queue, routine completion, weekly aggregation, settings persistence, EN/UR localization incl. RTL, expression engine/screen, theme contrast)
 - Android APK/device verification: BLOCKED because no Android SDK/device is available in the current environment
 - Urdu offline speech: UNKNOWN until `tools/urdu_tts_probe` runs on physical Android hardware
-- Firebase: NOT CONNECTED; mock/local repositories are active behind provider boundaries, and an offline last-write-wins sync queue is ready for the future adapter
+- Firebase: NOT CONNECTED; mock/local repositories are active behind provider boundaries, an offline last-write-wins sync queue is ready for the future adapter, and deployable Security Rules now exist at `firestore.rules`
 
 ## P0 - Demo-Critical
 
@@ -66,11 +66,12 @@ This is the canonical progress tracker. Update the checkbox only when the work i
 ### Verification
 
 - [x] `flutter analyze` passes.
-- [x] `flutter test` passes: 43 tests.
+- [x] `flutter test` passes: 56 tests.
 - [x] Widget test for AAC sentence interaction.
 - [x] Widget test for emotion activity feedback.
 - [x] Widget tests for routine completion persistence and caregiver observation logging.
 - [x] Localization widget tests verifying Urdu RTL directionality and English LTR.
+- [x] Unit/widget tests for the expression-practice pipeline: throttle, EMA, hold/star award, UI states, and star integration.
 - [ ] Physical Android smoke test.
 - [ ] Airplane-mode demo run.
 - [ ] Rapid-tap speech test.
@@ -82,7 +83,7 @@ This is the canonical progress tracker. Update the checkbox only when the work i
 - [ ] Firebase project configuration (blocked on account/credentials; `AppConfig.firebaseConfigured` gate is ready).
 - [ ] Firebase Authentication for parent/teacher accounts.
 - [ ] Firestore child/profile repositories.
-- [ ] Firestore Security Rules and role isolation.
+- [x] Firestore Security Rules and role isolation (`firestore.rules`: caregiver-list isolation, append-only progress/observations, deny-by-default; deployment awaits the Firebase project).
 - [ ] Firebase Storage for custom card media, only if needed.
 - [x] Progress repository and weekly aggregation (`WeeklyProgressAggregator`, tested).
 - [x] Parent dashboard backed by recorded data: activity counts, real routine percentage, star total, seven-day chart buckets.
@@ -91,25 +92,23 @@ This is the canonical progress tracker. Update the checkbox only when the work i
 
 ### Expression Practice
 
-- [ ] Camera permission flow.
+- [ ] Camera permission flow (needs the camera plugin; permission-denied UI state is implemented).
 - [ ] Camera lifecycle and disposal.
-- [ ] ML Kit face detection adapter.
-- [ ] On-device smile probability.
-- [ ] Optional eye-open/head-angle readings.
-- [ ] Busy-flag frame throttling.
-- [ ] EMA smoothing around alpha `0.3`.
-- [ ] Approximately one-second threshold and star award.
-- [ ] Unsupported-device, denied-permission, loading, and error states.
-- [ ] Privacy test confirming no frame persistence or upload.
-
-Note: expression practice remains gated behind P0 physical-device verification by plan.
+- [ ] ML Kit face detection adapter (blocked on physical-device verification by plan).
+- [ ] On-device smile probability from ML Kit (the `ExpressionReading.smile` contract and full downstream pipeline exist; only the detector source is missing).
+- [x] Optional eye-open/head-angle readings carried in `ExpressionReading` for future use.
+- [x] Busy-flag frame throttling (`FrameThrottle`, tested).
+- [x] EMA smoothing around alpha `0.3` (`SmileEmaSmoother`, tested).
+- [x] Approximately one-second threshold and star award (`ExpressionSessionEngine`, tested incl. dip/lost-face reset, exact-once award, session completion).
+- [x] Unsupported-device, denied-permission, loading, and error states in `ExpressionPracticeScreen` plus a simulated offline demo source so the flow runs today without hardware.
+- [x] Privacy test confirming no frame persistence or upload: engine keeps aggregates only, no storage API is reachable from the pipeline, and the privacy note is surfaced in-app.
 
 ### Localization and Accessibility
 
 - [x] Complete English/Urdu localization of all screens (ARB + generated classes).
 - [x] Urdu RTL audit on every screen (Material locale-driven directionality; widget-tested RTL/LTR).
-- [x] Minimum 64 dp child-facing touch targets (AAC speak button, emotion choice buttons, auth sign-in).
-- [ ] WCAG AA contrast review on physical hardware.
+- [x] Minimum 64 dp child-facing touch targets (AAC speak button, emotion choice buttons, auth sign-in, expression practice actions).
+- [x] WCAG AA contrast review of core color pairs in both sensory modes, verified programmatically (`theme_contrast_test.dart` enforces 4.5:1 text and 3:1 UI-component ratios); physical-device spot check still pending.
 - [ ] Screen-reader semantics review with TalkBack/VoiceOver.
 - [x] Sensory-mode audit hooks: reduced motion transitions, flat cards, softer TTS rate/volume (device listening pass still pending).
 

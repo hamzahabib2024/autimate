@@ -101,6 +101,36 @@ class AppLocalizationsUr extends AppLocalizations {
   String get coreWords => 'بنیادی الفاظ';
 
   @override
+  String get allCategories => 'سب';
+
+  @override
+  String get aacCategoryFood => 'کھانا';
+
+  @override
+  String get aacCategoryDrinks => 'مشروبات';
+
+  @override
+  String get aacCategoryEmotions => 'جذبات';
+
+  @override
+  String get aacCategoryActivities => 'سرگرمیاں';
+
+  @override
+  String get aacCategoryPeople => 'لوگ';
+
+  @override
+  String get aacCategoryPlaces => 'جگہیں';
+
+  @override
+  String get aacCategoryNeeds => 'ضرورتیں';
+
+  @override
+  String get aacCategoryObjects => 'چیزیں';
+
+  @override
+  String get removeLastWordTooltip => 'آخری لفظ ہٹائیں';
+
+  @override
   String get emotionPracticeTitle => 'جذبات کی مشق';
 
   @override
@@ -157,7 +187,47 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get cameraPracticeMessage =>
-      'P1 پلیس ہولدر۔ مستقبل کی ML Kit پروسیسنگ یادداشت میں رہے گی اور فریمز کبھی اپ لوڈ نہیں ہوں گے۔';
+      'آلے پر مسکراہٹ کی شناخت کا منطق مکمل ہے؛ ML Kit کیمرہ ایڈاپٹر فزیکل ویریفیکیشن کے بعد آئے گا۔ ابھی سمیولیٹڈ ڈیمو دستیاب ہے۔';
+
+  @override
+  String get expressionTitle => 'اظہار کی مشق';
+
+  @override
+  String get expressionStart => 'مشق شروع کریں';
+
+  @override
+  String get expressionHoldSmile => 'ایک سیکنڈ تک بڑی مسکراہٹ رکھیں';
+
+  @override
+  String get expressionUnsupported => 'اس آلے پر اظہار کی مشق دستیاب نہیں ہے۔';
+
+  @override
+  String get expressionPermissionDenied =>
+      'کیمرے کی اجازت درکار ہے۔ نگہبان آلے کی ترتیبات سے اجازت دے سکتے ہیں۔';
+
+  @override
+  String get expressionLoadingCamera => 'کیمرہ شروع ہو رہا ہے...';
+
+  @override
+  String get expressionCameraError =>
+      'کیمرے میں کوئی خرابی پیش آئی۔ دوبارہ کوشش کریں۔';
+
+  @override
+  String expressionSmileProgress(int done, int total) {
+    return '$total میں سے $done مسکراہٹیں مکمل';
+  }
+
+  @override
+  String expressionSessionComplete(int stars) {
+    return 'شاباش! $stars ستارے ملے';
+  }
+
+  @override
+  String get expressionPrivacyTitle => 'ڈیزائن سے نجی';
+
+  @override
+  String get expressionPrivacyNote =>
+      'فریمز اس آلے کی یادداشت میں رہتے ہیں اور کبھی محفوظ یا اپ لوڈ نہیں ہوتے۔ صرف ستاروں کا مجموعہ ریکارڈ ہوتا ہے۔';
 
   @override
   String get routineTitle => 'روٹین';
