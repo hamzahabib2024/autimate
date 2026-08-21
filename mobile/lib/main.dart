@@ -1,16 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import 'core/providers/app_providers.dart';
 import 'core/services/app_services.dart';
 import 'core/services/tts_service.dart';
+import 'core/data/local_store.dart';
 import 'core/theme/app_theme.dart';
 import 'features/home/presentation/app_shell.dart';
+import 'l10n/generated/app_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  final prefs = await SharedPreferences.getInstance();
+  final keyValueStore = SharedPrefsKeyValueStore(prefs);
+
   final ttsService = QueuedTtsService();
   await ttsService.initialise();
-  final appState = AppState(MockAuthRepository(), ttsService);
-  runApp(AutiMateApp(appState: appState));
+
+  final container = ProviderContainer(
+    overrides: [keyValueStoreProvider.overrideWithValue(keyValueStore)],
+  );
+
+  final appState = container.read(appStateProvider);
+  await appState.loadPersistedSettings();
+
+  runApp(
+    UncontrolledProviderScope(
+      container: container,
+      child: AutiMateApp(appState: appState),
+    ),
+  );
 }
 
 class AutiMateApp extends StatelessWidget {
@@ -28,6 +49,7 @@ class AutiMateApp extends StatelessWidget {
         theme: AppTheme.light(sensoryMode: appState.sensoryMode),
         locale: appState.locale,
         supportedLocales: const [Locale('en'), Locale('ur')],
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
         home: AppShell(appState: appState),
       ),
     );
