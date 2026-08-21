@@ -8,6 +8,7 @@ import 'core/services/tts_service.dart';
 import 'core/data/local_store.dart';
 import 'core/theme/app_theme.dart';
 import 'features/home/presentation/app_shell.dart';
+import 'features/onboarding/presentation/onboarding_screen.dart';
 import 'l10n/generated/app_localizations.dart';
 
 Future<void> main() async {
@@ -25,6 +26,7 @@ Future<void> main() async {
 
   final appState = container.read(appStateProvider);
   await appState.loadPersistedSettings();
+  appState.startListeningToConnectivity();
 
   runApp(
     UncontrolledProviderScope(
@@ -50,7 +52,9 @@ class AutiMateApp extends StatelessWidget {
         locale: appState.locale,
         supportedLocales: const [Locale('en'), Locale('ur')],
         localizationsDelegates: AppLocalizations.localizationsDelegates,
-        home: AppShell(appState: appState),
+        home: appState.onboarded
+            ? AppShell(appState: appState)
+            : OnboardingScreen(appState: appState),
       ),
     );
   }

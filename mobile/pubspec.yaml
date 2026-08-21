@@ -32,6 +32,9 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+  # Justification: hashes the caregiver PIN; nothing in the current
+  # dependency set provides secure hashing.
+  crypto: ^3.0.6
   flutter_riverpod: ^2.6.1
   flutter_tts: ^4.2.5
   shared_preferences: ^2.3.4

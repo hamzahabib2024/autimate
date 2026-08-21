@@ -86,3 +86,32 @@ class StatePanel extends StatelessWidget {
     );
   }
 }
+
+
+/// Slim banner shown above the shell while the device is offline.
+class OfflineBanner extends StatelessWidget {
+  const OfflineBanner({required this.message, super.key});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      key: const ValueKey('offline-banner'),
+      color: Theme.of(context).colorScheme.tertiaryContainer,
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            children: [
+              const Icon(Icons.cloud_off_outlined, size: 20),
+              const SizedBox(width: 10),
+              Expanded(child: Text(message)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

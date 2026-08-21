@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../core/services/app_services.dart';
 import '../../../l10n/generated/app_localizations.dart';
@@ -27,7 +27,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<_DashboardData> _load() async {
-    final child = widget.appState.children.first;
+    final child = widget.appState.selectedChild;
     final sessions = await widget.appState.progressRepository.getSessions(
       child.id,
     );
@@ -81,7 +81,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (note == null) return;
     await widget.appState.progressRepository.recordObservation(
       ObservationNote(
-        childId: widget.appState.children.first.id,
+        childId: widget.appState.selectedChild.id,
         note: note,
         authorRole: 'parent',
         createdAt: DateTime.now(),
@@ -106,7 +106,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         padding: const EdgeInsets.all(20),
         children: [
           Text(
-            l10n.childWeekHeader(widget.appState.children.first.name),
+            l10n.childWeekHeader(widget.appState.selectedChild.name),
             style: Theme.of(context).textTheme.headlineSmall,
           ),
           const SizedBox(height: 16),
@@ -288,3 +288,4 @@ class _Bar extends StatelessWidget {
     ),
   );
 }
+

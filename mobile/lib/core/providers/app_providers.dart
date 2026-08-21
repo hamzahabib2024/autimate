@@ -5,6 +5,7 @@ import '../data/local_progress_repository.dart';
 import '../data/local_store.dart';
 import '../data/offline_sync_queue.dart';
 import '../services/app_services.dart';
+import '../services/connectivity_service.dart';
 import '../services/tts_service.dart';
 import '../../features/progress/domain/progress_models.dart';
 import '../../features/routines/domain/routine_repository.dart';
@@ -48,6 +49,12 @@ final routineRepositoryProvider = Provider<RoutineRepository>(
   (ref) => LocalRoutineRepository(store: ref.watch(keyValueStoreProvider)),
 );
 
+/// Connectivity boundary. A verified connectivity_plus adapter replaces
+/// the static implementation on device.
+final connectivityServiceProvider = Provider<ConnectivityService>(
+  (ref) => const StaticConnectivityService(),
+);
+
 /// Application state wired from the providers above.
 final appStateProvider = ChangeNotifierProvider<AppState>((ref) {
   return AppState(
@@ -56,5 +63,6 @@ final appStateProvider = ChangeNotifierProvider<AppState>((ref) {
     progressRepository: ref.watch(progressRepositoryProvider),
     routineRepository: ref.watch(routineRepositoryProvider),
     settingsStore: ref.watch(keyValueStoreProvider),
+    connectivityService: ref.watch(connectivityServiceProvider),
   );
 });

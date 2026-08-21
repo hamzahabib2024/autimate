@@ -391,4 +391,57 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get sensorySupportTileSubtitle =>
       'پُرسکون ہونے اور آواز کے فوری کنٹرول';
+
+  @override
+  String get onboardingTitle => 'AutiMate میں خوش آمدید';
+
+  @override
+  String get onboardingSubtitle => 'اپنے بچے کے لیے ایک پُرسکون جگہ ترتیب دیں۔';
+
+  @override
+  String get childNameLabel => 'بچے کا نام';
+
+  @override
+  String get chooseLanguageLabel => 'ایپ کی زبان';
+
+  @override
+  String get createPinLabel => 'نگہبان کا PIN (4 ہندسے)';
+
+  @override
+  String get getStarted => 'شروع کریں';
+
+  @override
+  String get intermediateSupportLevel => 'درمیانی سطح کی معاونت';
+
+  @override
+  String get advancedSupportLevel => 'اعلیٰ سطح کی معاونت';
+
+  @override
+  String get parentLockTitle => 'والدین کا لاک';
+
+  @override
+  String get enterParentPin => 'نگہبان کا PIN درج کریں';
+
+  @override
+  String get pinIncorrect => 'PIN غلط ہے۔ دوبارہ کوشش کریں۔';
+
+  @override
+  String get unlockAction => 'کھولیں';
+
+  @override
+  String get childModeLabel => 'بچوں والا موڈ';
+
+  @override
+  String get childModeSubtitle =>
+      'نگہبان کے حصے والدین کے لاک کے پیچھے چھپائیں';
+
+  @override
+  String get profilesSectionTitle => 'بچے';
+
+  @override
+  String get addChildLabel => 'بچہ شامل کریں';
+
+  @override
+  String get offlineBanner =>
+      'آپ آف لائن ہیں۔ کام اس آلے پر محفوظ ہے اور بعد میں سنک ہوگا۔';
 }
