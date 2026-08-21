@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 
 import 'core/services/app_services.dart';
+import 'core/services/tts_service.dart';
 import 'core/theme/app_theme.dart';
 import 'features/home/presentation/app_shell.dart';
 
-void main() {
-  final appState = AppState(MockAuthRepository(), MockTtsService());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final ttsService = QueuedTtsService();
+  await ttsService.initialise();
+  final appState = AppState(MockAuthRepository(), ttsService);
   runApp(AutiMateApp(appState: appState));
 }
 

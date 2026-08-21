@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'tts_service.dart';
+
 class ChildProfile {
   const ChildProfile({
     required this.id,
@@ -15,12 +17,6 @@ class ChildProfile {
 abstract interface class AuthRepository {
   Future<bool> signIn(String email, String password);
   Future<void> signOut();
-}
-
-abstract interface class TtsService {
-  Future<void> initialise();
-  Future<void> speak(String text, Locale locale);
-  Future<void> stop();
 }
 
 abstract interface class FeatureRepository {
@@ -81,6 +77,9 @@ class AppState extends ChangeNotifier {
 
   void toggleSensoryMode(bool value) {
     _sensoryMode = value;
+    if (ttsService is QueuedTtsService) {
+      (ttsService as QueuedTtsService).setSensoryMode(value);
+    }
     notifyListeners();
   }
 

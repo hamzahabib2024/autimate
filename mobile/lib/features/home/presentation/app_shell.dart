@@ -27,7 +27,7 @@ class _AppShellState extends State<AppShell> {
     if (!widget.appState.signedIn) return AuthScreen(appState: widget.appState);
     final pages = [
       _home(context),
-      const AacScreen(),
+      AacScreen(appState: widget.appState),
       const RoutinesScreen(),
       const DashboardScreen(),
     ];
@@ -104,7 +104,9 @@ class _AppShellState extends State<AppShell> {
                   subtitle: 'Learn six everyday expressions',
                   icon: Icons.emoji_emotions_outlined,
                   onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const EmotionScreen()),
+                    MaterialPageRoute(
+                      builder: (_) => EmotionScreen(appState: widget.appState),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 12),
