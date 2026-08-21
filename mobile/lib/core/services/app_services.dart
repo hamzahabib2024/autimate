@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'tts_service.dart';
+import '../../features/communication/domain/card_ranker.dart';
+import '../../features/emotion_recognition/domain/emotion_activity_engine.dart';
+import '../../features/progress/domain/progress_models.dart';
 
 class ChildProfile {
   const ChildProfile({
@@ -51,13 +54,22 @@ class MockFeatureRepository implements FeatureRepository {
 }
 
 class AppState extends ChangeNotifier {
-  AppState(this.authRepository, this.ttsService)
-    : _children = const [
-        ChildProfile(id: 'demo-child', name: 'Ayaan', supportLevel: 'Beginner'),
-      ];
+  AppState(
+    this.authRepository,
+    this.ttsService, {
+    ProgressRepository? progressRepository,
+  }) : _children = const [
+         ChildProfile(
+           id: 'demo-child',
+           name: 'Ayaan',
+           supportLevel: 'Beginner',
+         ),
+       ],
+       progressRepository = progressRepository ?? InMemoryProgressRepository();
 
   final AuthRepository authRepository;
   final TtsService ttsService;
+  final ProgressRepository progressRepository;
   final List<ChildProfile> _children;
   Locale _locale = const Locale('en');
   bool _sensoryMode = false;
@@ -87,6 +99,12 @@ class AppState extends ChangeNotifier {
     _stars += amount;
     notifyListeners();
   }
+
+  Future<void> recordSession(SessionResult result) =>
+      progressRepository.recordSession(result);
+
+  Future<void> recordCardUsage(CardUsageEvent event) =>
+      progressRepository.recordCardUsage(event);
 
   Future<void> signOut() async {
     await authRepository.signOut();

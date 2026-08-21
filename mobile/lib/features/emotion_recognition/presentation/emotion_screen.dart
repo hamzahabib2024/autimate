@@ -122,6 +122,7 @@ class _EmotionScreenState extends State<EmotionScreen> {
       });
       if (_result != null && widget.appState != null) {
         widget.appState!.awardStars(_result!.starsAwarded);
+        widget.appState!.recordSession(_result!);
       }
     });
   }

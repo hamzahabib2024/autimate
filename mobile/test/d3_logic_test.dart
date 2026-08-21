@@ -4,6 +4,7 @@ import 'package:autimate/features/communication/domain/card_ranker.dart';
 import 'package:autimate/features/communication/domain/sentence_realiser.dart';
 import 'package:autimate/features/emotion_recognition/domain/adaptive_level_controller.dart';
 import 'package:autimate/features/emotion_recognition/domain/emotion_activity_engine.dart';
+import 'package:autimate/features/progress/domain/progress_models.dart';
 
 void main() {
   group('RuleBasedSentenceRealiser', () {
@@ -263,4 +264,32 @@ void main() {
       );
     });
   });
+
+  test(
+    'in-memory progress repository retains sessions and card usage',
+    () async {
+      final repository = InMemoryProgressRepository();
+      final result = SessionResult(
+        childId: 'child',
+        activityType: 'emotion_identification',
+        score: 4,
+        total: 5,
+        levelPlayed: SupportLevel.beginner,
+        levelAfter: SupportLevel.intermediate,
+        duration: const Duration(seconds: 20),
+        completedAt: DateTime(2026, 8, 21),
+        starsAwarded: 3,
+      );
+      final usage = CardUsageEvent(
+        cardId: 'water',
+        usedAt: DateTime(2026, 8, 21),
+      );
+
+      await repository.recordSession(result);
+      await repository.recordCardUsage(usage);
+
+      expect((await repository.getSessions('child')).single.result.score, 4);
+      expect((await repository.getCardUsage('child')).single.cardId, 'water');
+    },
+  );
 }
