@@ -10,6 +10,7 @@ import '../../gamification/presentation/gamification_screen.dart';
 import '../../parent_dashboard/presentation/dashboard_screen.dart';
 import '../../routines/presentation/routines_screen.dart';
 import '../../sensory_support/presentation/sensory_support_screen.dart';
+import '../../settings/presentation/parent_gate_screen.dart';
 import '../../settings/presentation/settings_screen.dart';
 import 'feature_screen.dart';
 
@@ -25,10 +26,45 @@ class AppShell extends StatefulWidget {
 class _AppShellState extends State<AppShell> {
   int _index = 0;
 
+  Future<bool> _unlockCaregiverArea() async {
+    if (!widget.appState.childMode) return true;
+    final unlocked = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => ParentGateScreen(appState: widget.appState),
+      ),
+    );
+    return unlocked ?? false;
+  }
+
+  Future<void> _openSettings() async {
+    if (!await _unlockCaregiverArea()) return;
+    if (!mounted) return;
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => SettingsScreen(appState: widget.appState),
+      ),
+    );
+  }
+
+  Future<void> _selectDestination(int value) async {
+    const caregiverTabs = {3};
+    if (caregiverTabs.contains(value)) {
+      if (!await _unlockCaregiverArea()) return;
+    }
+    setState(() => _index = value);
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     if (!widget.appState.signedIn) return AuthScreen(appState: widget.appState);
+    return AnimatedBuilder(
+      animation: widget.appState,
+      builder: (context, _) => _buildShell(context, l10n),
+    );
+  }
+
+  Widget _buildShell(BuildContext context, AppLocalizations l10n) {
     final pages = [
       _home(context, l10n),
       AacScreen(appState: widget.appState),
@@ -36,10 +72,18 @@ class _AppShellState extends State<AppShell> {
       DashboardScreen(appState: widget.appState),
     ];
     return Scaffold(
-      body: IndexedStack(index: _index, children: pages),
+      body: Column(
+        children: [
+          if (widget.appState.offline)
+            OfflineBanner(message: l10n.offlineBanner),
+          Expanded(
+            child: IndexedStack(index: _index, children: pages),
+          ),
+        ],
+      ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,
-        onDestinationSelected: (value) => setState(() => _index = value),
+        onDestinationSelected: _selectDestination,
         destinations: [
           NavigationDestination(
             icon: const Icon(Icons.home_outlined),
@@ -75,11 +119,7 @@ class _AppShellState extends State<AppShell> {
             actions: [
               IconButton(
                 tooltip: l10n.settingsTooltip,
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => SettingsScreen(appState: widget.appState),
-                  ),
-                ),
+                onPressed: _openSettings,
                 icon: const Icon(Icons.settings_outlined),
               ),
             ],
@@ -185,7 +225,7 @@ class _AppShellState extends State<AppShell> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.appState.children.first.name,
+                    widget.appState.selectedChild.name,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),

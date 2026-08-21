@@ -797,8 +797,110 @@ abstract class AppLocalizations {
   /// No description provided for @sensorySupportTileSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Quick calming and sound controls'**
+  /// **'Quick calm-down and sound controls'**
   String get sensorySupportTileSubtitle;
+
+  /// No description provided for @onboardingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to AutiMate'**
+  String get onboardingTitle;
+
+  /// No description provided for @onboardingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up a calm space for your child.'**
+  String get onboardingSubtitle;
+
+  /// No description provided for @childNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Child\'s name'**
+  String get childNameLabel;
+
+  /// No description provided for @chooseLanguageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'App language'**
+  String get chooseLanguageLabel;
+
+  /// No description provided for @createPinLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Caregiver PIN (4 digits)'**
+  String get createPinLabel;
+
+  /// No description provided for @getStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Get started'**
+  String get getStarted;
+
+  /// No description provided for @intermediateSupportLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Intermediate support level'**
+  String get intermediateSupportLevel;
+
+  /// No description provided for @advancedSupportLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced support level'**
+  String get advancedSupportLevel;
+
+  /// No description provided for @parentLockTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent lock'**
+  String get parentLockTitle;
+
+  /// No description provided for @enterParentPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter caregiver PIN'**
+  String get enterParentPin;
+
+  /// No description provided for @pinIncorrect.
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect PIN. Try again.'**
+  String get pinIncorrect;
+
+  /// No description provided for @unlockAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock'**
+  String get unlockAction;
+
+  /// No description provided for @childModeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Child mode'**
+  String get childModeLabel;
+
+  /// No description provided for @childModeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide caregiver areas behind the parent lock'**
+  String get childModeSubtitle;
+
+  /// No description provided for @profilesSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Children'**
+  String get profilesSectionTitle;
+
+  /// No description provided for @addChildLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Add child'**
+  String get addChildLabel;
+
+  /// No description provided for @offlineBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'You are offline. Work is saved on this device and will sync later.'**
+  String get offlineBanner;
 }
 
 class _AppLocalizationsDelegate

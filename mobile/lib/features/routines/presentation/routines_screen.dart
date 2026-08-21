@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:flutter/material.dart';
 
@@ -43,7 +43,7 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
     super.dispose();
   }
 
-  String get _childId => widget.appState.children.first.id;
+  String get _childId => widget.appState.selectedChild.id;
 
   Future<void> _load() async {
     final steps = await widget.appState.routineRepository.getSteps();
@@ -183,3 +183,4 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
     _ => Icons.task_alt,
   };
 }
+

@@ -161,5 +161,22 @@
   "gamificationTileTitle": "Stars and rewards",
   "gamificationTileSubtitle": "See stars earned from activities",
   "sensorySupportTileTitle": "Sensory support",
-  "sensorySupportTileSubtitle": "Quick calming and sound controls"
+  "sensorySupportTileSubtitle": "Quick calm-down and sound controls",
+  "onboardingTitle": "Welcome to AutiMate",
+  "onboardingSubtitle": "Set up a calm space for your child.",
+  "childNameLabel": "Child's name",
+  "chooseLanguageLabel": "App language",
+  "createPinLabel": "Caregiver PIN (4 digits)",
+  "getStarted": "Get started",
+  "intermediateSupportLevel": "Intermediate support level",
+  "advancedSupportLevel": "Advanced support level",
+  "parentLockTitle": "Parent lock",
+  "enterParentPin": "Enter caregiver PIN",
+  "pinIncorrect": "Incorrect PIN. Try again.",
+  "unlockAction": "Unlock",
+  "childModeLabel": "Child mode",
+  "childModeSubtitle": "Hide caregiver areas behind the parent lock",
+  "profilesSectionTitle": "Children",
+  "addChildLabel": "Add child",
+  "offlineBanner": "You are offline. Work is saved on this device and will sync later."
 }

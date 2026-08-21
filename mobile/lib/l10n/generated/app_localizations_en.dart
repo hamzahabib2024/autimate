@@ -393,5 +393,57 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sensorySupportTileTitle => 'Sensory support';
 
   @override
-  String get sensorySupportTileSubtitle => 'Quick calming and sound controls';
+  String get sensorySupportTileSubtitle => 'Quick calm-down and sound controls';
+
+  @override
+  String get onboardingTitle => 'Welcome to AutiMate';
+
+  @override
+  String get onboardingSubtitle => 'Set up a calm space for your child.';
+
+  @override
+  String get childNameLabel => 'Child\'s name';
+
+  @override
+  String get chooseLanguageLabel => 'App language';
+
+  @override
+  String get createPinLabel => 'Caregiver PIN (4 digits)';
+
+  @override
+  String get getStarted => 'Get started';
+
+  @override
+  String get intermediateSupportLevel => 'Intermediate support level';
+
+  @override
+  String get advancedSupportLevel => 'Advanced support level';
+
+  @override
+  String get parentLockTitle => 'Parent lock';
+
+  @override
+  String get enterParentPin => 'Enter caregiver PIN';
+
+  @override
+  String get pinIncorrect => 'Incorrect PIN. Try again.';
+
+  @override
+  String get unlockAction => 'Unlock';
+
+  @override
+  String get childModeLabel => 'Child mode';
+
+  @override
+  String get childModeSubtitle => 'Hide caregiver areas behind the parent lock';
+
+  @override
+  String get profilesSectionTitle => 'Children';
+
+  @override
+  String get addChildLabel => 'Add child';
+
+  @override
+  String get offlineBanner =>
+      'You are offline. Work is saved on this device and will sync later.';
 }
