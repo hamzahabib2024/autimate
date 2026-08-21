@@ -45,6 +45,15 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
 
   String get _childId => widget.appState.selectedChild.id;
 
+  String? _loadedChildId;
+
+  /// Reloads per-child completion data when the active profile changes.
+  void _ensureChildData() {
+    if (_loadedChildId == _childId) return;
+    _loadedChildId = _childId;
+    unawaited(_load());
+  }
+
   Future<void> _load() async {
     final steps = await widget.appState.routineRepository.getSteps();
     final completed = await widget.appState.routineRepository
@@ -98,7 +107,22 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    _ensureChildData();
     final progress = _steps.isEmpty ? 0.0 : _completed.length / _steps.length;
+    return AnimatedBuilder(
+      animation: widget.appState,
+      builder: (context, _) {
+        _ensureChildData();
+        return _buildBody(context, l10n, progress);
+      },
+    );
+  }
+
+  Widget _buildBody(
+    BuildContext context,
+    AppLocalizations l10n,
+    double progress,
+  ) {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.routineTitle)),
       body: ListView(
