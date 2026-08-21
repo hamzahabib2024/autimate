@@ -154,10 +154,12 @@ class _AacScreenState extends State<AacScreen> {
   }
 
   void _addCard(CardGrammar card) {
+    final usage = CardUsageEvent(cardId: card.id, usedAt: DateTime.now());
     setState(() {
       _strip.add(card);
-      _usage.add(CardUsageEvent(cardId: card.id, usedAt: DateTime.now()));
+      _usage.add(usage);
     });
+    widget.appState.recordCardUsage(usage);
     final tts = widget.appState.ttsService;
     if (tts is QueuedTtsService) {
       tts.speak(

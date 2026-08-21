@@ -29,7 +29,7 @@ class _AppShellState extends State<AppShell> {
       _home(context),
       AacScreen(appState: widget.appState),
       const RoutinesScreen(),
-      const DashboardScreen(),
+      DashboardScreen(appState: widget.appState),
     ];
     return Scaffold(
       body: IndexedStack(index: _index, children: pages),

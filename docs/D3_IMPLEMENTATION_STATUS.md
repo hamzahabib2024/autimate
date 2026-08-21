@@ -5,7 +5,7 @@ Audited after commit `6e580c8` on branch `AI`. This status reflects code current
 ## Build Status
 
 - flutter analyze: PASS (current mock skeleton).
-- flutter test: PASS (18 tests: domain logic, TTS contracts, app-shell navigation, AAC, and emotion flows).
+- flutter test: PASS (19 tests: domain logic, TTS contracts, app-shell navigation, AAC, emotion flows, and progress persistence).
 - flutter run/build: `flutter build apk --debug` blocked because no Android SDK is configured in this environment.
 - Android physical device status: NOT VERIFIED; the Urdu probe remains available under `tools/urdu_tts_probe`.
 
@@ -82,13 +82,13 @@ Audited after commit `6e580c8` on branch `AI`. This status reflects code current
 - [x] AAC integration: semantic cards, realiser, usage ranking, and TTS action are connected.
 - [x] Emotion integration: screen uses the deterministic engine and produces a session result.
 - [x] Adaptive integration: session engine consumes the controller with lock and override support.
-- [ ] Firestore integration: mock backend contracts only.
-- [ ] UI integration: shell and placeholders exist.
+- [ ] Firestore integration: mock backend contracts only; in-memory repository is active.
+- [x] UI integration: shell, AAC, emotion, and dashboard progress wiring exist.
 - [ ] Offline verification
 
 ## Remaining Work
 
-1. Persist session results and AAC usage through a repository.
+1. Replace the in-memory progress repository with durable offline storage/Firebase adapters.
 2. Verify TTS locale availability, Urdu output, offline speech, rapid taps, and latency on physical Android hardware.
 3. Add Firebase/Firestore adapters after credentials and rules are available.
 4. Add Riverpod providers at the integration boundary without rewriting tested domain logic.

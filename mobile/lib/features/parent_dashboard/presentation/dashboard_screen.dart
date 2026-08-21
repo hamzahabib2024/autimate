@@ -1,7 +1,29 @@
 import 'package:flutter/material.dart';
 
-class DashboardScreen extends StatelessWidget {
-  const DashboardScreen({super.key});
+import '../../../core/services/app_services.dart';
+
+class DashboardScreen extends StatefulWidget {
+  const DashboardScreen({required this.appState, super.key});
+
+  final AppState appState;
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  late Future<int> _activityCount;
+
+  @override
+  void initState() {
+    super.initState();
+    _activityCount = _loadActivityCount();
+  }
+
+  Future<int> _loadActivityCount() async =>
+      (await widget.appState.progressRepository.getSessions(
+        'demo-child',
+      )).length;
 
   @override
   Widget build(BuildContext context) {
@@ -15,20 +37,29 @@ class DashboardScreen extends StatelessWidget {
             style: Theme.of(context).textTheme.headlineSmall,
           ),
           const SizedBox(height: 16),
-          Row(
-            children: const [
-              Expanded(
-                child: _Metric(label: 'Activities', value: '18'),
-              ),
-              SizedBox(width: 12),
-              Expanded(
-                child: _Metric(label: 'Routine', value: '82%'),
-              ),
-              SizedBox(width: 12),
-              Expanded(
-                child: _Metric(label: 'Stars', value: '12'),
-              ),
-            ],
+          FutureBuilder<int>(
+            future: _activityCount,
+            builder: (context, snapshot) {
+              final count = snapshot.data ?? 0;
+              return Row(
+                children: [
+                  Expanded(
+                    child: _Metric(label: 'Activities', value: '$count'),
+                  ),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: _Metric(label: 'Routine', value: '82%'),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _Metric(
+                      label: 'Stars',
+                      value: '${widget.appState.stars}',
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
           const SizedBox(height: 20),
           Card(

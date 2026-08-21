@@ -12,7 +12,7 @@ Status is synchronized with the canonical tracker at `DEVELOPMENT-CHECKLIST.md`.
 - [x] Emotion engine
 - [x] Adaptive controller
 - [x] AAC integration
-- [ ] Offline verification - requires persistence/device testing
+- [ ] Offline verification - in-memory persistence is implemented; durable storage/device testing remains
 - [ ] Physical device verification - Android SDK/device blocker
 - [x] Tests (15 passing)
 - [x] flutter analyze clean

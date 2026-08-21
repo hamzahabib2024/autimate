@@ -7,7 +7,7 @@ This is the canonical progress tracker. Update the checkbox only when the work i
 - Branch: `AI`
 - Latest implementation area: D3 speech, AAC logic, emotion engine, and adaptive controller
 - Static analysis: PASS
-- Automated tests: PASS, 15 tests
+- Automated tests: PASS, 19 tests
 - Android APK/device verification: BLOCKED because no Android SDK/device is available in the current environment
 - Urdu offline speech: UNKNOWN until `tools/urdu_tts_probe` runs on physical Android hardware
 - Firebase: NOT CONNECTED; mock repositories are active
@@ -57,14 +57,15 @@ This is the canonical progress tracker. Update the checkbox only when the work i
 - [x] AAC sentence speak action connected to TTS.
 - [x] Emotion screen connected to the activity engine.
 - [x] Emotion session completion awards stars in app state.
-- [ ] Persist AAC usage and emotion results beyond the current session.
+- [x] Persist AAC usage and emotion results beyond the current widget session through `InMemoryProgressRepository`.
+- [ ] Durable offline persistence and Firestore sync.
 - [ ] Routine completion state and local reminders.
 - [ ] Offline persistence for AAC, routines, and progress.
 
 ### Verification
 
 - [x] `flutter analyze` passes.
-- [x] `flutter test` passes: 18 tests.
+- [x] `flutter test` passes: 19 tests.
 - [x] Widget test for AAC sentence interaction.
 - [x] Widget test for emotion activity feedback.
 - [ ] Physical Android smoke test.
