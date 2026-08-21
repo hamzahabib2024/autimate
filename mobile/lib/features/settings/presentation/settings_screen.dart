@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/services/app_services.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import '../../home/presentation/feature_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -10,69 +11,72 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return AnimatedBuilder(
       animation: appState,
-      builder: (context, _) => Scaffold(
-        appBar: AppBar(title: const Text('Settings')),
-        body: ListView(
-          padding: const EdgeInsets.all(20),
-          children: [
-            SwitchListTile(
-              title: const Text('Sensory-friendly mode'),
-              subtitle: const Text(
-                'Reduce motion, clutter, and sound intensity',
+      builder: (context, _) {
+        final isUrdu = appState.locale.languageCode == 'ur';
+        return Scaffold(
+          appBar: AppBar(title: Text(l10n.settingsTitle)),
+          body: ListView(
+            padding: const EdgeInsets.all(20),
+            children: [
+              SwitchListTile(
+                title: Text(l10n.sensoryMode),
+                subtitle: Text(l10n.sensoryModeSubtitle),
+                value: appState.sensoryMode,
+                onChanged: appState.toggleSensoryMode,
               ),
-              value: appState.sensoryMode,
-              onChanged: appState.toggleSensoryMode,
-            ),
-            const Divider(),
-            ListTile(
-              title: const Text('Language'),
-              subtitle: Text(
-                appState.locale.languageCode == 'ur' ? 'Urdu (RTL)' : 'English',
+              const Divider(),
+              ListTile(
+                title: Text(l10n.languageLabel),
+                subtitle: Text(isUrdu ? l10n.languageUrdu : l10n.languageEnglish),
+                trailing: DropdownButton<Locale>(
+                  value: appState.locale,
+                  items: [
+                    DropdownMenuItem(
+                      value: const Locale('en'),
+                      child: Text(l10n.languageEnglish),
+                    ),
+                    DropdownMenuItem(
+                      value: const Locale('ur'),
+                      child: Text(l10n.languageUrdu),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    if (value != null) appState.setLocale(value);
+                  },
+                ),
               ),
-              trailing: DropdownButton<Locale>(
-                value: appState.locale,
-                items: const [
-                  DropdownMenuItem(value: Locale('en'), child: Text('English')),
-                  DropdownMenuItem(value: Locale('ur'), child: Text('اردو')),
-                ],
-                onChanged: (value) {
-                  if (value != null) appState.setLocale(value);
-                },
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.tune),
-              title: const Text('Support level'),
-              subtitle: const Text('Beginner, controlled by caregiver'),
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const FeatureScreen(
-                    title: 'Support level',
-                    description:
-                        'Adaptive difficulty will be connected to the rule-based controller here.',
-                    icon: Icons.tune,
+              ListTile(
+                leading: const Icon(Icons.tune),
+                title: Text(l10n.supportLevel),
+                subtitle: Text(l10n.supportLevelSubtitle),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => FeatureScreen(
+                      title: l10n.supportLevel,
+                      description: l10n.supportLevelDescription,
+                      icon: Icons.tune,
+                    ),
                   ),
                 ),
               ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.privacy_tip_outlined),
-              title: const Text('Privacy and safety'),
-              subtitle: const Text(
-                'No diagnosis, no child-facing open chat, camera processing stays on-device',
+              ListTile(
+                leading: const Icon(Icons.privacy_tip_outlined),
+                title: Text(l10n.privacySafety),
+                subtitle: Text(l10n.privacySafetySubtitle),
+                onTap: () {},
               ),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('Sign out'),
-              onTap: appState.signOut,
-            ),
-          ],
-        ),
-      ),
+              ListTile(
+                leading: const Icon(Icons.logout),
+                title: Text(l10n.signOut),
+                onTap: appState.signOut,
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
