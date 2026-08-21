@@ -104,6 +104,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String get coreWords => 'Core words';
 
   @override
+  String get allCategories => 'All';
+
+  @override
+  String get aacCategoryFood => 'Food';
+
+  @override
+  String get aacCategoryDrinks => 'Drinks';
+
+  @override
+  String get aacCategoryEmotions => 'Emotions';
+
+  @override
+  String get aacCategoryActivities => 'Activities';
+
+  @override
+  String get aacCategoryPeople => 'People';
+
+  @override
+  String get aacCategoryPlaces => 'Places';
+
+  @override
+  String get aacCategoryNeeds => 'Needs';
+
+  @override
+  String get aacCategoryObjects => 'Objects';
+
+  @override
+  String get removeLastWordTooltip => 'Remove last word';
+
+  @override
   String get emotionPracticeTitle => 'Emotion practice';
 
   @override

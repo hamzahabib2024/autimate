@@ -101,6 +101,36 @@ class AppLocalizationsUr extends AppLocalizations {
   String get coreWords => 'بنیادی الفاظ';
 
   @override
+  String get allCategories => 'سب';
+
+  @override
+  String get aacCategoryFood => 'کھانا';
+
+  @override
+  String get aacCategoryDrinks => 'مشروبات';
+
+  @override
+  String get aacCategoryEmotions => 'جذبات';
+
+  @override
+  String get aacCategoryActivities => 'سرگرمیاں';
+
+  @override
+  String get aacCategoryPeople => 'لوگ';
+
+  @override
+  String get aacCategoryPlaces => 'جگہیں';
+
+  @override
+  String get aacCategoryNeeds => 'ضرورتیں';
+
+  @override
+  String get aacCategoryObjects => 'چیزیں';
+
+  @override
+  String get removeLastWordTooltip => 'آخری لفظ ہٹائیں';
+
+  @override
   String get emotionPracticeTitle => 'جذبات کی مشق';
 
   @override

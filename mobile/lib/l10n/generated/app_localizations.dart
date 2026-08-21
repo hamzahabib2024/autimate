@@ -272,6 +272,66 @@ abstract class AppLocalizations {
   /// **'Core words'**
   String get coreWords;
 
+  /// No description provided for @allCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get allCategories;
+
+  /// No description provided for @aacCategoryFood.
+  ///
+  /// In en, this message translates to:
+  /// **'Food'**
+  String get aacCategoryFood;
+
+  /// No description provided for @aacCategoryDrinks.
+  ///
+  /// In en, this message translates to:
+  /// **'Drinks'**
+  String get aacCategoryDrinks;
+
+  /// No description provided for @aacCategoryEmotions.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotions'**
+  String get aacCategoryEmotions;
+
+  /// No description provided for @aacCategoryActivities.
+  ///
+  /// In en, this message translates to:
+  /// **'Activities'**
+  String get aacCategoryActivities;
+
+  /// No description provided for @aacCategoryPeople.
+  ///
+  /// In en, this message translates to:
+  /// **'People'**
+  String get aacCategoryPeople;
+
+  /// No description provided for @aacCategoryPlaces.
+  ///
+  /// In en, this message translates to:
+  /// **'Places'**
+  String get aacCategoryPlaces;
+
+  /// No description provided for @aacCategoryNeeds.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs'**
+  String get aacCategoryNeeds;
+
+  /// No description provided for @aacCategoryObjects.
+  ///
+  /// In en, this message translates to:
+  /// **'Objects'**
+  String get aacCategoryObjects;
+
+  /// No description provided for @removeLastWordTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove last word'**
+  String get removeLastWordTooltip;
+
   /// No description provided for @emotionPracticeTitle.
   ///
   /// In en, this message translates to:
