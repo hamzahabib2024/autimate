@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:crypto/crypto.dart' as crypto;
 import 'package:flutter/material.dart';
 
+import 'connectivity_service.dart';
 import 'tts_service.dart';
 import '../data/local_store.dart';
 import '../../features/communication/domain/card_ranker.dart';
@@ -20,6 +23,18 @@ class ChildProfile {
   final String id;
   final String name;
   final String supportLevel;
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'supportLevel': supportLevel,
+  };
+
+  static ChildProfile fromJson(Map<String, dynamic> json) => ChildProfile(
+    id: json['id'] as String? ?? '',
+    name: json['name'] as String? ?? '',
+    supportLevel: json['supportLevel'] as String? ?? 'Beginner',
+  );
 }
 
 abstract interface class AuthRepository {
@@ -65,6 +80,7 @@ class AppState extends ChangeNotifier {
     ProgressRepository? progressRepository,
     RoutineRepository? routineRepository,
     KeyValueStore? settingsStore,
+    ConnectivityService? connectivityService,
   }) : _children = const [
          ChildProfile(
            id: 'demo-child',
@@ -73,9 +89,10 @@ class AppState extends ChangeNotifier {
          ),
        ],
        progressRepository =
-           progressRepository ?? InMemoryProgressRepository(),
+            progressRepository ?? InMemoryProgressRepository(),
        routineRepository = routineRepository ?? _defaultRoutineRepository(),
-       _settings = settingsStore;
+       _settings = settingsStore,
+       _connectivity = connectivityService;
 
   static RoutineRepository _defaultRoutineRepository() {
     // Overridden by composition root; keeps tests and previews working.
@@ -87,16 +104,109 @@ class AppState extends ChangeNotifier {
   final ProgressRepository progressRepository;
   final RoutineRepository routineRepository;
   final KeyValueStore? _settings;
-  final List<ChildProfile> _children;
+  final ConnectivityService? _connectivity;
+  List<ChildProfile> _children;
+  String _selectedChildId = 'demo-child';
   Locale _locale = const Locale('en');
   bool _sensoryMode = false;
   bool _signedIn = true;
+  bool _childMode = false;
+  bool _onboarded = false;
+  bool _offline = false;
   int _stars = 12;
+  StreamSubscription<bool>? _connectivitySubscription;
 
   Locale get locale => _locale;
   bool get sensoryMode => _sensoryMode;
   bool get signedIn => _signedIn;
+  bool get childMode => _childMode;
+  bool get onboarded => _onboarded;
+  bool get offline => _offline;
+  bool get hasParentPin => _parentPinHash != null;
   int get stars => _stars;
+
+  String? _parentPinHash;
+
+  /// The child whose data every screen currently shows.
+  ChildProfile get selectedChild => _children.firstWhere(
+    (child) => child.id == _selectedChildId,
+    orElse: () => _children.first,
+  );
+
+  void selectChild(String id) {
+    if (!_children.any((child) => child.id == id)) return;
+    _selectedChildId = id;
+    unawaited(persistSettings());
+    notifyListeners();
+  }
+
+  ChildProfile addChild({required String name, required String supportLevel}) {
+    final child = ChildProfile(
+      id: 'child-${DateTime.now().microsecondsSinceEpoch}',
+      name: name,
+      supportLevel: supportLevel,
+    );
+    _children = [..._children, child];
+    _selectedChildId = child.id;
+    unawaited(persistSettings());
+    notifyListeners();
+    return child;
+  }
+
+  /// Sets up the first-run profile and enters the main app.
+  Future<void> completeOnboarding({
+    required String childName,
+    required String supportLevel,
+    required Locale locale,
+    required String parentPin,
+  }) async {
+    _locale = locale;
+    _children = [
+      ChildProfile(
+        id: 'demo-child',
+        name: childName,
+        supportLevel: supportLevel,
+      ),
+    ];
+    _selectedChildId = 'demo-child';
+    await setParentPin(parentPin);
+    _onboarded = true;
+    await persistSettings();
+    notifyListeners();
+  }
+
+  Future<void> setParentPin(String pin) async {
+    _parentPinHash = _hashPin(pin);
+    await persistSettings();
+    notifyListeners();
+  }
+
+  bool verifyParentPin(String pin) => _hashPin(pin) == _parentPinHash;
+
+  static String _hashPin(String pin) =>
+      crypto.sha256.convert(utf8.encode('autimate-parent-lock:$pin')).toString();
+
+  void setChildMode(bool enabled) {
+    _childMode = enabled;
+    unawaited(persistSettings());
+    notifyListeners();
+  }
+
+  /// Drives the offline banner until a platform adapter reports real state.
+  void setOffline(bool offline) {
+    if (_offline == offline) return;
+    _offline = offline;
+    notifyListeners();
+  }
+
+  void startListeningToConnectivity() {
+    final service = _connectivity;
+    if (service == null || _connectivitySubscription != null) return;
+    _connectivitySubscription = service.onChanged().listen(
+      (online) => setOffline(!online),
+    );
+    service.isOnline().then((online) => setOffline(!online));
+  }
   List<ChildProfile> get children => List.unmodifiable(_children);
 
   /// Restores durable settings written by [persistSettings].
@@ -113,6 +223,34 @@ class AppState extends ChangeNotifier {
     if (sensory != null) _sensoryMode = sensory == 'true';
     final stars = int.tryParse(await store.read(_keyStars) ?? '');
     if (stars != null && stars >= 0) _stars = stars;
+    final childMode = await store.read(_keyChildMode);
+    if (childMode != null) _childMode = childMode == 'true';
+    final onboarded = await store.read(_keyOnboarded);
+    if (onboarded != null) _onboarded = onboarded == 'true';
+    _parentPinHash = await store.read(_keyParentPinHash);
+    final childrenJson = await store.read(_keyChildren);
+    if (childrenJson != null) {
+      try {
+        final decoded = jsonDecode(childrenJson) as List<dynamic>;
+        final stored = decoded
+            .whereType<Map<String, dynamic>>()
+            .map(ChildProfile.fromJson)
+            .where((child) => child.id.isNotEmpty && child.name.isNotEmpty)
+            .toList();
+        if (stored.isNotEmpty) {
+          _children = stored;
+          final selected = await store.read(_keySelectedChild);
+          if (selected != null &&
+              stored.any((child) => child.id == selected)) {
+            _selectedChildId = selected;
+          } else {
+            _selectedChildId = stored.first.id;
+          }
+        }
+      } on FormatException {
+        // Corrupt payload: keep the built-in demo profile.
+      }
+    }
     notifyListeners();
   }
 
@@ -122,11 +260,35 @@ class AppState extends ChangeNotifier {
     await store.write(_keyLanguage, _locale.languageCode);
     await store.write(_keySensoryMode, '$_sensoryMode');
     await store.write(_keyStars, '$_stars');
+    await store.write(_keyChildMode, '$_childMode');
+    await store.write(_keyOnboarded, '$_onboarded');
+    final pinHash = _parentPinHash;
+    if (pinHash == null) {
+      await store.remove(_keyParentPinHash);
+    } else {
+      await store.write(_keyParentPinHash, pinHash);
+    }
+    await store.write(
+      _keyChildren,
+      jsonEncode(_children.map((child) => child.toJson()).toList()),
+    );
+    await store.write(_keySelectedChild, _selectedChildId);
   }
 
   static const String _keyLanguage = 'autimate.settings.language';
   static const String _keySensoryMode = 'autimate.settings.sensoryMode';
   static const String _keyStars = 'autimate.settings.stars';
+  static const String _keyChildMode = 'autimate.settings.childMode';
+  static const String _keyOnboarded = 'autimate.settings.onboarded';
+  static const String _keyParentPinHash = 'autimate.settings.parentPinHash';
+  static const String _keyChildren = 'autimate.children';
+  static const String _keySelectedChild = 'autimate.selectedChild';
+
+  @override
+  void dispose() {
+    unawaited(_connectivitySubscription?.cancel());
+    super.dispose();
+  }
 
   void setLocale(Locale locale) {
     _locale = locale;
