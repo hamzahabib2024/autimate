@@ -29,12 +29,12 @@ Current verified state: `flutter analyze` PASS · `flutter test` PASS (56 tests)
 
 ### Open
 
-- [ ] Locked child mode: simplified launcher that hides caregiver screens behind parent lock
-- [ ] Parent lock PIN/gate screen reused by all caregiver surfaces
-- [ ] Onboarding flow: first-run profile creation (child name, support level, language)
-- [ ] Multi-child profile switching (data model already keyed by `childId`)
-- [ ] Connectivity service contract (online/offline banner for sync status)
-- [ ] App icon and splash screen assets
+- [x] Locked child mode: simplified launcher that hides caregiver screens behind parent lock (settings icon + Progress tab gated; tested) — done
+- [x] Parent lock PIN/gate screen reused by all caregiver surfaces (SHA-256 hashed, bilingual pad; auto-passes until a PIN exists) — done
+- [x] Onboarding flow: first-run profile creation (language, child name, support level, PIN; app swaps to shell on completion) — done
+- [x] Multi-child profile switching (add/select in Settings, durable JSON store, every screen reads `selectedChild`) — done
+- [x] Connectivity service contract + offline banner (`ConnectivityService` with static impl; platform adapter awaits device verification) — done
+- [ ] App icon and splash screen assets (needs final artwork/tooling)
 
 ---
 
