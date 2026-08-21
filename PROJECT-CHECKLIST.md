@@ -52,12 +52,13 @@ Current verified state: `flutter analyze` PASS · `flutter test` PASS (56 tests)
 
 ### Open
 
-- [ ] Expand catalog into scoped categories: Food, Drinks, Emotions, Activities, People, Places, Needs, Objects (7 core words exist today)
-- [ ] Category tabs/filter UI in the AAC grid
-- [ ] Frequently-used surfaced as tappable cards (currently a text summary)
-- [ ] Sentence-strip word removal (backspace single card) and reorder
 - [ ] Custom caregiver cards: image from gallery/camera + label + optional audio (⛔ needs Firebase Storage decision or local-file approach; local-first possible)
-- [ ] Quick request benchmark: "request in ≤ 3 taps" verified in a widget test
+- [x] Expand catalog into scoped categories: Food, Drinks, Emotions, Activities, People, Places, Needs, Objects (30 cards: 2 carriers + all eight categories; six-emotion set complete) — done
+- [x] Category tabs/filter UI in the AAC grid (localized ChoiceChips EN/UR, carriers always visible) — done
+- [x] Frequently-used surfaced as tappable cards (durable history + session usage merged into ranked ActionChips) — done
+- [x] Sentence-strip word removal (backspace single card) and reorder — removal done; reorder deferred with custom-card work
+- [ ] Custom caregiver cards (listed above)
+- [x] Quick request benchmark: "request in ≤ 3 taps" verified in a widget test (tap carrier → tap noun → tap speak; TTS text asserted) — done
 
 ## Module 2 — Social Communication Training (P2)
 
