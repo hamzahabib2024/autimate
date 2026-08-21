@@ -43,7 +43,7 @@ class _AacScreenState extends State<AacScreen> {
   /// Restores the frequent-cards ranking across restarts.
   Future<void> _loadDurableUsage() async {
     final events = await widget.appState.progressRepository.getCardUsage(
-      widget.appState.children.first.id,
+      widget.appState.selectedChild.id,
     );
     if (!mounted || events.isEmpty) return;
     setState(() => _durableUsage.addAll(events));
