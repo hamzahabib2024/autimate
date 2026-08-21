@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/services/app_services.dart';
+import '../../../l10n/generated/app_localizations.dart';
+import '../../progress/domain/progress_models.dart';
+import '../domain/weekly_progress_aggregator.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({required this.appState, super.key});
@@ -12,94 +15,232 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  late Future<int> _activityCount;
+  final WeeklyProgressAggregator _aggregator = const WeeklyProgressAggregator();
+
+  late Future<_DashboardData> _data;
+  List<ObservationNote> _observations = [];
 
   @override
   void initState() {
     super.initState();
-    _activityCount = _loadActivityCount();
+    _data = _load();
   }
 
-  Future<int> _loadActivityCount() async =>
-      (await widget.appState.progressRepository.getSessions(
-        'demo-child',
-      )).length;
+  Future<_DashboardData> _load() async {
+    final child = widget.appState.children.first;
+    final sessions = await widget.appState.progressRepository.getSessions(
+      child.id,
+    );
+    final completed = await widget.appState.routineRepository
+        .completedStepIdsFor(child.id, DateTime.now());
+    final steps = await widget.appState.routineRepository.getSteps();
+    final observations = await widget.appState.progressRepository
+        .getObservations(child.id);
+    if (!mounted) return _DashboardData.empty();
+    setState(() => _observations = observations);
+    return _DashboardData(
+      buckets: _aggregator.aggregate(sessions, DateTime.now()),
+      activityCount: sessions.length,
+      routineRatio: _aggregator.routineCompletion(
+        child: child,
+        completedSteps: completed.length,
+        totalSteps: steps.length,
+      ),
+      stars: widget.appState.stars,
+    );
+  }
+
+  Future<void> _addObservation() async {
+    final l10n = AppLocalizations.of(context);
+    final controller = TextEditingController();
+    final note = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.logObservation),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          maxLines: 3,
+          decoration: InputDecoration(hintText: l10n.observationHint),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () {
+              final text = controller.text.trim();
+              Navigator.of(context).pop(text.isEmpty ? null : text);
+            },
+            child: Text(l10n.save),
+          ),
+        ],
+      ),
+    );
+    if (note == null) return;
+    await widget.appState.progressRepository.recordObservation(
+      ObservationNote(
+        childId: widget.appState.children.first.id,
+        note: note,
+        authorRole: 'parent',
+        createdAt: DateTime.now(),
+      ),
+    );
+    setState(() {
+      _data = _load();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Progress')),
+      appBar: AppBar(title: Text(l10n.progressTitle)),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _addObservation,
+        icon: const Icon(Icons.edit_note),
+        label: Text(l10n.observationButton),
+      ),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
           Text(
-            'Ayaan\'s week',
+            l10n.childWeekHeader(widget.appState.children.first.name),
             style: Theme.of(context).textTheme.headlineSmall,
           ),
           const SizedBox(height: 16),
-          FutureBuilder<int>(
-            future: _activityCount,
+          FutureBuilder<_DashboardData>(
+            future: _data,
             builder: (context, snapshot) {
-              final count = snapshot.data ?? 0;
-              return Row(
+              final data = snapshot.data;
+              if (data == null) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: _Metric(label: 'Activities', value: '$count'),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _Metric(
+                          label: l10n.metricActivities,
+                          value: '${data.activityCount}',
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _Metric(
+                          label: l10n.metricRoutine,
+                          value: '${(data.routineRatio * 100).round()}%',
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _Metric(
+                          label: l10n.metricStars,
+                          value: '${widget.appState.stars}',
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 12),
-                  const Expanded(
-                    child: _Metric(label: 'Routine', value: '82%'),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _Metric(
-                      label: 'Stars',
-                      value: '${widget.appState.stars}',
+                  const SizedBox(height: 20),
+                  Card(
+                    child: SizedBox(
+                      height: 190,
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(l10n.activitiesThisWeek),
+                            const Spacer(),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                for (final bucket in data.buckets)
+                                  _Bar(
+                                    height: _barHeight(bucket.count),
+                                    label: _weekdayLabel(bucket.weekday),
+                                    count: bucket.count,
+                                  ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ],
               );
             },
           ),
-          const SizedBox(height: 20),
-          Card(
-            child: SizedBox(
-              height: 190,
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Activity completion'),
-                    const Spacer(),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _Bar(height: 70, label: 'M'),
-                        _Bar(height: 105, label: 'T'),
-                        _Bar(height: 85, label: 'W'),
-                        _Bar(height: 125, label: 'T'),
-                        _Bar(height: 95, label: 'F'),
-                      ],
+          const SizedBox(height: 16),
+          ListTile(
+            leading: const Icon(Icons.info_outline),
+            title: Text(l10n.explainableProgress),
+            subtitle: Text(l10n.explainableProgressMessage),
+          ),
+          const SizedBox(height: 8),
+          Text(l10n.caregiverNotes, style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 8),
+          if (_observations.isEmpty)
+            Text(l10n.noObservationsYet)
+          else
+            ..._observations.take(5).map(
+              (note) => Card(
+                child: ListTile(
+                  leading: const Icon(Icons.sticky_note_2_outlined),
+                  title: Text(note.note),
+                  subtitle: Text(
+                    MaterialLocalizations.of(context).formatFullDate(
+                      note.createdAt,
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 16),
-          const ListTile(
-            leading: Icon(Icons.info_outline),
-            title: Text('Explainable progress'),
-            subtitle: Text(
-              'Charts are based on recorded activities and never make clinical claims.',
-            ),
-          ),
+          const SizedBox(height: 80),
         ],
       ),
     );
   }
+
+  double _barHeight(int count) => switch (count) {
+    0 => 12,
+    1 => 45,
+    2 => 75,
+    3 => 105,
+    _ => 130,
+  };
+
+  String _weekdayLabel(int weekday) => switch (weekday) {
+    DateTime.monday => 'M',
+    DateTime.tuesday => 'T',
+    DateTime.wednesday => 'W',
+    DateTime.thursday => 'T',
+    DateTime.friday => 'F',
+    DateTime.saturday => 'S',
+    _ => 'S',
+  };
+}
+
+class _DashboardData {
+  const _DashboardData({
+    required this.buckets,
+    required this.activityCount,
+    required this.routineRatio,
+    required this.stars,
+  });
+
+  _DashboardData.empty()
+    : this(buckets: const [], activityCount: 0, routineRatio: 0, stars: 0);
+
+  final List<DailyActivityBucket> buckets;
+  final int activityCount;
+  final double routineRatio;
+  final int stars;
 }
 
 class _Metric extends StatelessWidget {
@@ -126,19 +267,24 @@ class _Metric extends StatelessWidget {
 }
 
 class _Bar extends StatelessWidget {
-  const _Bar({required this.height, required this.label});
+  const _Bar({required this.height, required this.label, required this.count});
   final double height;
   final String label;
+  final int count;
   @override
-  Widget build(BuildContext context) => Column(
-    children: [
-      Container(
-        width: 28,
-        height: height,
-        color: Theme.of(context).colorScheme.primary,
-      ),
-      const SizedBox(height: 4),
-      Text(label),
-    ],
+  Widget build(BuildContext context) => Semantics(
+    label: label,
+    value: '$count',
+    child: Column(
+      children: [
+        Container(
+          width: 28,
+          height: height,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+        const SizedBox(height: 4),
+        Text(label),
+      ],
+    ),
   );
 }
