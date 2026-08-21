@@ -12,6 +12,7 @@ import '../../routines/presentation/routines_screen.dart';
 import '../../sensory_support/presentation/sensory_support_screen.dart';
 import '../../settings/presentation/parent_gate_screen.dart';
 import '../../settings/presentation/settings_screen.dart';
+import '../../social_communication/presentation/social_stories_screen.dart';
 import 'feature_screen.dart';
 
 class AppShell extends StatefulWidget {
@@ -158,10 +159,8 @@ class _AppShellState extends State<AppShell> {
                   icon: Icons.auto_stories_outlined,
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (_) => FeatureScreen(
-                        title: l10n.socialStoriesTileTitle,
-                        description: l10n.socialStoriesDescription,
-                        icon: Icons.auto_stories_outlined,
+                      builder: (_) => SocialStoriesScreen(
+                        appState: widget.appState,
                       ),
                     ),
                   ),

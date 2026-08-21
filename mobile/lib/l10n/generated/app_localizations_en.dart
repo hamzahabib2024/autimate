@@ -43,8 +43,41 @@ class AppLocalizationsEn extends AppLocalizations {
   String get socialStoriesTileTitle => 'Social stories';
 
   @override
-  String get socialStoriesTileSubtitle =>
-      'Designed and documented for the next phase';
+  String get socialStoriesTileSubtitle => 'Stories and conversation practice';
+
+  @override
+  String get tabStories => 'Stories';
+
+  @override
+  String get tabConversations => 'Conversations';
+
+  @override
+  String get narrateTooltip => 'Read aloud';
+
+  @override
+  String get nextPageTooltip => 'Next page';
+
+  @override
+  String get previousPageTooltip => 'Previous page';
+
+  @override
+  String get comprehensionTitle => 'Let\'s check understanding';
+
+  @override
+  String get conversationComplete =>
+      'You finished the conversation! A star was earned.';
+
+  @override
+  String get conversationHint =>
+      'Choose a situation, then pick the reply that fits.';
+
+  @override
+  String get gentleRetry => 'That is okay. Let\'s try another way.';
+
+  @override
+  String storyPagesCount(int count) {
+    return '$count pages';
+  }
 
   @override
   String get learningPathTileTitle => 'Learning path';

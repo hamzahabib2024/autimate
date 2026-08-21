@@ -42,7 +42,39 @@ class AppLocalizationsUr extends AppLocalizations {
   String get socialStoriesTileTitle => 'سماجی کہانیاں';
 
   @override
-  String get socialStoriesTileSubtitle => 'اگلے مرحلے کے لیے تیار شدہ منصوبہ';
+  String get socialStoriesTileSubtitle => 'کہانیاں اور بات چیت کی مشق';
+
+  @override
+  String get tabStories => 'کہانیاں';
+
+  @override
+  String get tabConversations => 'بات چیت کی مشق';
+
+  @override
+  String get narrateTooltip => 'بلند آواز میں پڑھیں';
+
+  @override
+  String get nextPageTooltip => 'اگلا صفحہ';
+
+  @override
+  String get previousPageTooltip => 'پچھلا صفحہ';
+
+  @override
+  String get comprehensionTitle => 'آئیے سمجھ جانچیں';
+
+  @override
+  String get conversationComplete => 'آپ نے بات چیت مکمل کر لی! ایک ستارہ ملا۔';
+
+  @override
+  String get conversationHint => 'ایک صورتحال منتخب کریں اور موزوں جواب چنیں۔';
+
+  @override
+  String get gentleRetry => 'کوئی بات نہیں، آئیے دوسرا طریقہ آزمائیں۔';
+
+  @override
+  String storyPagesCount(int count) {
+    return '$count صفحات';
+  }
 
   @override
   String get learningPathTileTitle => 'سیکھنے کا راستہ';
