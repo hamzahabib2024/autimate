@@ -8,7 +8,7 @@ Status legend:
 - `[ ]` open
 - `⛔ BLOCKED:` prefix = cannot proceed until the stated external dependency exists (device, SDK, credentials)
 
-Current verified state: `flutter analyze` PASS · `flutter test` PASS (76 tests) · branch `AI`
+Current verified state: `flutter analyze` PASS · `flutter test` PASS (83 tests) · branch `AI`
 
 ---
 
@@ -84,10 +84,10 @@ Current verified state: `flutter analyze` PASS · `flutter test` PASS (76 tests)
 ### Open
 
 - [ ] Real face/scene artwork for the six emotions (current UI uses standard icons)
-- [ ] Camera permission flow (request + rationale dialog)
-- [ ] Camera lifecycle and disposal management
+- [x] Camera permission flow (request + rationale dialog) — done
+- [x] Camera lifecycle and disposal management (stops on background, reattaches on resume without losing session progress; dispose stops the camera) — done
 - [ ] ML Kit face-detection adapter producing `ExpressionReading` ⛔ BLOCKED: requires physical Android device verification per plan
-- [ ] Eye-open/head-angle readings surfaced in feedback (contract carries them)
+- [x] Eye-open/head-angle readings surfaced in feedback (contract carries them; engine flags closed eyes / tilt and the practice UI shows bilingual posture hints incl. lost-face "come closer") — done
 
 ## Module 4 — Routine & Flexibility Builder
 
