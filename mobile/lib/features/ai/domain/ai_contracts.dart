@@ -39,3 +39,32 @@ abstract interface class ExpressionPracticeService {
   Stream<ExpressionReading> start();
   Future<void> stop();
 }
+
+/// Permission state for the practice camera.
+enum CameraPermissionStatus {
+  granted,
+  denied,
+  permanentlyDenied,
+  unsupported,
+}
+
+/// Camera permission boundary. The future ML Kit adapter will implement
+/// this over the OS permission APIs; the offline simulated build answers
+/// from configuration instead.
+abstract interface class CameraPermissionService {
+  Future<CameraPermissionStatus> status();
+  Future<CameraPermissionStatus> request();
+}
+
+/// Always-granted permission source backing the simulated practice flow.
+class AutoGrantCameraPermissions implements CameraPermissionService {
+  const AutoGrantCameraPermissions();
+
+  @override
+  Future<CameraPermissionStatus> status() async =>
+      CameraPermissionStatus.granted;
+
+  @override
+  Future<CameraPermissionStatus> request() async =>
+      CameraPermissionStatus.granted;
+}

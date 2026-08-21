@@ -262,6 +262,28 @@ class AppLocalizationsUr extends AppLocalizations {
       'فریمز اس آلے کی یادداشت میں رہتے ہیں اور کبھی محفوظ یا اپ لوڈ نہیں ہوتے۔ صرف ستاروں کا مجموعہ ریکارڈ ہوتا ہے۔';
 
   @override
+  String get expressionRationaleTitle => 'کیمرہ کیوں؟';
+
+  @override
+  String get expressionRationaleBody =>
+      'کیمرا آپ کی مسکراہٹ دیکھ کر ستارے دیتا ہے۔ فریم اسی ڈیوائس پر رہتے ہیں اور کبھی محفوظ یا اپ لوڈ نہیں کیے جاتے۔';
+
+  @override
+  String get expressionAllowCamera => 'کیمرے کی اجازت دیں';
+
+  @override
+  String get expressionNotNow => 'ابھی نہیں';
+
+  @override
+  String get expressionComeCloserHint => 'کیمرے کے قریب آئیں';
+
+  @override
+  String get expressionEyesHint => 'آنکھیں کھولنے کی کوشش کریں';
+
+  @override
+  String get expressionLookStraightHint => 'کیمرے کی طرف سیدھا دیکھیں';
+
+  @override
   String get routineTitle => 'روٹین';
 
   @override
