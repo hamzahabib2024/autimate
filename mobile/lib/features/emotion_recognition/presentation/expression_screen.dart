@@ -24,6 +24,7 @@ class ExpressionPracticeScreen extends StatefulWidget {
     required this.appState,
     this.service,
     this.engine,
+    this.permissions,
     super.key,
   });
 
@@ -36,33 +37,82 @@ class ExpressionPracticeScreen extends StatefulWidget {
   /// Overridable for tests so time-dependent holds are deterministic.
   final ExpressionSessionEngine? engine;
 
+  /// Overridable for tests; defaults to always-granted so the simulated
+  /// flow needs no OS interaction.
+  final CameraPermissionService? permissions;
+
   @override
   State<ExpressionPracticeScreen> createState() =>
       _ExpressionPracticeScreenState();
 }
 
-class _ExpressionPracticeScreenState extends State<ExpressionPracticeScreen> {
+class _ExpressionPracticeScreenState extends State<ExpressionPracticeScreen>
+    with WidgetsBindingObserver {
   late final ExpressionPracticeService _service;
   late final ExpressionSessionEngine _engine;
+  late final CameraPermissionService _permissions;
 
   StreamSubscription<ExpressionReading>? _subscription;
   ExpressionPhase _phase = ExpressionPhase.checking;
   double _smoothedSmile = 0;
   bool _holding = false;
+  bool _faceDetected = true;
+  bool _eyesClosed = false;
+  double _headTiltDeg = 0;
+  bool _cameraPausedByLifecycle = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _service = widget.service ?? SimulatedExpressionService();
     _engine = widget.engine ?? ExpressionSessionEngine();
+    _permissions = widget.permissions ?? const AutoGrantCameraPermissions();
     _checkSupport();
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     unawaited(_subscription?.cancel());
     unawaited(_service.stop());
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.paused:
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.hidden:
+        _pauseCamera();
+      case AppLifecycleState.resumed:
+        _resumeCamera();
+      case AppLifecycleState.detached:
+        break;
+    }
+  }
+
+  /// Stops the camera whenever the app leaves the foreground so frames
+  /// are never captured in the background.
+  void _pauseCamera() {
+    if (_phase != ExpressionPhase.practicing) return;
+    _cameraPausedByLifecycle = true;
+    unawaited(_subscription?.cancel());
+    _subscription = null;
+    unawaited(_service.stop());
+  }
+
+  /// Reattaches the stream without resetting session progress.
+  void _resumeCamera() {
+    final wasPaused = _cameraPausedByLifecycle;
+    _cameraPausedByLifecycle = false;
+    if (!wasPaused ||
+        !mounted ||
+        _phase != ExpressionPhase.practicing) {
+      return;
+    }
+    unawaited(_attachStream());
   }
 
   Future<void> _checkSupport() async {
@@ -70,13 +120,65 @@ class _ExpressionPracticeScreenState extends State<ExpressionPracticeScreen> {
     try {
       final supported = await _service.isSupported();
       if (!mounted) return;
-      // The future camera adapter reports permission denial through
-      // [markPermissionDenied]; the simulated source is always usable.
-      setState(() => _phase =
-          supported ? ExpressionPhase.loading : ExpressionPhase.unsupported);
+      if (!supported) {
+        setState(() => _phase = ExpressionPhase.unsupported);
+        return;
+      }
+      await _resolvePermission();
     } catch (_) {
       if (mounted) setState(() => _phase = ExpressionPhase.error);
     }
+  }
+
+  Future<void> _resolvePermission() async {
+    var status = await _permissions.status();
+    // The rationale loop keeps showing until the child/caregiver grants
+    // access or opts out; denial lands in [ExpressionPhase.permissionDenied].
+    while (status != CameraPermissionStatus.granted && mounted) {
+      if (status == CameraPermissionStatus.unsupported) {
+        setState(() => _phase = ExpressionPhase.permissionDenied);
+        return;
+      }
+      final afterRequest = await _showRationaleDialog();
+      if (!mounted) return;
+      if (afterRequest == null) {
+        setState(() => _phase = ExpressionPhase.permissionDenied);
+        return;
+      }
+      status = afterRequest;
+    }
+    if (mounted) setState(() => _phase = ExpressionPhase.loading);
+  }
+
+  /// Explains why the camera is needed and returns the resulting status,
+  /// or null when the user declines ("Not now" or back-dismiss).
+  Future<CameraPermissionStatus?> _showRationaleDialog() {
+    final l10n = AppLocalizations.of(context);
+    return showDialog<CameraPermissionStatus>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.expressionRationaleTitle),
+        content: Text(l10n.expressionRationaleBody),
+        actions: [
+          TextButton(
+            key: const ValueKey('permission-not-now'),
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(l10n.expressionNotNow),
+          ),
+          FilledButton(
+            key: const ValueKey('permission-allow'),
+            onPressed: () async {
+              final requested = await _permissions.request();
+              if (dialogContext.mounted) {
+                Navigator.of(dialogContext).pop(requested);
+              }
+            },
+            child: Text(l10n.expressionAllowCamera),
+          ),
+        ],
+      ),
+    );
   }
 
   void markPermissionDenied() {
@@ -89,7 +191,14 @@ class _ExpressionPracticeScreenState extends State<ExpressionPracticeScreen> {
       _engine.restart();
       _smoothedSmile = 0;
       _holding = false;
+      _faceDetected = true;
+      _eyesClosed = false;
+      _headTiltDeg = 0;
     });
+    await _attachStream();
+  }
+
+  Future<void> _attachStream() async {
     try {
       final frames = _service.start();
       await _subscription?.cancel();
@@ -110,6 +219,9 @@ class _ExpressionPracticeScreenState extends State<ExpressionPracticeScreen> {
     setState(() {
       _smoothedSmile = feedback.smoothedSmile;
       _holding = feedback.holding;
+      _faceDetected = feedback.faceDetected;
+      _eyesClosed = feedback.eyesClosed;
+      _headTiltDeg = feedback.headTiltedDeg;
     });
     if (feedback.starAwarded) widget.appState.awardStars(1);
     if (feedback.sessionComplete) {
@@ -153,10 +265,23 @@ class _ExpressionPracticeScreenState extends State<ExpressionPracticeScreen> {
               message: l10n.expressionUnsupported,
               icon: Icons.videocam_off_outlined,
             ),
-            ExpressionPhase.permissionDenied => StatePanel(
-              title: l10n.expressionTitle,
-              message: l10n.expressionPermissionDenied,
-              icon: Icons.no_photography_outlined,
+            ExpressionPhase.permissionDenied => Column(
+              children: [
+                StatePanel(
+                  key: const ValueKey('permission-denied-panel'),
+                  title: l10n.expressionTitle,
+                  message: l10n.expressionPermissionDenied,
+                  icon: Icons.no_photography_outlined,
+                ),
+                const SizedBox(height: 16),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 64),
+                  child: OutlinedButton(
+                    onPressed: _checkSupport,
+                    child: Text(l10n.expressionAllowCamera),
+                  ),
+                ),
+              ],
             ),
             ExpressionPhase.error => StatePanel(
               title: l10n.expressionTitle,
@@ -222,6 +347,13 @@ class _ExpressionPracticeScreenState extends State<ExpressionPracticeScreen> {
                   ),
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
+                if (!_faceDetected)
+                  _postureHint(context, l10n.expressionComeCloserHint)
+                else if (_eyesClosed)
+                  _postureHint(context, l10n.expressionEyesHint)
+                else if (_headTiltDeg.abs() >
+                    ExpressionSessionEngine.headTiltThresholdDeg)
+                  _postureHint(context, l10n.expressionLookStraightHint),
               ],
             ),
           },
@@ -231,6 +363,24 @@ class _ExpressionPracticeScreenState extends State<ExpressionPracticeScreen> {
             message: l10n.expressionPrivacyNote,
             icon: Icons.shield_outlined,
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _postureHint(BuildContext context, String message) {
+    return Padding(
+      key: const ValueKey('expression-hint'),
+      padding: const EdgeInsets.only(top: 8),
+      child: Row(
+        children: [
+          Icon(
+            Icons.info_outline,
+            size: 20,
+            color: Theme.of(context).colorScheme.error,
+          ),
+          const SizedBox(width: 8),
+          Expanded(child: Text(message)),
         ],
       ),
     );

@@ -560,6 +560,48 @@ abstract class AppLocalizations {
   /// **'Frames stay in memory on this device and are never stored or uploaded. Only star totals are recorded.'**
   String get expressionPrivacyNote;
 
+  /// No description provided for @expressionRationaleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Why the camera?'**
+  String get expressionRationaleTitle;
+
+  /// No description provided for @expressionRationaleBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The camera watches for your smile so stars can be awarded. Frames stay on this device and are never saved or uploaded.'**
+  String get expressionRationaleBody;
+
+  /// No description provided for @expressionAllowCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow camera'**
+  String get expressionAllowCamera;
+
+  /// No description provided for @expressionNotNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get expressionNotNow;
+
+  /// No description provided for @expressionComeCloserHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Come closer to the camera'**
+  String get expressionComeCloserHint;
+
+  /// No description provided for @expressionEyesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Try opening your eyes'**
+  String get expressionEyesHint;
+
+  /// No description provided for @expressionLookStraightHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Look straight at the camera'**
+  String get expressionLookStraightHint;
+
   /// No description provided for @routineTitle.
   ///
   /// In en, this message translates to:

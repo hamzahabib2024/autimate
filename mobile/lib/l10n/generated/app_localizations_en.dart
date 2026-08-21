@@ -267,6 +267,28 @@ class AppLocalizationsEn extends AppLocalizations {
       'Frames stay in memory on this device and are never stored or uploaded. Only star totals are recorded.';
 
   @override
+  String get expressionRationaleTitle => 'Why the camera?';
+
+  @override
+  String get expressionRationaleBody =>
+      'The camera watches for your smile so stars can be awarded. Frames stay on this device and are never saved or uploaded.';
+
+  @override
+  String get expressionAllowCamera => 'Allow camera';
+
+  @override
+  String get expressionNotNow => 'Not now';
+
+  @override
+  String get expressionComeCloserHint => 'Come closer to the camera';
+
+  @override
+  String get expressionEyesHint => 'Try opening your eyes';
+
+  @override
+  String get expressionLookStraightHint => 'Look straight at the camera';
+
+  @override
   String get routineTitle => 'Routine';
 
   @override

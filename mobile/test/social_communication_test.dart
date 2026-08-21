@@ -149,7 +149,13 @@ void main() {
       expect(find.byKey(const ValueKey('quiz-page')), findsOneWidget);
       await tester.tap(find.byKey(const ValueKey('quiz-option-0')));
       await tester.pumpAndSettle();
-      expect(find.text('That is right.'), findsOneWidget);
+
+      // A correct answer advances; no stale praise lingers on question 2.
+      expect(
+        find.textContaining('Is it okay to take time'),
+        findsOneWidget,
+      );
+      expect(find.text('That is right.'), findsNothing);
 
       // Second question completes the session and awards a star.
       await tester.tap(find.byKey(const ValueKey('quiz-option-0')));

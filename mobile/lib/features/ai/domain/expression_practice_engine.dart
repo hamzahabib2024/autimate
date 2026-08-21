@@ -89,6 +89,8 @@ class ExpressionFeedback {
     required this.starAwarded,
     required this.starsEarned,
     required this.sessionComplete,
+    this.eyesClosed = false,
+    this.headTiltedDeg = 0,
   });
 
   final bool faceDetected;
@@ -97,9 +99,17 @@ class ExpressionFeedback {
   final bool starAwarded;
   final int starsEarned;
   final bool sessionComplete;
+
+  /// True when the latest reading's eye-open probability suggests closed
+  /// eyes (below the configured floor); drives the "open your eyes" hint.
+  final bool eyesClosed;
+
+  /// Latest signed head tilt in degrees; values beyond the configured
+  /// threshold drive the "look at the camera" hint.
+  final double headTiltedDeg;
 }
 
-/// Deterministic state machine over an `ExpressionReading` stream.
+  /// Deterministic state machine over an `ExpressionReading` stream.
 ///
 /// A rep is counted when the EMA-smoothed smile probability stays at or
 /// above [ExpressionPracticeConfig.smileThreshold] for
@@ -119,6 +129,12 @@ class ExpressionSessionEngine {
   final DateTime Function() _clock;
   final FrameThrottle _throttle;
   final SmileEmaSmoother _smoother;
+
+  /// Probability floor under which an eye counts as closed.
+  static const double eyeOpenFloor = 0.3;
+
+  /// Absolute tilt (degrees) beyond which the head is considered turned.
+  static const double headTiltThresholdDeg = 20;
 
   DateTime? _holdStartedAt;
   int _stars = 0;
@@ -151,6 +167,8 @@ class ExpressionSessionEngine {
         starAwarded: false,
         starsEarned: _stars,
         sessionComplete: _complete,
+        eyesClosed: _eyesClosed(reading),
+        headTiltedDeg: reading.headTiltDegrees,
       );
     }
 
@@ -177,6 +195,12 @@ class ExpressionSessionEngine {
       starAwarded: awarded,
       starsEarned: _stars,
       sessionComplete: _complete,
+      eyesClosed: _eyesClosed(reading),
+      headTiltedDeg: reading.headTiltDegrees,
     );
   }
+
+  static bool _eyesClosed(ExpressionReading reading) =>
+      reading.leftEyeOpen < eyeOpenFloor &&
+      reading.rightEyeOpen < eyeOpenFloor;
 }
