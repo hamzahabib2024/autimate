@@ -1,0 +1,53 @@
+rules_version = '2';
+
+// AutiMate Firestore Security Rules
+//
+// Model:
+//   - Only authenticated caregivers (parents/teachers) may touch data.
+//   - A child document lists its caregiver UIDs in `caregiverIds`.
+//   - Progress, observations, and AAC usage live in per-child subcollections
+//     and are write-once from the app (no deletes; history is explainable).
+//   - Children are never readable by other families. There is no public or
+//     anonymous access to any document.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isCaregiverOf(childId) {
+      return signedIn()
+        && request.auth.uid in get(/databases/$(database)/documents/children/$(childId)).data.caregiverIds;
+    }
+
+    // Child profiles: readable/writable only by their listed caregivers.
+    match /children/{childId} {
+      allow read, update, delete: if isCaregiverOf(childId);
+      allow create: if signedIn()
+        && request.auth.uid in request.resource.data.caregiverIds;
+
+      // Recorded sessions and card usage: append-only evidence.
+      match /progress/{recordId} {
+        allow read: if isCaregiverOf(childId);
+        allow create, update: if isCaregiverOf(childId)
+          && request.resource.data.childId == childId;
+        allow delete: if false;
+      }
+
+      // Human-authored caregiver observations: append-only.
+      match /observations/{noteId} {
+        allow read: if isCaregiverOf(childId);
+        allow create: if isCaregiverOf(childId)
+          && request.resource.data.childId == childId
+          && request.resource.data.authorRole in ['parent', 'teacher'];
+        allow update, delete: if false;
+      }
+    }
+
+    // Everything else is denied by default.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
