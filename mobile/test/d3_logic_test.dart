@@ -176,6 +176,33 @@ void main() {
       expect(question.choices.length, 2);
       expect(question.hintVisible, isTrue);
     });
+
+    test('session result honors parent lock and override', () {
+      final locked = DeterministicEmotionActivityEngine(
+        childId: 'child',
+        parentLocked: true,
+      );
+      var question = locked.start(
+        level: SupportLevel.beginner,
+        questionCount: 3,
+      );
+      for (var index = 0; index < 3; index++) {
+        locked.submit(question.answer);
+        if (index < 2) question = locked.next()!;
+      }
+      expect(locked.finish().levelAfter, SupportLevel.beginner);
+
+      final overridden = DeterministicEmotionActivityEngine(
+        childId: 'child',
+        parentOverride: SupportLevel.advanced,
+      );
+      question = overridden.start(
+        level: SupportLevel.beginner,
+        questionCount: 1,
+      );
+      overridden.submit(question.answer);
+      expect(overridden.finish().levelAfter, SupportLevel.advanced);
+    });
   });
 
   group('RuleBasedAdaptiveLevelController', () {

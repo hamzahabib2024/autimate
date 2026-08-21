@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'adaptive_level_controller.dart';
+
 enum EmotionLabel { happy, sad, angry, surprised, scared, neutral }
 
 enum SupportLevel { beginner, intermediate, advanced }
@@ -70,14 +72,22 @@ abstract interface class EmotionActivityEngine {
 class DeterministicEmotionActivityEngine implements EmotionActivityEngine {
   DeterministicEmotionActivityEngine({
     required this.childId,
+    AdaptiveLevelController? adaptiveController,
+    this.parentLocked = false,
+    this.parentOverride,
     Random? random,
     DateTime Function()? clock,
   }) : _random = random ?? Random(7),
-       _clock = clock ?? DateTime.now;
+       _clock = clock ?? DateTime.now,
+       _adaptiveController =
+           adaptiveController ?? RuleBasedAdaptiveLevelController();
 
   final String childId;
+  final bool parentLocked;
+  final SupportLevel? parentOverride;
   final Random _random;
   final DateTime Function() _clock;
+  final AdaptiveLevelController _adaptiveController;
   SupportLevel _level = SupportLevel.beginner;
   int _total = 5;
   int _index = 0;
@@ -224,21 +234,12 @@ class DeterministicEmotionActivityEngine implements EmotionActivityEngine {
   }
 
   SupportLevel _levelAfterSession() {
-    if (_answers.length < _total) return _level;
-    final recent = _answers.length >= 3
-        ? _answers.sublist(_answers.length - 3)
-        : _answers;
-    if (recent.length >= 3 && recent.every((answer) => answer)) {
-      return SupportLevel.values[min(
-        _level.index + 1,
-        SupportLevel.values.length - 1,
-      )];
-    }
-    if (_answers.length >= 2 &&
-        _answers.sublist(_answers.length - 2).every((answer) => !answer)) {
-      return SupportLevel.values[max(_level.index - 1, 0)];
-    }
-    return _level;
+    return _adaptiveController.evaluate(
+      current: _level,
+      recentOutcomes: _answers,
+      parentLocked: parentLocked,
+      parentOverride: parentOverride,
+    );
   }
 
   int _starsFor(int score, int total) {
