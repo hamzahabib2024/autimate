@@ -9,6 +9,72 @@ class SettingsScreen extends StatelessWidget {
 
   final AppState appState;
 
+  String _levelLabel(AppLocalizations l10n, String level) => switch (level) {
+    'Intermediate' => l10n.intermediateSupportLevel,
+    'Advanced' => l10n.advancedSupportLevel,
+    _ => l10n.beginnerSupportLevel,
+  };
+
+  Future<void> _addChildDialog(BuildContext context, AppLocalizations l10n) {
+    final nameController = TextEditingController();
+    var level = 'Beginner';
+    return showDialog<void>(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (dialogContext, setDialogState) => AlertDialog(
+          title: Text(l10n.addChildLabel),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                key: const ValueKey('add-child-name'),
+                controller: nameController,
+                autofocus: true,
+                decoration: InputDecoration(
+                  labelText: l10n.childNameLabel,
+                  border: const OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                children: [
+                  for (final candidate in const [
+                    'Beginner',
+                    'Intermediate',
+                    'Advanced',
+                  ])
+                    ChoiceChip(
+                      label: Text(_levelLabel(l10n, candidate)),
+                      selected: level == candidate,
+                      onSelected: (_) =>
+                          setDialogState(() => level = candidate),
+                    ),
+                ],
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(l10n.cancel),
+            ),
+            FilledButton(
+              key: const ValueKey('add-child-save'),
+              onPressed: () {
+                final name = nameController.text.trim();
+                if (name.isEmpty) return;
+                appState.addChild(name: name, supportLevel: level);
+                Navigator.of(dialogContext).pop();
+              },
+              child: Text(l10n.save),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -62,6 +128,44 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ),
               ),
+              const Divider(),
+              SwitchListTile(
+                key: const ValueKey('child-mode-switch'),
+                secondary: const Icon(Icons.child_friendly_outlined),
+                title: Text(l10n.childModeLabel),
+                subtitle: Text(l10n.childModeSubtitle),
+                value: appState.childMode,
+                onChanged: appState.setChildMode,
+              ),
+              const Divider(),
+              Text(
+                l10n.profilesSectionTitle,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              RadioGroup<String>(
+                groupValue: appState.selectedChild.id,
+                onChanged: (value) {
+                  if (value != null) appState.selectChild(value);
+                },
+                child: Column(
+                  children: [
+                    for (final child in appState.children)
+                      RadioListTile<String>(
+                        key: ValueKey('child-option-${child.id}'),
+                        value: child.id,
+                        title: Text(child.name),
+                        subtitle: Text(_levelLabel(l10n, child.supportLevel)),
+                      ),
+                  ],
+                ),
+              ),
+              ListTile(
+                key: const ValueKey('add-child-tile'),
+                leading: const Icon(Icons.person_add_alt_outlined),
+                title: Text(l10n.addChildLabel),
+                onTap: () => _addChildDialog(context, l10n),
+              ),
+              const Divider(),
               ListTile(
                 leading: const Icon(Icons.privacy_tip_outlined),
                 title: Text(l10n.privacySafety),
