@@ -4,7 +4,16 @@ AutiMate is an offline-first Flutter support tool for autistic children and thei
 
 ## Current status
 
-The `mobile/` directory contains the runnable application skeleton and P0 dummy flows. It currently uses mock repositories so the app can run without Firebase credentials. The full product scope and the six-day vertical-slice sprint are documented in the existing planning files.
+The `mobile/` directory contains the runnable application with the P0 child and caregiver flows working offline:
+
+- AAC communication with bilingual sentence realisation and platform TTS.
+- Six-emotion practice engine with adaptive levels, stars, and session recording.
+- Routines with per-day completion state and spoken transition warnings.
+- Caregiver dashboard backed by recorded data plus manual observation logging.
+- Durable offline persistence (progress, usage, routines, settings) via `shared_preferences`.
+- English/Urdu ARB localization with RTL support, Riverpod composition root, and `--dart-define` environment configuration.
+
+Firebase is not connected; mock/local repositories run behind provider boundaries and an offline last-write-wins sync queue is ready for the future Firestore adapter. The full product scope and the six-day vertical-slice sprint are documented in the existing planning files.
 
 ## Run the app
 
@@ -24,7 +33,13 @@ The app uses feature-based Flutter organization with presentation, state, domain
 
 ## Configuration
 
-Copy `.env.example` to the environment used by the team when backend integration begins. Secrets and Firebase configuration must stay outside source control. No credentials are required for the current mock-first skeleton.
+Copy `.env.example` to the environment used by the team when backend integration begins. Values are injected at build time, for example:
+
+```powershell
+flutter run --dart-define=AUTIMATE_FIREBASE_PROJECT_ID=your-project
+```
+
+Secrets and Firebase configuration must stay outside source control. With no values supplied the app runs fully offline against local repositories.
 
 ## Scope guardrails
 
