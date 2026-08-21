@@ -104,6 +104,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String get coreWords => 'Core words';
 
   @override
+  String get allCategories => 'All';
+
+  @override
+  String get aacCategoryFood => 'Food';
+
+  @override
+  String get aacCategoryDrinks => 'Drinks';
+
+  @override
+  String get aacCategoryEmotions => 'Emotions';
+
+  @override
+  String get aacCategoryActivities => 'Activities';
+
+  @override
+  String get aacCategoryPeople => 'People';
+
+  @override
+  String get aacCategoryPlaces => 'Places';
+
+  @override
+  String get aacCategoryNeeds => 'Needs';
+
+  @override
+  String get aacCategoryObjects => 'Objects';
+
+  @override
+  String get removeLastWordTooltip => 'Remove last word';
+
+  @override
   String get emotionPracticeTitle => 'Emotion practice';
 
   @override
@@ -160,7 +190,48 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cameraPracticeMessage =>
-      'P1 placeholder. Future on-device ML Kit processing will stay in memory and never upload frames.';
+      'On-device smile detection logic is implemented; the ML Kit camera adapter lands after physical-device verification. A simulated demo is available now.';
+
+  @override
+  String get expressionTitle => 'Expression practice';
+
+  @override
+  String get expressionStart => 'Start practice';
+
+  @override
+  String get expressionHoldSmile => 'Hold a big smile for one second';
+
+  @override
+  String get expressionUnsupported =>
+      'Expression practice is not available on this device.';
+
+  @override
+  String get expressionPermissionDenied =>
+      'Camera permission is needed. A caregiver can allow it in device settings.';
+
+  @override
+  String get expressionLoadingCamera => 'Starting the camera...';
+
+  @override
+  String get expressionCameraError =>
+      'Something went wrong with the camera. Please try again.';
+
+  @override
+  String expressionSmileProgress(int done, int total) {
+    return '$done of $total smiles held';
+  }
+
+  @override
+  String expressionSessionComplete(int stars) {
+    return 'Great smiling! $stars stars earned';
+  }
+
+  @override
+  String get expressionPrivacyTitle => 'Private by design';
+
+  @override
+  String get expressionPrivacyNote =>
+      'Frames stay in memory on this device and are never stored or uploaded. Only star totals are recorded.';
 
   @override
   String get routineTitle => 'Routine';

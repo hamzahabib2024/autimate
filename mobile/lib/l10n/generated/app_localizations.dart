@@ -272,6 +272,66 @@ abstract class AppLocalizations {
   /// **'Core words'**
   String get coreWords;
 
+  /// No description provided for @allCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get allCategories;
+
+  /// No description provided for @aacCategoryFood.
+  ///
+  /// In en, this message translates to:
+  /// **'Food'**
+  String get aacCategoryFood;
+
+  /// No description provided for @aacCategoryDrinks.
+  ///
+  /// In en, this message translates to:
+  /// **'Drinks'**
+  String get aacCategoryDrinks;
+
+  /// No description provided for @aacCategoryEmotions.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotions'**
+  String get aacCategoryEmotions;
+
+  /// No description provided for @aacCategoryActivities.
+  ///
+  /// In en, this message translates to:
+  /// **'Activities'**
+  String get aacCategoryActivities;
+
+  /// No description provided for @aacCategoryPeople.
+  ///
+  /// In en, this message translates to:
+  /// **'People'**
+  String get aacCategoryPeople;
+
+  /// No description provided for @aacCategoryPlaces.
+  ///
+  /// In en, this message translates to:
+  /// **'Places'**
+  String get aacCategoryPlaces;
+
+  /// No description provided for @aacCategoryNeeds.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs'**
+  String get aacCategoryNeeds;
+
+  /// No description provided for @aacCategoryObjects.
+  ///
+  /// In en, this message translates to:
+  /// **'Objects'**
+  String get aacCategoryObjects;
+
+  /// No description provided for @removeLastWordTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove last word'**
+  String get removeLastWordTooltip;
+
   /// No description provided for @emotionPracticeTitle.
   ///
   /// In en, this message translates to:
@@ -371,8 +431,74 @@ abstract class AppLocalizations {
   /// No description provided for @cameraPracticeMessage.
   ///
   /// In en, this message translates to:
-  /// **'P1 placeholder. Future on-device ML Kit processing will stay in memory and never upload frames.'**
+  /// **'On-device smile detection logic is implemented; the ML Kit camera adapter lands after physical-device verification. A simulated demo is available now.'**
   String get cameraPracticeMessage;
+
+  /// No description provided for @expressionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Expression practice'**
+  String get expressionTitle;
+
+  /// No description provided for @expressionStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start practice'**
+  String get expressionStart;
+
+  /// No description provided for @expressionHoldSmile.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold a big smile for one second'**
+  String get expressionHoldSmile;
+
+  /// No description provided for @expressionUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Expression practice is not available on this device.'**
+  String get expressionUnsupported;
+
+  /// No description provided for @expressionPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera permission is needed. A caregiver can allow it in device settings.'**
+  String get expressionPermissionDenied;
+
+  /// No description provided for @expressionLoadingCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'Starting the camera...'**
+  String get expressionLoadingCamera;
+
+  /// No description provided for @expressionCameraError.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong with the camera. Please try again.'**
+  String get expressionCameraError;
+
+  /// No description provided for @expressionSmileProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{done} of {total} smiles held'**
+  String expressionSmileProgress(int done, int total);
+
+  /// No description provided for @expressionSessionComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Great smiling! {stars} stars earned'**
+  String expressionSessionComplete(int stars);
+
+  /// No description provided for @expressionPrivacyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Private by design'**
+  String get expressionPrivacyTitle;
+
+  /// No description provided for @expressionPrivacyNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Frames stay in memory on this device and are never stored or uploaded. Only star totals are recorded.'**
+  String get expressionPrivacyNote;
 
   /// No description provided for @routineTitle.
   ///

@@ -11,16 +11,20 @@ void main() {
   testWidgets('AAC builds an English sentence from semantic cards', (
     tester,
   ) async {
+    tester.view.physicalSize = const Size(900, 3200);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
     await tester.pumpWidget(
       testApp(
         AacScreen(appState: AppState(MockAuthRepository(), MockTtsService())),
       ),
     );
+    await tester.pumpAndSettle();
 
     expect(find.text('Tap a card to build a sentence'), findsOneWidget);
-    await tester.tap(find.text('I want'));
+    await tester.tap(find.byKey(const ValueKey('aac-card-i_want')));
     await tester.pump();
-    await tester.tap(find.text('apple'));
+    await tester.tap(find.byKey(const ValueKey('aac-card-apple')));
     await tester.pump();
 
     expect(find.text('I want an apple.'), findsOneWidget);

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/services/app_services.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../../shared/widgets/app_widgets.dart';
+import 'expression_screen.dart';
 import '../domain/emotion_activity_engine.dart';
 
 class EmotionScreen extends StatefulWidget {
@@ -117,6 +118,21 @@ class _EmotionScreenState extends State<EmotionScreen> {
             message: l10n.cameraPracticeMessage,
             icon: Icons.camera_alt_outlined,
           ),
+          const SizedBox(height: 12),
+          if (widget.appState != null)
+            ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 64),
+              child: FilledButton.tonal(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => ExpressionPracticeScreen(
+                      appState: widget.appState!,
+                    ),
+                  ),
+                ),
+                child: Text(l10n.expressionTitle),
+              ),
+            ),
         ],
       ),
     );

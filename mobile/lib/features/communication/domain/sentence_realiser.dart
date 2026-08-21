@@ -16,6 +16,7 @@ class CardGrammar {
     this.urduSubject = '',
     this.urduVerbMasculine = '',
     this.urduVerbFeminine = '',
+    this.noArticle = false,
   });
 
   final String id;
@@ -28,6 +29,9 @@ class CardGrammar {
   final String urduSubject;
   final String urduVerbMasculine;
   final String urduVerbFeminine;
+
+  /// Names of people and places take no article in English.
+  final bool noArticle;
 }
 
 class SpeakerProfile {
@@ -73,10 +77,15 @@ class RuleBasedSentenceRealiser implements SentenceRealiser {
     final object = _first(strip, PartOfSpeech.noun);
     final adjective = _first(strip, PartOfSpeech.adjective);
     if (carrier?.id == 'i_want' && object != null) {
-      final article = object.isCountable
+      final article = object.noArticle
+          ? ''
+          : object.isCountable
           ? (object.startsWithVowelSound ? 'an' : 'a')
           : 'some';
-      return 'I want $article ${object.labelEn}.';
+      final phrase = article.isEmpty
+          ? object.labelEn
+          : '$article ${object.labelEn}';
+      return 'I want $phrase.';
     }
     if (carrier?.id == 'i_feel' && adjective != null) {
       return 'I feel ${adjective.labelEn}.';

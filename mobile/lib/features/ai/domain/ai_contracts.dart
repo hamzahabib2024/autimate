@@ -39,23 +39,3 @@ abstract interface class ExpressionPracticeService {
   Stream<ExpressionReading> start();
   Future<void> stop();
 }
-
-class PlaceholderExpressionPracticeService
-    implements ExpressionPracticeService {
-  final StreamController<ExpressionReading> _controller =
-      StreamController.broadcast();
-
-  @override
-  Future<bool> isSupported() async => false;
-
-  @override
-  Stream<ExpressionReading> start() {
-    // TODO: AI IMPLEMENTATION - connect camera frames to on-device ML Kit.
-    return _controller.stream;
-  }
-
-  @override
-  Future<void> stop() async {
-    // TODO: AI IMPLEMENTATION - stop the camera and dispose the detector.
-  }
-}
