@@ -1,17 +1,12 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:autimate/main.dart';
 import 'package:autimate/core/services/app_services.dart';
+import 'package:autimate/main.dart';
 
 void main() {
-  testWidgets('renders the home shell and opens communication', (WidgetTester tester) async {
+  testWidgets('renders the home shell and opens communication', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
       AutiMateApp(appState: AppState(MockAuthRepository(), MockTtsService())),
     );

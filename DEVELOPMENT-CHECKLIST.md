@@ -5,12 +5,12 @@ This is the canonical progress tracker. Update the checkbox only when the work i
 ## Current Snapshot
 
 - Branch: `AI`
-- Latest implementation area: D3 speech, AAC logic, emotion engine, and adaptive controller
-- Static analysis: PASS
-- Automated tests: PASS, 19 tests
+- Latest implementation area: durable offline persistence, Riverpod composition root, English/Urdu ARB localization, routine completion with transition warnings, data-backed caregiver dashboard
+- Static analysis: PASS (`flutter analyze`, no issues)
+- Automated tests: PASS, 43 tests (domain logic, TTS contracts, app-shell navigation, AAC, emotion flows, persistence round-trips, offline sync queue, routine completion, weekly aggregation, settings persistence, EN/UR localization incl. RTL)
 - Android APK/device verification: BLOCKED because no Android SDK/device is available in the current environment
 - Urdu offline speech: UNKNOWN until `tools/urdu_tts_probe` runs on physical Android hardware
-- Firebase: NOT CONNECTED; mock repositories are active
+- Firebase: NOT CONNECTED; mock/local repositories are active behind provider boundaries, and an offline last-write-wins sync queue is ready for the future adapter
 
 ## P0 - Demo-Critical
 
@@ -22,9 +22,9 @@ This is the canonical progress tracker. Update the checkbox only when the work i
 - [x] Theme and shared accessibility widgets created.
 - [x] Navigation shell created.
 - [x] Mock repository/service boundaries created.
-- [ ] Riverpod providers adopted. Next: add providers at integration boundaries without rewriting domain logic.
-- [ ] Environment configuration connected. File exists: `.env.example`.
-- [ ] English/Urdu ARB localization created and hard-coded UI strings removed.
+- [x] Riverpod providers adopted at integration boundaries (`core/providers/app_providers.dart`, `ProviderContainer` in `main.dart`) without rewriting domain logic.
+- [x] Environment configuration connected through `--dart-define` (`core/config/app_config.dart`, aligned `.env.example`). Safe defaults keep the app fully offline without credentials.
+- [x] English/Urdu ARB localization created (`lib/l10n/app_en.arb`, `app_ur.arb`) and hard-coded UI strings removed from every screen.
 
 ### D3 Speech and Logic
 
@@ -58,16 +58,19 @@ This is the canonical progress tracker. Update the checkbox only when the work i
 - [x] Emotion screen connected to the activity engine.
 - [x] Emotion session completion awards stars in app state.
 - [x] Persist AAC usage and emotion results beyond the current widget session through `InMemoryProgressRepository`.
-- [ ] Durable offline persistence and Firestore sync.
-- [ ] Routine completion state and local reminders.
-- [ ] Offline persistence for AAC, routines, and progress.
+- [x] Durable offline persistence: sessions, card usage, observations, routine completion, language/sensory/stars settings survive restarts (`LocalProgressRepository`, `LocalRoutineRepository`, `KeyValueStore` over `shared_preferences`).
+- [x] Routine completion state per calendar day with reset, plus in-app spoken transition warnings while the routine screen is open (`RoutineReminderEngine`).
+- [x] Offline persistence for AAC, routines, and progress.
+- [ ] Firestore sync drain of the offline queue (blocked on Firebase credentials; queue contract and LWW logic are implemented and tested).
 
 ### Verification
 
 - [x] `flutter analyze` passes.
-- [x] `flutter test` passes: 19 tests.
+- [x] `flutter test` passes: 43 tests.
 - [x] Widget test for AAC sentence interaction.
 - [x] Widget test for emotion activity feedback.
+- [x] Widget tests for routine completion persistence and caregiver observation logging.
+- [x] Localization widget tests verifying Urdu RTL directionality and English LTR.
 - [ ] Physical Android smoke test.
 - [ ] Airplane-mode demo run.
 - [ ] Rapid-tap speech test.
@@ -76,15 +79,15 @@ This is the canonical progress tracker. Update the checkbox only when the work i
 
 ### Backend and Caregiver Data
 
-- [ ] Firebase project configuration.
+- [ ] Firebase project configuration (blocked on account/credentials; `AppConfig.firebaseConfigured` gate is ready).
 - [ ] Firebase Authentication for parent/teacher accounts.
 - [ ] Firestore child/profile repositories.
 - [ ] Firestore Security Rules and role isolation.
 - [ ] Firebase Storage for custom card media, only if needed.
-- [ ] Progress repository and weekly aggregation.
-- [ ] Parent dashboard backed by recorded data.
-- [ ] Manual caregiver observation logging.
-- [ ] Offline queue and last-write-wins sync.
+- [x] Progress repository and weekly aggregation (`WeeklyProgressAggregator`, tested).
+- [x] Parent dashboard backed by recorded data: activity counts, real routine percentage, star total, seven-day chart buckets.
+- [x] Manual caregiver observation logging with durable storage surfaced on the dashboard.
+- [x] Offline queue and last-write-wins merge semantics (`OfflineSyncQueue`, tested); remote drain awaits Firebase.
 
 ### Expression Practice
 
@@ -99,14 +102,16 @@ This is the canonical progress tracker. Update the checkbox only when the work i
 - [ ] Unsupported-device, denied-permission, loading, and error states.
 - [ ] Privacy test confirming no frame persistence or upload.
 
+Note: expression practice remains gated behind P0 physical-device verification by plan.
+
 ### Localization and Accessibility
 
-- [ ] Complete English/Urdu localization.
-- [ ] Urdu RTL audit on every screen.
-- [ ] Minimum 64 dp child-facing touch targets.
-- [ ] WCAG AA contrast review.
-- [ ] Screen-reader semantics review.
-- [ ] Sensory-mode audit for motion, sound, contrast, and clutter.
+- [x] Complete English/Urdu localization of all screens (ARB + generated classes).
+- [x] Urdu RTL audit on every screen (Material locale-driven directionality; widget-tested RTL/LTR).
+- [x] Minimum 64 dp child-facing touch targets (AAC speak button, emotion choice buttons, auth sign-in).
+- [ ] WCAG AA contrast review on physical hardware.
+- [ ] Screen-reader semantics review with TalkBack/VoiceOver.
+- [x] Sensory-mode audit hooks: reduced motion transitions, flat cards, softer TTS rate/volume (device listening pass still pending).
 
 ## P2 - Deferred Scope
 
@@ -116,7 +121,7 @@ This is the canonical progress tracker. Update the checkbox only when the work i
 - [ ] Interest profile and authored learning path.
 - [ ] Flexibility training.
 - [ ] Custom AAC cards from gallery/camera.
-- [ ] Local notifications and transition warnings.
+- [ ] OS-level local notifications and scheduled reminders (in-app spoken warnings shipped first).
 - [ ] Badges, streaks, and progress rings beyond stars.
 - [ ] Speech-to-text evaluation, only if the P0/P1 schedule permits.
 
@@ -144,8 +149,8 @@ This is the canonical progress tracker. Update the checkbox only when the work i
 
 ## Next Actions
 
-1. Run the Urdu TTS probe on the physical Android demo device, online and offline.
-2. Configure Android SDK/device access and run the AAC flow with rapid taps.
-3. Add widget tests for AAC and emotion screens.
-4. Connect Riverpod providers and real persistence only after the device gate is known.
-5. Attempt ML Kit expression practice only after P0 physical verification passes.
+1. Install the Android SDK/toolchain and run `flutter build apk --debug`, then the AAC rapid-tap and airplane-mode checks on the demo device.
+2. Run the Urdu TTS probe online and offline on physical hardware; record results here.
+3. Create the Firebase project, inject credentials via `--dart-define` (see `.env.example`), then implement the Firestore adapter that drains `OfflineSyncQueue`.
+4. Run TalkBack/VoiceOver and WCAG contrast passes once device access exists.
+5. Only after the device gate passes, attempt ML Kit expression practice.

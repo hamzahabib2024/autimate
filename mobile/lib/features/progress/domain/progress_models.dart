@@ -8,16 +8,34 @@ class ProgressRecord {
   final DateTime recordedAt;
 }
 
+/// A free-text caregiver observation. Human-authored, never generated.
+class ObservationNote {
+  const ObservationNote({
+    required this.childId,
+    required this.note,
+    required this.authorRole,
+    required this.createdAt,
+  });
+
+  final String childId;
+  final String note;
+  final String authorRole;
+  final DateTime createdAt;
+}
+
 abstract interface class ProgressRepository {
   Future<void> recordSession(SessionResult result);
   Future<void> recordCardUsage(CardUsageEvent event);
+  Future<void> recordObservation(ObservationNote note);
   Future<List<ProgressRecord>> getSessions(String childId);
   Future<List<CardUsageEvent>> getCardUsage(String childId);
+  Future<List<ObservationNote>> getObservations(String childId);
 }
 
 class InMemoryProgressRepository implements ProgressRepository {
   final List<ProgressRecord> _sessions = [];
   final List<CardUsageEvent> _usage = [];
+  final List<ObservationNote> _observations = [];
 
   @override
   Future<void> recordSession(SessionResult result) async {
@@ -30,6 +48,11 @@ class InMemoryProgressRepository implements ProgressRepository {
   }
 
   @override
+  Future<void> recordObservation(ObservationNote note) async {
+    _observations.add(note);
+  }
+
+  @override
   Future<List<ProgressRecord>> getSessions(String childId) async =>
       List.unmodifiable(
         _sessions.where((record) => record.result.childId == childId),
@@ -38,6 +61,12 @@ class InMemoryProgressRepository implements ProgressRepository {
   @override
   Future<List<CardUsageEvent>> getCardUsage(String childId) async =>
       List.unmodifiable(_usage);
+
+  @override
+  Future<List<ObservationNote>> getObservations(String childId) async =>
+      List.unmodifiable(
+        _observations.where((note) => note.childId == childId),
+      );
 }
 
 class FirestoreProgressRepository implements ProgressRepository {
@@ -52,6 +81,11 @@ class FirestoreProgressRepository implements ProgressRepository {
   }
 
   @override
+  Future<void> recordObservation(ObservationNote note) async {
+    // TODO: BACKEND INTEGRATION - persist caregiver observations.
+  }
+
+  @override
   Future<List<ProgressRecord>> getSessions(String childId) async {
     // TODO: BACKEND INTEGRATION - query progress for the authenticated child.
     return const [];
@@ -60,6 +94,12 @@ class FirestoreProgressRepository implements ProgressRepository {
   @override
   Future<List<CardUsageEvent>> getCardUsage(String childId) async {
     // TODO: BACKEND INTEGRATION - query usage for the authenticated child.
+    return const [];
+  }
+
+  @override
+  Future<List<ObservationNote>> getObservations(String childId) async {
+    // TODO: BACKEND INTEGRATION - query observations for the child.
     return const [];
   }
 }
