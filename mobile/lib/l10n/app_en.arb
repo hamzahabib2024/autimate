@@ -11,7 +11,22 @@
   "emotionPracticeTileTitle": "Emotion practice",
   "emotionPracticeTileSubtitle": "Learn six everyday expressions",
   "socialStoriesTileTitle": "Social stories",
-  "socialStoriesTileSubtitle": "Designed and documented for the next phase",
+  "socialStoriesTileSubtitle": "Stories and conversation practice",
+  "tabStories": "Stories",
+  "tabConversations": "Conversations",
+  "narrateTooltip": "Read aloud",
+  "nextPageTooltip": "Next page",
+  "previousPageTooltip": "Previous page",
+  "comprehensionTitle": "Let's check understanding",
+  "conversationComplete": "You finished the conversation! A star was earned.",
+  "conversationHint": "Choose a situation, then pick the reply that fits.",
+  "gentleRetry": "That is okay. Let's try another way.",
+  "storyPagesCount": "{count} pages",
+  "@storyPagesCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
   "learningPathTileTitle": "Learning path",
   "learningPathTileSubtitle": "Interest-based activities are coming next",
   "beginnerSupportLevel": "Beginner support level",

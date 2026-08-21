@@ -11,7 +11,22 @@
   "emotionPracticeTileTitle": "جذبات کی مشق",
   "emotionPracticeTileSubtitle": "چھ روزمرہ اظہارات سیکھیں",
   "socialStoriesTileTitle": "سماجی کہانیاں",
-  "socialStoriesTileSubtitle": "اگلے مرحلے کے لیے تیار شدہ منصوبہ",
+  "socialStoriesTileSubtitle": "کہانیاں اور بات چیت کی مشق",
+  "tabStories": "کہانیاں",
+  "tabConversations": "بات چیت کی مشق",
+  "narrateTooltip": "بلند آواز میں پڑھیں",
+  "nextPageTooltip": "اگلا صفحہ",
+  "previousPageTooltip": "پچھلا صفحہ",
+  "comprehensionTitle": "آئیے سمجھ جانچیں",
+  "conversationComplete": "آپ نے بات چیت مکمل کر لی! ایک ستارہ ملا۔",
+  "conversationHint": "ایک صورتحال منتخب کریں اور موزوں جواب چنیں۔",
+  "gentleRetry": "کوئی بات نہیں، آئیے دوسرا طریقہ آزمائیں۔",
+  "storyPagesCount": "{count} صفحات",
+  "@storyPagesCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
   "learningPathTileTitle": "سیکھنے کا راستہ",
   "learningPathTileSubtitle": "دلچسپی پر مبنی سرگرمیاں آنے والی ہیں",
   "beginnerSupportLevel": "ابتدائی سطح کی معاونت",
