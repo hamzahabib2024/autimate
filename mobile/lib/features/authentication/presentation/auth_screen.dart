@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/services/app_services.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({required this.appState, super.key});
@@ -29,12 +30,13 @@ class _AuthScreenState extends State<AuthScreen> {
     if (!mounted) return;
     setState(() {
       loading = false;
-      error = valid ? null : 'Enter an email and password to continue.';
+      error = valid ? null : AppLocalizations.of(context).authErrorRequired;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
@@ -47,26 +49,26 @@ class _AuthScreenState extends State<AuthScreen> {
                 const Icon(Icons.connect_without_contact, size: 64),
                 const SizedBox(height: 20),
                 Text(
-                  'Welcome to AutiMate',
+                  l10n.authWelcome,
                   style: Theme.of(context).textTheme.headlineMedium,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  'A calm communication and learning space for children and caregivers.',
+                Text(
+                  l10n.authTagline,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 28),
                 TextField(
                   controller: email,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(labelText: 'Parent email'),
+                  decoration: InputDecoration(labelText: l10n.parentEmail),
                 ),
                 const SizedBox(height: 12),
                 TextField(
                   controller: password,
                   obscureText: true,
-                  decoration: const InputDecoration(labelText: 'Password'),
+                  decoration: InputDecoration(labelText: l10n.password),
                 ),
                 if (error != null)
                   Padding(
@@ -79,14 +81,17 @@ class _AuthScreenState extends State<AuthScreen> {
                     ),
                   ),
                 const SizedBox(height: 20),
-                FilledButton(
-                  onPressed: loading ? null : _signIn,
-                  child: Text(loading ? 'Loading...' : 'Sign in'),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 56),
+                  child: FilledButton(
+                    onPressed: loading ? null : _signIn,
+                    child: Text(loading ? l10n.signingIn : l10n.signIn),
+                  ),
                 ),
                 const SizedBox(height: 12),
                 TextButton(
                   onPressed: () {},
-                  child: const Text('Create a parent account'),
+                  child: Text(l10n.createParentAccount),
                 ),
               ],
             ),

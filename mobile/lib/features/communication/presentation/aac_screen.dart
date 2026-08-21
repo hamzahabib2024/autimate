@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/services/app_services.dart';
 import '../../../core/services/tts_service.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import '../domain/aac_catalog.dart';
 import '../domain/card_ranker.dart';
 import '../domain/sentence_realiser.dart';
@@ -32,124 +33,134 @@ class _AacScreenState extends State<AacScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return AnimatedBuilder(
       animation: widget.appState,
-      builder: (context, _) => Scaffold(
-        appBar: AppBar(
-          title: const Text('Communicate'),
-          actions: [
-            IconButton(
-              tooltip: 'Speak sentence',
-              onPressed: _strip.isEmpty ? null : _speakSentence,
-              icon: const Icon(Icons.volume_up),
-            ),
-          ],
-        ),
-        body: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            Semantics(
-              header: true,
-              child: Text(
-                'Sentence',
-                style: Theme.of(context).textTheme.titleLarge,
+      builder: (context, _) {
+        final sentence = _sentence;
+        final frequent = _ranker.rank(_usage);
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(l10n.communicateTitle),
+            actions: [
+              IconButton(
+                tooltip: l10n.speakSentenceTooltip,
+                onPressed: _strip.isEmpty ? null : _speakSentence,
+                icon: const Icon(Icons.volume_up),
               ),
-            ),
-            const SizedBox(height: 8),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        _sentence.isEmpty
-                            ? 'Tap a card to build a sentence'
-                            : _sentence,
-                        style: Theme.of(context).textTheme.titleLarge,
-                        textDirection: _language == AppLanguage.ur
-                            ? TextDirection.rtl
-                            : TextDirection.ltr,
-                      ),
-                    ),
-                    if (_strip.isNotEmpty)
-                      IconButton(
-                        tooltip: 'Clear sentence',
-                        onPressed: () => setState(_strip.clear),
-                        icon: const Icon(Icons.clear),
-                      ),
-                  ],
+            ],
+          ),
+          body: ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              Semantics(
+                header: true,
+                child: Text(
+                  l10n.sentenceHeader,
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              'Frequently used',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              _ranker.rank(_usage).isEmpty
-                  ? 'Your recent cards will appear here.'
-                  : _ranker.rank(_usage).join('  •  '),
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 20),
-            Text('Core words', style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: 12),
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 180,
-                mainAxisExtent: 132,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
+              const SizedBox(height: 8),
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Semantics(
+                          liveRegion: true,
+                          label: l10n.sentenceHeader,
+                          child: Text(
+                            sentence.isEmpty
+                                ? l10n.tapCardToBuild
+                                : sentence,
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                        ),
+                      ),
+                      if (_strip.isNotEmpty)
+                        IconButton(
+                          tooltip: l10n.clearSentenceTooltip,
+                          onPressed: () => setState(_strip.clear),
+                          icon: const Icon(Icons.clear),
+                        ),
+                    ],
+                  ),
+                ),
               ),
-              itemCount: aacCards.length,
-              itemBuilder: (context, index) {
-                final card = aacCards[index];
-                return Semantics(
-                  button: true,
-                  label: card.labelEn,
-                  child: Card(
-                    child: InkWell(
-                      onTap: () => _addCard(card),
-                      borderRadius: BorderRadius.circular(16),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(_iconFor(card.id), size: 32),
-                            const SizedBox(height: 4),
-                            Text(
-                              card.labelEn,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
+              const SizedBox(height: 20),
+              Text(
+                l10n.frequentlyUsed,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                frequent.isEmpty
+                    ? l10n.recentCardsHint
+                    : frequent.join('  •  '),
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 20),
+              Text(
+                l10n.coreWords,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 12),
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 180,
+                  mainAxisExtent: 132,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                ),
+                itemCount: aacCards.length,
+                itemBuilder: (context, index) {
+                  final card = aacCards[index];
+                  return Semantics(
+                    button: true,
+                    label:
+                        '${card.labelEn}, ${card.labelUr}',
+                    child: Card(
+                      child: InkWell(
+                        onTap: () => _addCard(card),
+                        borderRadius: BorderRadius.circular(16),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(_iconFor(card.id), size: 32),
+                              const SizedBox(height: 4),
+                              Text(
+                                card.labelEn,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                            Text(
-                              card.labelUr,
-                              textDirection: TextDirection.rtl,
-                            ),
-                          ],
+                              Text(card.labelUr),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 20),
-            FilledButton.icon(
-              onPressed: _strip.isEmpty ? null : _speakSentence,
-              icon: const Icon(Icons.volume_up),
-              label: const Text('Speak sentence'),
-            ),
-          ],
-        ),
-      ),
+                  );
+                },
+              ),
+              const SizedBox(height: 20),
+              ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 64),
+                child: FilledButton.icon(
+                  onPressed: _strip.isEmpty ? null : _speakSentence,
+                  icon: const Icon(Icons.volume_up),
+                  label: Text(l10n.speakSentenceTooltip),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 

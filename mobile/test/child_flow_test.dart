@@ -5,15 +5,15 @@ import 'package:autimate/core/services/app_services.dart';
 import 'package:autimate/features/communication/presentation/aac_screen.dart';
 import 'package:autimate/features/emotion_recognition/presentation/emotion_screen.dart';
 
+import 'helpers/test_app.dart';
+
 void main() {
   testWidgets('AAC builds an English sentence from semantic cards', (
     tester,
   ) async {
     await tester.pumpWidget(
-      MaterialApp(
-        home: AacScreen(
-          appState: AppState(MockAuthRepository(), MockTtsService()),
-        ),
+      testApp(
+        AacScreen(appState: AppState(MockAuthRepository(), MockTtsService())),
       ),
     );
 
@@ -28,7 +28,7 @@ void main() {
   });
 
   testWidgets('emotion activity presents choices and feedback', (tester) async {
-    await tester.pumpWidget(const MaterialApp(home: EmotionScreen()));
+    await tester.pumpWidget(testApp(const EmotionScreen()));
 
     expect(find.textContaining('Question 1 of 5'), findsOneWidget);
     expect(find.textContaining('Which face feels'), findsOneWidget);

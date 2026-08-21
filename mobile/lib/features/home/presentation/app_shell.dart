@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/services/app_services.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import '../../../shared/widgets/app_widgets.dart';
 import '../../authentication/presentation/auth_screen.dart';
 import '../../communication/presentation/aac_screen.dart';
 import '../../emotion_recognition/presentation/emotion_screen.dart';
+import '../../gamification/presentation/gamification_screen.dart';
 import '../../parent_dashboard/presentation/dashboard_screen.dart';
 import '../../routines/presentation/routines_screen.dart';
+import '../../sensory_support/presentation/sensory_support_screen.dart';
 import '../../settings/presentation/settings_screen.dart';
 import 'feature_screen.dart';
 
@@ -24,11 +27,12 @@ class _AppShellState extends State<AppShell> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     if (!widget.appState.signedIn) return AuthScreen(appState: widget.appState);
     final pages = [
-      _home(context),
+      _home(context, l10n),
       AacScreen(appState: widget.appState),
-      const RoutinesScreen(),
+      RoutinesScreen(appState: widget.appState),
       DashboardScreen(appState: widget.appState),
     ];
     return Scaffold(
@@ -36,33 +40,33 @@ class _AppShellState extends State<AppShell> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,
         onDestinationSelected: (value) => setState(() => _index = value),
-        destinations: const [
+        destinations: [
           NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: 'Home',
+            icon: const Icon(Icons.home_outlined),
+            selectedIcon: const Icon(Icons.home),
+            label: l10n.navHome,
           ),
           NavigationDestination(
-            icon: Icon(Icons.forum_outlined),
-            selectedIcon: Icon(Icons.forum),
-            label: 'Communicate',
+            icon: const Icon(Icons.forum_outlined),
+            selectedIcon: const Icon(Icons.forum),
+            label: l10n.navCommunicate,
           ),
           NavigationDestination(
-            icon: Icon(Icons.today_outlined),
-            selectedIcon: Icon(Icons.today),
-            label: 'Routine',
+            icon: const Icon(Icons.today_outlined),
+            selectedIcon: const Icon(Icons.today),
+            label: l10n.navRoutine,
           ),
           NavigationDestination(
-            icon: Icon(Icons.insights_outlined),
-            selectedIcon: Icon(Icons.insights),
-            label: 'Progress',
+            icon: const Icon(Icons.insights_outlined),
+            selectedIcon: const Icon(Icons.insights),
+            label: l10n.navProgress,
           ),
         ],
       ),
     );
   }
 
-  Widget _home(BuildContext context) {
+  Widget _home(BuildContext context, AppLocalizations l10n) {
     return SafeArea(
       child: CustomScrollView(
         slivers: [
@@ -70,7 +74,7 @@ class _AppShellState extends State<AppShell> {
             title: const Text('AutiMate'),
             actions: [
               IconButton(
-                tooltip: 'Settings',
+                tooltip: l10n.settingsTooltip,
                 onPressed: () => Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_) => SettingsScreen(appState: widget.appState),
@@ -81,27 +85,25 @@ class _AppShellState extends State<AppShell> {
             ],
           ),
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+            padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 20, 24),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
                 Text(
-                  'Good morning, caregiver',
+                  l10n.homeGreeting,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 6),
-                const Text(
-                  'A calm place to communicate, learn, and practise together.',
-                ),
+                Text(l10n.homeTagline),
                 const SizedBox(height: 20),
-                _summaryCard(context),
+                _summaryCard(context, l10n),
                 const SizedBox(height: 20),
-                Text('Today', style: Theme.of(context).textTheme.titleLarge),
+                Text(l10n.homeToday, style: Theme.of(context).textTheme.titleLarge),
                 const SizedBox(height: 12),
                 FeatureTile(
-                  title: 'Emotion practice',
-                  subtitle: 'Learn six everyday expressions',
+                  title: l10n.emotionPracticeTileTitle,
+                  subtitle: l10n.emotionPracticeTileSubtitle,
                   icon: Icons.emoji_emotions_outlined,
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(
@@ -111,15 +113,14 @@ class _AppShellState extends State<AppShell> {
                 ),
                 const SizedBox(height: 12),
                 FeatureTile(
-                  title: 'Social stories',
-                  subtitle: 'Designed and documented for the next phase',
+                  title: l10n.socialStoriesTileTitle,
+                  subtitle: l10n.socialStoriesTileSubtitle,
                   icon: Icons.auto_stories_outlined,
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (_) => const FeatureScreen(
-                        title: 'Social stories',
-                        description:
-                            'Short illustrated stories and guided comprehension checks will live here.',
+                      builder: (_) => FeatureScreen(
+                        title: l10n.socialStoriesTileTitle,
+                        description: l10n.socialStoriesDescription,
                         icon: Icons.auto_stories_outlined,
                       ),
                     ),
@@ -127,17 +128,40 @@ class _AppShellState extends State<AppShell> {
                 ),
                 const SizedBox(height: 12),
                 FeatureTile(
-                  title: 'Learning path',
-                  subtitle: 'Interest-based activities are coming next',
+                  title: l10n.learningPathTileTitle,
+                  subtitle: l10n.learningPathTileSubtitle,
                   icon: Icons.lightbulb_outline,
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (_) => const FeatureScreen(
-                        title: 'Interest-based learning',
-                        description:
-                            'Deterministic interest-to-topic mapping will power this learning path.',
+                      builder: (_) => FeatureScreen(
+                        title: l10n.learningPathTileTitle,
+                        description: l10n.interestLearningDescription,
                         icon: Icons.lightbulb_outline,
                       ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                FeatureTile(
+                  title: l10n.gamificationTileTitle,
+                  subtitle: l10n.gamificationTileSubtitle,
+                  icon: Icons.stars_outlined,
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          GamificationScreen(appState: widget.appState),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                FeatureTile(
+                  title: l10n.sensorySupportTileTitle,
+                  subtitle: l10n.sensorySupportTileSubtitle,
+                  icon: Icons.spa_outlined,
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          SensorySupportScreen(appState: widget.appState),
                     ),
                   ),
                 ),
@@ -149,7 +173,7 @@ class _AppShellState extends State<AppShell> {
     );
   }
 
-  Widget _summaryCard(BuildContext context) {
+  Widget _summaryCard(BuildContext context, AppLocalizations l10n) {
     return Card(
       color: Theme.of(context).colorScheme.primaryContainer,
       child: Padding(
@@ -167,10 +191,10 @@ class _AppShellState extends State<AppShell> {
                     ),
                   ),
                   const SizedBox(height: 6),
-                  const Text('Beginner support level'),
+                  Text(l10n.beginnerSupportLevel),
                   const SizedBox(height: 14),
                   Text(
-                    '${widget.appState.stars} stars earned',
+                    l10n.starsEarned(widget.appState.stars),
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ],

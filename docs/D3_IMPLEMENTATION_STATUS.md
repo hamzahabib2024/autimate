@@ -4,8 +4,8 @@ Audited after commit `6e580c8` on branch `AI`. This status reflects code current
 
 ## Build Status
 
-- flutter analyze: PASS (current mock skeleton).
-- flutter test: PASS (19 tests: domain logic, TTS contracts, app-shell navigation, AAC, emotion flows, and progress persistence).
+- flutter analyze: PASS (no issues).
+- flutter test: PASS (43 tests: domain logic, TTS contracts, app-shell navigation, AAC, emotion flows, progress persistence round-trips, offline sync queue, routine completion, weekly aggregation, settings persistence, and EN/UR localization incl. RTL).
 - flutter run/build: `flutter build apk --debug` blocked because no Android SDK is configured in this environment.
 - Android physical device status: NOT VERIFIED; the Urdu probe remains available under `tools/urdu_tts_probe`.
 
