@@ -160,7 +160,48 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cameraPracticeMessage =>
-      'P1 placeholder. Future on-device ML Kit processing will stay in memory and never upload frames.';
+      'On-device smile detection logic is implemented; the ML Kit camera adapter lands after physical-device verification. A simulated demo is available now.';
+
+  @override
+  String get expressionTitle => 'Expression practice';
+
+  @override
+  String get expressionStart => 'Start practice';
+
+  @override
+  String get expressionHoldSmile => 'Hold a big smile for one second';
+
+  @override
+  String get expressionUnsupported =>
+      'Expression practice is not available on this device.';
+
+  @override
+  String get expressionPermissionDenied =>
+      'Camera permission is needed. A caregiver can allow it in device settings.';
+
+  @override
+  String get expressionLoadingCamera => 'Starting the camera...';
+
+  @override
+  String get expressionCameraError =>
+      'Something went wrong with the camera. Please try again.';
+
+  @override
+  String expressionSmileProgress(int done, int total) {
+    return '$done of $total smiles held';
+  }
+
+  @override
+  String expressionSessionComplete(int stars) {
+    return 'Great smiling! $stars stars earned';
+  }
+
+  @override
+  String get expressionPrivacyTitle => 'Private by design';
+
+  @override
+  String get expressionPrivacyNote =>
+      'Frames stay in memory on this device and are never stored or uploaded. Only star totals are recorded.';
 
   @override
   String get routineTitle => 'Routine';

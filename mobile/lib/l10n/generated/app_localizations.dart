@@ -371,8 +371,74 @@ abstract class AppLocalizations {
   /// No description provided for @cameraPracticeMessage.
   ///
   /// In en, this message translates to:
-  /// **'P1 placeholder. Future on-device ML Kit processing will stay in memory and never upload frames.'**
+  /// **'On-device smile detection logic is implemented; the ML Kit camera adapter lands after physical-device verification. A simulated demo is available now.'**
   String get cameraPracticeMessage;
+
+  /// No description provided for @expressionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Expression practice'**
+  String get expressionTitle;
+
+  /// No description provided for @expressionStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start practice'**
+  String get expressionStart;
+
+  /// No description provided for @expressionHoldSmile.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold a big smile for one second'**
+  String get expressionHoldSmile;
+
+  /// No description provided for @expressionUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Expression practice is not available on this device.'**
+  String get expressionUnsupported;
+
+  /// No description provided for @expressionPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera permission is needed. A caregiver can allow it in device settings.'**
+  String get expressionPermissionDenied;
+
+  /// No description provided for @expressionLoadingCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'Starting the camera...'**
+  String get expressionLoadingCamera;
+
+  /// No description provided for @expressionCameraError.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong with the camera. Please try again.'**
+  String get expressionCameraError;
+
+  /// No description provided for @expressionSmileProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{done} of {total} smiles held'**
+  String expressionSmileProgress(int done, int total);
+
+  /// No description provided for @expressionSessionComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Great smiling! {stars} stars earned'**
+  String expressionSessionComplete(int stars);
+
+  /// No description provided for @expressionPrivacyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Private by design'**
+  String get expressionPrivacyTitle;
+
+  /// No description provided for @expressionPrivacyNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Frames stay in memory on this device and are never stored or uploaded. Only star totals are recorded.'**
+  String get expressionPrivacyNote;
 
   /// No description provided for @routineTitle.
   ///

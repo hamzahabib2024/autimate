@@ -68,7 +68,29 @@
   "answerCorrect": "That is right.",
   "answerIncorrect": "Let us try the next one.",
   "cameraPracticeTitle": "Camera expression practice",
-  "cameraPracticeMessage": "P1 placeholder. Future on-device ML Kit processing will stay in memory and never upload frames.",
+  "cameraPracticeMessage": "On-device smile detection logic is implemented; the ML Kit camera adapter lands after physical-device verification. A simulated demo is available now.",
+  "expressionTitle": "Expression practice",
+  "expressionStart": "Start practice",
+  "expressionHoldSmile": "Hold a big smile for one second",
+  "expressionUnsupported": "Expression practice is not available on this device.",
+  "expressionPermissionDenied": "Camera permission is needed. A caregiver can allow it in device settings.",
+  "expressionLoadingCamera": "Starting the camera...",
+  "expressionCameraError": "Something went wrong with the camera. Please try again.",
+  "expressionSmileProgress": "{done} of {total} smiles held",
+  "@expressionSmileProgress": {
+    "placeholders": {
+      "done": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "expressionSessionComplete": "Great smiling! {stars} stars earned",
+  "@expressionSessionComplete": {
+    "placeholders": {
+      "stars": { "type": "int" }
+    }
+  },
+  "expressionPrivacyTitle": "Private by design",
+  "expressionPrivacyNote": "Frames stay in memory on this device and are never stored or uploaded. Only star totals are recorded.",
   "routineTitle": "Routine",
   "oneStepAtATime": "One step at a time",
   "routineProgressLabel": "Routine progress",
