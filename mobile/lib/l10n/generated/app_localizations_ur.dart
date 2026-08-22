@@ -284,6 +284,83 @@ class AppLocalizationsUr extends AppLocalizations {
   String get expressionLookStraightHint => 'کیمرے کی طرف سیدھا دیکھیں';
 
   @override
+  String get routineEditTooltip => 'روٹین ترتیب دیں';
+
+  @override
+  String get routineEditorTitle => 'روٹین ایڈیٹر';
+
+  @override
+  String get routineAddStep => 'نیا مرحلہ شامل کریں';
+
+  @override
+  String get stepTitleEnLabel => 'عنوان (انگریزی)';
+
+  @override
+  String get stepTitleUrLabel => 'عنوان (اردو)';
+
+  @override
+  String get stepCueEnLabel => 'بولنے کا جملہ (انگریزی، اختیاری)';
+
+  @override
+  String get stepCueUrLabel => 'بولنے کا جملہ (اردو، اختیاری)';
+
+  @override
+  String get stepTimeLabel => 'وقت';
+
+  @override
+  String get stepIconLabel => 'علامت';
+
+  @override
+  String get leadMinutesLabel => 'ہر مرحلے سے کتنے منٹ پہلے اطلاع دیں';
+
+  @override
+  String countdownWarning(int minutes, String title) {
+    return '$minutes منٹ باقی ہیں: $title';
+  }
+
+  @override
+  String get flexibilityTitle => 'دوستانہ تبدیلیاں';
+
+  @override
+  String get flexibilityExplanation =>
+      'آج کے کسی معروف مرحلے میں ایک چھوٹی منصوبہ بند تبدیلی ڈالیں تاکہ بچہ حیرانی سنبھالنے کی مشق کرے۔';
+
+  @override
+  String get flexibilityPickStep => 'تبدیلی کا مرحلہ';
+
+  @override
+  String get flexibilityNewLabelEn => 'نیا عنوان (انگریزی، اختیاری)';
+
+  @override
+  String get flexibilityNewLabelUr => 'نیا عنوان (اردو، اختیاری)';
+
+  @override
+  String get flexibilityApply => 'آج کی تبدیلی مقرر کریں';
+
+  @override
+  String get flexibilityClear => 'منصوبہ بند تبدیلی ہٹائیں';
+
+  @override
+  String get flexibilityPlannedToday => 'آج ایک دوستانہ تبدیلی مقرر ہے۔';
+
+  @override
+  String get flexibilityBadge => 'منصوبہ بند تبدیلی';
+
+  @override
+  String get flexibilityWellDone => 'تبدیلیاں مزے دار ہو سکتی ہیں! شاباش۔';
+
+  @override
+  String get routineDeleteStepTitle => 'کیا یہ مرحلہ ہٹا دیں؟';
+
+  @override
+  String routineDeleteStepBody(String title) {
+    return '«$title» روزانہ کی روٹین میں اب نہیں دکھے گا۔';
+  }
+
+  @override
+  String get deleteAction => 'ہٹائیں';
+
+  @override
   String get routineTitle => 'روٹین';
 
   @override

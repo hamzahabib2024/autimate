@@ -8,12 +8,22 @@ import 'routine_models.dart';
 /// Contract for reading routine steps and per-day completion state.
 abstract interface class RoutineRepository {
   Future<List<RoutineStep>> getSteps();
+  Future<void> saveSteps(List<RoutineStep> steps);
   Future<Set<String>> completedStepIdsFor(String childId, DateTime day);
   Future<void> setStepCompleted(
     String childId,
     DateTime day,
     String stepId,
     bool completed,
+  );
+  Future<FlexibilityChange?> flexibilityChangeFor(
+    String childId,
+    DateTime day,
+  );
+  Future<void> setFlexibilityChange(
+    String childId,
+    DateTime day,
+    FlexibilityChange? change,
   );
 }
 
@@ -28,6 +38,9 @@ class LocalRoutineRepository implements RoutineRepository {
   }) : _store = store;
 
   static const String _stepsKey = 'autimate.routine.steps.v1';
+
+  String _flexKey(String childId, DateTime day) =>
+      'autimate.flex.$childId.${_dayId(day)}';
 
   final KeyValueStore _store;
   final List<RoutineStep> seedSteps;
@@ -62,6 +75,10 @@ class LocalRoutineRepository implements RoutineRepository {
   }
 
   @override
+  Future<void> saveSteps(List<RoutineStep> steps) =>
+      _store.write(_stepsKey, jsonEncode(steps.map((s) => s.toMap()).toList()));
+
+  @override
   Future<Set<String>> completedStepIdsFor(String childId, DateTime day) async {
     final raw = await _store.read(_dayKey(childId, day));
     if (raw == null || raw.isEmpty) return <String>{};
@@ -92,37 +109,135 @@ class LocalRoutineRepository implements RoutineRepository {
     }
     await _store.write(key, jsonEncode(current.toList()..sort()));
   }
+
+  @override
+  Future<FlexibilityChange?> flexibilityChangeFor(
+    String childId,
+    DateTime day,
+  ) async {
+    final raw = await _store.read(_flexKey(childId, day));
+    if (raw == null || raw.isEmpty) return null;
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is! Map<String, dynamic>) return null;
+      return FlexibilityChange.fromMap(decoded);
+    } on FormatException {
+      return null;
+    }
+  }
+
+  @override
+  Future<void> setFlexibilityChange(
+    String childId,
+    DateTime day,
+    FlexibilityChange? change,
+  ) async {
+    if (change == null) {
+      await _store.write(_flexKey(childId, day), '');
+      return;
+    }
+    await _store.write(
+      _flexKey(childId, day),
+      jsonEncode(change.toMap()),
+    );
+  }
+}
+
+/// One pending transition notification for a step.
+class TransitionWarning {
+  const TransitionWarning({
+    required this.stepId,
+    required this.countdown,
+    required this.minutesUntil,
+  });
+
+  final String stepId;
+
+  /// True while inside the configurable lead window ("5 minutes left");
+  /// false once the scheduled time itself has arrived.
+  final bool countdown;
+
+  /// Whole minutes remaining until the step starts (countdown only).
+  final int minutesUntil;
 }
 
 /// Pure reminder decision logic: which routine steps need a transition
 /// warning right now?
 ///
-/// A step is due when its scheduled time has arrived (or passed), it is not
-/// completed yet, and it has not already been announced today.
+/// Two phases per step, both suppressed once completed or announced:
+/// 1. countdown — inside the [RoutineReminderEngine.pendingWarnings] lead
+///    window before the scheduled time ("5 minutes left"),
+/// 2. due — at/after the scheduled time (the step is announced itself).
 class RoutineReminderEngine {
   const RoutineReminderEngine();
 
-  /// Returns step ids that should be announced at [now].
+  /// Returns warnings (countdowns first-come) that should be surfaced at
+  /// [now].
+  List<TransitionWarning> pendingWarnings({
+    required List<RoutineStep> steps,
+    required Set<String> completedIds,
+    required Set<String> announcedDueIds,
+    required Set<String> announcedCountdownIds,
+    required int leadMinutes,
+    required DateTime now,
+  }) {
+    final minuteOfDay = now.hour * 60 + now.minute;
+    final warnings = <TransitionWarning>[];
+    for (final step in steps) {
+      if (completedIds.contains(step.id)) continue;
+      final stepMinute = _parseMinute(step.timeOfDay);
+      // Due phase: the scheduled time has arrived.
+      if (stepMinute <= minuteOfDay) {
+        if (!announcedDueIds.contains(step.id)) {
+          warnings.add(
+            TransitionWarning(stepId: step.id, countdown: false, minutesUntil: 0),
+          );
+        }
+        continue;
+      }
+      // Countdown phase: within the lead window before the step.
+      final minutesUntil = stepMinute - minuteOfDay;
+      if (leadMinutes > 0 &&
+          minutesUntil <= leadMinutes &&
+          !announcedCountdownIds.contains(step.id)) {
+        warnings.add(
+          TransitionWarning(
+            stepId: step.id,
+            countdown: true,
+            minutesUntil: minutesUntil,
+          ),
+        );
+      }
+    }
+    return warnings;
+  }
+
+  /// Returns step ids whose scheduled time has arrived (or passed).
   List<String> dueStepIds({
     required List<RoutineStep> steps,
     required Set<String> completedIds,
     required Set<String> announcedIds,
     required DateTime now,
   }) {
-    final minuteOfDay = now.hour * 60 + now.minute;
     return [
-      for (final step in steps)
-        if (!completedIds.contains(step.id) &&
-            !announcedIds.contains(step.id) &&
-            _parseMinute(step.timeOfDay) <= minuteOfDay)
-            step.id,
+      for (final warning in pendingWarnings(
+        steps: steps,
+        completedIds: completedIds,
+        announcedDueIds: announcedIds,
+        announcedCountdownIds: const <String>{},
+        leadMinutes: 0,
+        now: now,
+      ))
+        warning.stepId,
     ];
   }
 
-  int _parseMinute(String timeOfDay) {
+  static int parseMinute(String timeOfDay) {
     final parts = timeOfDay.split(':');
     final hour = int.tryParse(parts.isNotEmpty ? parts[0] : '') ?? 0;
     final minute = int.tryParse(parts.length > 1 ? parts[1] : '') ?? 0;
     return hour.clamp(0, 23) * 60 + minute.clamp(0, 59);
   }
+
+  int _parseMinute(String timeOfDay) => parseMinute(timeOfDay);
 }

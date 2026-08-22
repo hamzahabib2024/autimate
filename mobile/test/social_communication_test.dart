@@ -147,6 +147,16 @@ void main() {
 
       // First comprehension question.
       expect(find.byKey(const ValueKey('quiz-page')), findsOneWidget);
+
+      // The child can step back to re-read the last page.
+      await tester.tap(find.byKey(const ValueKey('quiz-back')));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('calm and safe'), findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('reader-next')));
+      await tester.pumpAndSettle();
+
+      // Back at the first question.
+      expect(find.byKey(const ValueKey('quiz-page')), findsOneWidget);
       await tester.tap(find.byKey(const ValueKey('quiz-option-0')));
       await tester.pumpAndSettle();
 

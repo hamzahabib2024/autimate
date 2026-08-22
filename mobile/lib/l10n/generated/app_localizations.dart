@@ -602,6 +602,150 @@ abstract class AppLocalizations {
   /// **'Look straight at the camera'**
   String get expressionLookStraightHint;
 
+  /// No description provided for @routineEditTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit routine'**
+  String get routineEditTooltip;
+
+  /// No description provided for @routineEditorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Routine editor'**
+  String get routineEditorTitle;
+
+  /// No description provided for @routineAddStep.
+  ///
+  /// In en, this message translates to:
+  /// **'Add step'**
+  String get routineAddStep;
+
+  /// No description provided for @stepTitleEnLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Title (English)'**
+  String get stepTitleEnLabel;
+
+  /// No description provided for @stepTitleUrLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Title (Urdu)'**
+  String get stepTitleUrLabel;
+
+  /// No description provided for @stepCueEnLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Spoken cue (English, optional)'**
+  String get stepCueEnLabel;
+
+  /// No description provided for @stepCueUrLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Spoken cue (Urdu, optional)'**
+  String get stepCueUrLabel;
+
+  /// No description provided for @stepTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get stepTimeLabel;
+
+  /// No description provided for @stepIconLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Icon'**
+  String get stepIconLabel;
+
+  /// No description provided for @leadMinutesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Warn minutes before each step'**
+  String get leadMinutesLabel;
+
+  /// No description provided for @countdownWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} minutes left: {title}'**
+  String countdownWarning(int minutes, String title);
+
+  /// No description provided for @flexibilityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Friendly changes'**
+  String get flexibilityTitle;
+
+  /// No description provided for @flexibilityExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan one small change to a known step for today so your child can practise coping with surprises.'**
+  String get flexibilityExplanation;
+
+  /// No description provided for @flexibilityPickStep.
+  ///
+  /// In en, this message translates to:
+  /// **'Step to change'**
+  String get flexibilityPickStep;
+
+  /// No description provided for @flexibilityNewLabelEn.
+  ///
+  /// In en, this message translates to:
+  /// **'New label (English, optional)'**
+  String get flexibilityNewLabelEn;
+
+  /// No description provided for @flexibilityNewLabelUr.
+  ///
+  /// In en, this message translates to:
+  /// **'New label (Urdu, optional)'**
+  String get flexibilityNewLabelUr;
+
+  /// No description provided for @flexibilityApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan today\'s change'**
+  String get flexibilityApply;
+
+  /// No description provided for @flexibilityClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove planned change'**
+  String get flexibilityClear;
+
+  /// No description provided for @flexibilityPlannedToday.
+  ///
+  /// In en, this message translates to:
+  /// **'A friendly change is planned for today.'**
+  String get flexibilityPlannedToday;
+
+  /// No description provided for @flexibilityBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned change'**
+  String get flexibilityBadge;
+
+  /// No description provided for @flexibilityWellDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Changes can be fun! Well done.'**
+  String get flexibilityWellDone;
+
+  /// No description provided for @routineDeleteStepTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this step?'**
+  String get routineDeleteStepTitle;
+
+  /// No description provided for @routineDeleteStepBody.
+  ///
+  /// In en, this message translates to:
+  /// **'\"{title}\" will no longer appear in the daily routine.'**
+  String routineDeleteStepBody(String title);
+
+  /// No description provided for @deleteAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get deleteAction;
+
   /// No description provided for @routineTitle.
   ///
   /// In en, this message translates to:
