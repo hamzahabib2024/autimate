@@ -257,6 +257,16 @@ class _StoryReaderState extends State<_StoryReader> {
       key: const ValueKey('quiz-page'),
       padding: const EdgeInsets.all(24),
       children: [
+        // Escape hatch so the child can re-read before answering.
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: TextButton.icon(
+            key: const ValueKey('quiz-back'),
+            onPressed: () => _goToPage(widget.story.pages.length - 1),
+            icon: const Icon(Icons.arrow_back),
+            label: Text(l10n.previousPageTooltip),
+          ),
+        ),
         Semantics(
           header: true,
           child: Text(l10n.comprehensionTitle,

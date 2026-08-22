@@ -8,7 +8,7 @@ Status legend:
 - `[ ]` open
 - `⛔ BLOCKED:` prefix = cannot proceed until the stated external dependency exists (device, SDK, credentials)
 
-Current verified state: `flutter analyze` PASS · `flutter test` PASS (83 tests) · branch `AI`
+Current verified state: `flutter analyze` PASS · `flutter test` PASS (98 tests) · branch `AI`
 
 ---
 
@@ -101,11 +101,11 @@ Current verified state: `flutter analyze` PASS · `flutter test` PASS (83 tests)
 
 ### Open
 
-- [ ] Caregiver routine editor: add/edit/remove steps (title EN/UR, time, icon)
-- [ ] Per-step optional audio cue (recorded or TTS phrase)
+- [x] Caregiver routine editor: add/edit/remove steps (title EN/UR, time, icon) — done
+- [x] Per-step optional audio cue (TTS phrase; spoken instead of the title on announcements) — done
 - [ ] OS-level local notification reminders ⛔ BLOCKED: needs `flutter_local_notifications` + device build verification
-- [ ] Transition countdown warnings ("5 minutes left") with configurable lead time
-- [ ] Flexibility training: parent-approved controlled change inserted into known routine + positive reinforcement flow
+- [x] Transition countdown warnings ("5 minutes left") with configurable lead time — done
+- [x] Flexibility training: parent-approved controlled change inserted into known routine + positive reinforcement flow — done
 
 ## Module 5 — Interest-Based Learning (P2)
 

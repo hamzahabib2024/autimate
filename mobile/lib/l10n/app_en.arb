@@ -123,6 +123,41 @@
   "expressionComeCloserHint": "Come closer to the camera",
   "expressionEyesHint": "Try opening your eyes",
   "expressionLookStraightHint": "Look straight at the camera",
+  "routineEditTooltip": "Edit routine",
+  "routineEditorTitle": "Routine editor",
+  "routineAddStep": "Add step",
+  "stepTitleEnLabel": "Title (English)",
+  "stepTitleUrLabel": "Title (Urdu)",
+  "stepCueEnLabel": "Spoken cue (English, optional)",
+  "stepCueUrLabel": "Spoken cue (Urdu, optional)",
+  "stepTimeLabel": "Time",
+  "stepIconLabel": "Icon",
+  "leadMinutesLabel": "Warn minutes before each step",
+  "countdownWarning": "{minutes} minutes left: {title}",
+  "@countdownWarning": {
+    "placeholders": {
+      "minutes": { "type": "int" },
+      "title": { "type": "String" }
+    }
+  },
+  "flexibilityTitle": "Friendly changes",
+  "flexibilityExplanation": "Plan one small change to a known step for today so your child can practise coping with surprises.",
+  "flexibilityPickStep": "Step to change",
+  "flexibilityNewLabelEn": "New label (English, optional)",
+  "flexibilityNewLabelUr": "New label (Urdu, optional)",
+  "flexibilityApply": "Plan today's change",
+  "flexibilityClear": "Remove planned change",
+  "flexibilityPlannedToday": "A friendly change is planned for today.",
+  "flexibilityBadge": "Planned change",
+  "flexibilityWellDone": "Changes can be fun! Well done.",
+  "routineDeleteStepTitle": "Remove this step?",
+  "routineDeleteStepBody": "\"{title}\" will no longer appear in the daily routine.",
+  "@routineDeleteStepBody": {
+    "placeholders": {
+      "title": { "type": "String" }
+    }
+  },
+  "deleteAction": "Remove",
   "routineTitle": "Routine",
   "oneStepAtATime": "One step at a time",
   "routineProgressLabel": "Routine progress",

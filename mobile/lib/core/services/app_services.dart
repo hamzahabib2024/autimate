@@ -114,6 +114,9 @@ class AppState extends ChangeNotifier {
   bool _onboarded = false;
   bool _offline = false;
   int _stars = 12;
+
+  /// Lead time in minutes for transition countdown warnings.
+  int _leadMinutes = 5;
   StreamSubscription<bool>? _connectivitySubscription;
 
   Locale get locale => _locale;
@@ -124,6 +127,16 @@ class AppState extends ChangeNotifier {
   bool get offline => _offline;
   bool get hasParentPin => _parentPinHash != null;
   int get stars => _stars;
+
+  /// Transition-warning lead time in minutes (0 disables countdowns).
+  int get transitionLeadMinutes => _leadMinutes;
+
+  void setTransitionLeadMinutes(int minutes) {
+    if (minutes == _leadMinutes || minutes < 0 || minutes > 60) return;
+    _leadMinutes = minutes;
+    unawaited(persistSettings());
+    notifyListeners();
+  }
 
   String? _parentPinHash;
 
@@ -227,6 +240,8 @@ class AppState extends ChangeNotifier {
     if (childMode != null) _childMode = childMode == 'true';
     final onboarded = await store.read(_keyOnboarded);
     if (onboarded != null) _onboarded = onboarded == 'true';
+    final lead = int.tryParse(await store.read(_keyLeadMinutes) ?? '');
+    if (lead != null && lead >= 0 && lead <= 60) _leadMinutes = lead;
     _parentPinHash = await store.read(_keyParentPinHash);
     final childrenJson = await store.read(_keyChildren);
     if (childrenJson != null) {
@@ -262,6 +277,7 @@ class AppState extends ChangeNotifier {
     await store.write(_keyStars, '$_stars');
     await store.write(_keyChildMode, '$_childMode');
     await store.write(_keyOnboarded, '$_onboarded');
+    await store.write(_keyLeadMinutes, '$_leadMinutes');
     final pinHash = _parentPinHash;
     if (pinHash == null) {
       await store.remove(_keyParentPinHash);
@@ -280,6 +296,7 @@ class AppState extends ChangeNotifier {
   static const String _keyStars = 'autimate.settings.stars';
   static const String _keyChildMode = 'autimate.settings.childMode';
   static const String _keyOnboarded = 'autimate.settings.onboarded';
+  static const String _keyLeadMinutes = 'autimate.routine.leadMinutes';
   static const String _keyParentPinHash = 'autimate.settings.parentPinHash';
   static const String _keyChildren = 'autimate.children';
   static const String _keySelectedChild = 'autimate.selectedChild';
@@ -331,6 +348,9 @@ class _NoopRoutineRepository implements RoutineRepository {
   Future<List<RoutineStep>> getSteps() async => const [];
 
   @override
+  Future<void> saveSteps(List<RoutineStep> steps) async {}
+
+  @override
   Future<Set<String>> completedStepIdsFor(String childId, DateTime day) async =>
       <String>{};
 
@@ -340,5 +360,19 @@ class _NoopRoutineRepository implements RoutineRepository {
     DateTime day,
     String stepId,
     bool completed,
+  ) async {}
+
+  @override
+  Future<FlexibilityChange?> flexibilityChangeFor(
+    String childId,
+    DateTime day,
+  ) async =>
+      null;
+
+  @override
+  Future<void> setFlexibilityChange(
+    String childId,
+    DateTime day,
+    FlexibilityChange? change,
   ) async {}
 }
