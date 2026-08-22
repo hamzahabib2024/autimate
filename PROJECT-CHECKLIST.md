@@ -8,7 +8,7 @@ Status legend:
 - `[ ]` open
 - `⛔ BLOCKED:` prefix = cannot proceed until the stated external dependency exists (device, SDK, credentials)
 
-Current verified state: `flutter analyze` PASS · `flutter test` PASS (98 tests) · branch `AI`
+Current verified state: `flutter analyze` PASS · `flutter test` PASS (108 tests) · branch `AI`
 
 ---
 
@@ -109,11 +109,11 @@ Current verified state: `flutter analyze` PASS · `flutter test` PASS (98 tests)
 
 ## Module 5 — Interest-Based Learning (P2)
 
-- [ ] Interest profile editor (cars, animals, trains, space, …)
-- [ ] Deterministic interest → topic mapping table
-- [ ] Learning path screen ordered by mapped topics
-- [ ] Themed activities/quizzes with authored bilingual content
-- [ ] Explainable mapping shown to caregivers (why this activity)
+- [x] Interest profile editor (cars, animals, trains, space) — done
+- [x] Deterministic interest → topic mapping table — done
+- [x] Learning path screen ordered by mapped topics — done
+- [x] Themed activities/quizzes with authored bilingual content — done
+- [x] Explainable mapping shown to caregivers ("{name} likes {interest}" on every activity card) — done
 
 ## Module 6 — Sensory-Friendly Environment
 
