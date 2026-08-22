@@ -9,6 +9,7 @@ import 'tts_service.dart';
 import '../data/local_store.dart';
 import '../../features/communication/domain/card_ranker.dart';
 import '../../features/emotion_recognition/domain/emotion_activity_engine.dart';
+import '../../features/learning/domain/interest_repository.dart';
 import '../../features/progress/domain/progress_models.dart';
 import '../../features/routines/domain/routine_models.dart';
 import '../../features/routines/domain/routine_repository.dart';
@@ -79,6 +80,7 @@ class AppState extends ChangeNotifier {
     this.ttsService, {
     ProgressRepository? progressRepository,
     RoutineRepository? routineRepository,
+    InterestRepository? interestRepository,
     KeyValueStore? settingsStore,
     ConnectivityService? connectivityService,
   }) : _children = const [
@@ -90,9 +92,11 @@ class AppState extends ChangeNotifier {
        ],
        progressRepository =
             progressRepository ?? InMemoryProgressRepository(),
-       routineRepository = routineRepository ?? _defaultRoutineRepository(),
-       _settings = settingsStore,
-       _connectivity = connectivityService;
+        routineRepository = routineRepository ?? _defaultRoutineRepository(),
+        interestRepository =
+            interestRepository ?? _NoopInterestRepository(),
+        _settings = settingsStore,
+        _connectivity = connectivityService;
 
   static RoutineRepository _defaultRoutineRepository() {
     // Overridden by composition root; keeps tests and previews working.
@@ -103,6 +107,7 @@ class AppState extends ChangeNotifier {
   final TtsService ttsService;
   final ProgressRepository progressRepository;
   final RoutineRepository routineRepository;
+  final InterestRepository interestRepository;
   final KeyValueStore? _settings;
   final ConnectivityService? _connectivity;
   List<ChildProfile> _children;
@@ -343,6 +348,14 @@ class AppState extends ChangeNotifier {
 
 /// Fallback used only when no repository is supplied at the composition
 /// root; keeps default constructors usable in widget previews.
+class _NoopInterestRepository implements InterestRepository {
+  @override
+  Future<Set<String>> interestsFor(String childId) async => <String>{};
+
+  @override
+  Future<void> setInterests(String childId, Set<String> ids) async {}
+}
+
 class _NoopRoutineRepository implements RoutineRepository {
   @override
   Future<List<RoutineStep>> getSteps() async => const [];
