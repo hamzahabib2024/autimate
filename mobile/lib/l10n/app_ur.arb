@@ -89,6 +89,41 @@
   "expressionComeCloserHint": "کیمرے کے قریب آئیں",
   "expressionEyesHint": "آنکھیں کھولنے کی کوشش کریں",
   "expressionLookStraightHint": "کیمرے کی طرف سیدھا دیکھیں",
+  "routineEditTooltip": "روٹین ترتیب دیں",
+  "routineEditorTitle": "روٹین ایڈیٹر",
+  "routineAddStep": "نیا مرحلہ شامل کریں",
+  "stepTitleEnLabel": "عنوان (انگریزی)",
+  "stepTitleUrLabel": "عنوان (اردو)",
+  "stepCueEnLabel": "بولنے کا جملہ (انگریزی، اختیاری)",
+  "stepCueUrLabel": "بولنے کا جملہ (اردو، اختیاری)",
+  "stepTimeLabel": "وقت",
+  "stepIconLabel": "علامت",
+  "leadMinutesLabel": "ہر مرحلے سے کتنے منٹ پہلے اطلاع دیں",
+  "countdownWarning": "{minutes} منٹ باقی ہیں: {title}",
+  "@countdownWarning": {
+    "placeholders": {
+      "minutes": { "type": "int" },
+      "title": { "type": "String" }
+    }
+  },
+  "flexibilityTitle": "دوستانہ تبدیلیاں",
+  "flexibilityExplanation": "آج کے کسی معروف مرحلے میں ایک چھوٹی منصوبہ بند تبدیلی ڈالیں تاکہ بچہ حیرانی سنبھالنے کی مشق کرے۔",
+  "flexibilityPickStep": "تبدیلی کا مرحلہ",
+  "flexibilityNewLabelEn": "نیا عنوان (انگریزی، اختیاری)",
+  "flexibilityNewLabelUr": "نیا عنوان (اردو، اختیاری)",
+  "flexibilityApply": "آج کی تبدیلی مقرر کریں",
+  "flexibilityClear": "منصوبہ بند تبدیلی ہٹائیں",
+  "flexibilityPlannedToday": "آج ایک دوستانہ تبدیلی مقرر ہے۔",
+  "flexibilityBadge": "منصوبہ بند تبدیلی",
+  "flexibilityWellDone": "تبدیلیاں مزے دار ہو سکتی ہیں! شاباش۔",
+  "routineDeleteStepTitle": "کیا یہ مرحلہ ہٹا دیں؟",
+  "routineDeleteStepBody": "«{title}» روزانہ کی روٹین میں اب نہیں دکھے گا۔",
+  "@routineDeleteStepBody": {
+    "placeholders": {
+      "title": { "type": "String" }
+    }
+  },
+  "deleteAction": "ہٹائیں",
   "routineTitle": "روٹین",
   "oneStepAtATime": "ایک وقت میں ایک قدم",
   "routineProgressLabel": "روٹین کی پیش رفت",

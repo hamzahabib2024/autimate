@@ -289,6 +289,84 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expressionLookStraightHint => 'Look straight at the camera';
 
   @override
+  String get routineEditTooltip => 'Edit routine';
+
+  @override
+  String get routineEditorTitle => 'Routine editor';
+
+  @override
+  String get routineAddStep => 'Add step';
+
+  @override
+  String get stepTitleEnLabel => 'Title (English)';
+
+  @override
+  String get stepTitleUrLabel => 'Title (Urdu)';
+
+  @override
+  String get stepCueEnLabel => 'Spoken cue (English, optional)';
+
+  @override
+  String get stepCueUrLabel => 'Spoken cue (Urdu, optional)';
+
+  @override
+  String get stepTimeLabel => 'Time';
+
+  @override
+  String get stepIconLabel => 'Icon';
+
+  @override
+  String get leadMinutesLabel => 'Warn minutes before each step';
+
+  @override
+  String countdownWarning(int minutes, String title) {
+    return '$minutes minutes left: $title';
+  }
+
+  @override
+  String get flexibilityTitle => 'Friendly changes';
+
+  @override
+  String get flexibilityExplanation =>
+      'Plan one small change to a known step for today so your child can practise coping with surprises.';
+
+  @override
+  String get flexibilityPickStep => 'Step to change';
+
+  @override
+  String get flexibilityNewLabelEn => 'New label (English, optional)';
+
+  @override
+  String get flexibilityNewLabelUr => 'New label (Urdu, optional)';
+
+  @override
+  String get flexibilityApply => 'Plan today\'s change';
+
+  @override
+  String get flexibilityClear => 'Remove planned change';
+
+  @override
+  String get flexibilityPlannedToday =>
+      'A friendly change is planned for today.';
+
+  @override
+  String get flexibilityBadge => 'Planned change';
+
+  @override
+  String get flexibilityWellDone => 'Changes can be fun! Well done.';
+
+  @override
+  String get routineDeleteStepTitle => 'Remove this step?';
+
+  @override
+  String routineDeleteStepBody(String title) {
+    return '\"$title\" will no longer appear in the daily routine.';
+  }
+
+  @override
+  String get deleteAction => 'Remove';
+
+  @override
   String get routineTitle => 'Routine';
 
   @override
