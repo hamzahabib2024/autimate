@@ -7,13 +7,13 @@ import '../../authentication/presentation/auth_screen.dart';
 import '../../communication/presentation/aac_screen.dart';
 import '../../emotion_recognition/presentation/emotion_screen.dart';
 import '../../gamification/presentation/gamification_screen.dart';
+import '../../learning/presentation/learning_path_screen.dart';
 import '../../parent_dashboard/presentation/dashboard_screen.dart';
 import '../../routines/presentation/routines_screen.dart';
 import '../../sensory_support/presentation/sensory_support_screen.dart';
 import '../../settings/presentation/parent_gate_screen.dart';
 import '../../settings/presentation/settings_screen.dart';
 import '../../social_communication/presentation/social_stories_screen.dart';
-import 'feature_screen.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({required this.appState, super.key});
@@ -172,10 +172,8 @@ class _AppShellState extends State<AppShell> {
                   icon: Icons.lightbulb_outline,
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (_) => FeatureScreen(
-                        title: l10n.learningPathTileTitle,
-                        description: l10n.interestLearningDescription,
-                        icon: Icons.lightbulb_outline,
+                      builder: (_) => LearningPathScreen(
+                        appState: widget.appState,
                       ),
                     ),
                   ),

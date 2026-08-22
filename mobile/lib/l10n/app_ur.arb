@@ -124,6 +124,23 @@
     }
   },
   "deleteAction": "ہٹائیں",
+  "learningEditorTitle": "دلچسپیاں",
+  "learningPickHint": "وہ چنیں جو آپ کا بچہ پسند کرتا ہے۔ سیکھنے کا راستہ اسی مطابق بدلے گا۔",
+  "learningWhy": "{name} کو {interest} پسند ہیں",
+  "@learningWhy": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "interest": { "type": "String" }
+    }
+  },
+  "learningPathEmptyHint": "سرگرمیاں دکھانے کے لیے چند دلچسپیاں منتخب کریں۔",
+  "learningQuestionProgress": "سوال {total} میں سے {done}",
+  "@learningQuestionProgress": {
+    "placeholders": {
+      "done": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
   "routineTitle": "روٹین",
   "oneStepAtATime": "ایک وقت میں ایک قدم",
   "routineProgressLabel": "روٹین کی پیش رفت",

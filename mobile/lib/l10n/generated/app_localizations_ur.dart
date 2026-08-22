@@ -361,6 +361,27 @@ class AppLocalizationsUr extends AppLocalizations {
   String get deleteAction => 'ہٹائیں';
 
   @override
+  String get learningEditorTitle => 'دلچسپیاں';
+
+  @override
+  String get learningPickHint =>
+      'وہ چنیں جو آپ کا بچہ پسند کرتا ہے۔ سیکھنے کا راستہ اسی مطابق بدلے گا۔';
+
+  @override
+  String learningWhy(String name, String interest) {
+    return '$name کو $interest پسند ہیں';
+  }
+
+  @override
+  String get learningPathEmptyHint =>
+      'سرگرمیاں دکھانے کے لیے چند دلچسپیاں منتخب کریں۔';
+
+  @override
+  String learningQuestionProgress(int done, int total) {
+    return 'سوال $total میں سے $done';
+  }
+
+  @override
   String get routineTitle => 'روٹین';
 
   @override

@@ -367,6 +367,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteAction => 'Remove';
 
   @override
+  String get learningEditorTitle => 'Interests';
+
+  @override
+  String get learningPickHint =>
+      'Choose what your child loves. The learning path updates to match.';
+
+  @override
+  String learningWhy(String name, String interest) {
+    return '$name likes $interest';
+  }
+
+  @override
+  String get learningPathEmptyHint =>
+      'Pick a few interests so activities can appear here.';
+
+  @override
+  String learningQuestionProgress(int done, int total) {
+    return 'Question $done of $total';
+  }
+
+  @override
   String get routineTitle => 'Routine';
 
   @override

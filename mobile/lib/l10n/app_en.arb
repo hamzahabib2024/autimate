@@ -158,6 +158,23 @@
     }
   },
   "deleteAction": "Remove",
+  "learningEditorTitle": "Interests",
+  "learningPickHint": "Choose what your child loves. The learning path updates to match.",
+  "learningWhy": "{name} likes {interest}",
+  "@learningWhy": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "interest": { "type": "String" }
+    }
+  },
+  "learningPathEmptyHint": "Pick a few interests so activities can appear here.",
+  "learningQuestionProgress": "Question {done} of {total}",
+  "@learningQuestionProgress": {
+    "placeholders": {
+      "done": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
   "routineTitle": "Routine",
   "oneStepAtATime": "One step at a time",
   "routineProgressLabel": "Routine progress",

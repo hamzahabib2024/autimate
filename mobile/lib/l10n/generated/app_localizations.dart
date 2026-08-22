@@ -746,6 +746,36 @@ abstract class AppLocalizations {
   /// **'Remove'**
   String get deleteAction;
 
+  /// No description provided for @learningEditorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Interests'**
+  String get learningEditorTitle;
+
+  /// No description provided for @learningPickHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose what your child loves. The learning path updates to match.'**
+  String get learningPickHint;
+
+  /// No description provided for @learningWhy.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} likes {interest}'**
+  String learningWhy(String name, String interest);
+
+  /// No description provided for @learningPathEmptyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a few interests so activities can appear here.'**
+  String get learningPathEmptyHint;
+
+  /// No description provided for @learningQuestionProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Question {done} of {total}'**
+  String learningQuestionProgress(int done, int total);
+
   /// No description provided for @routineTitle.
   ///
   /// In en, this message translates to:
