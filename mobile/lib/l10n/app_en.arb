@@ -175,6 +175,18 @@
       "total": { "type": "int" }
     }
   },
+  "breathingTitle": "Breathe with me",
+  "breatheIn": "Breathe in",
+  "breatheHold": "Hold",
+  "breatheOut": "Breathe out",
+  "breathingStart": "Begin",
+  "breathingStop": "Rest",
+  "sensoryBreathingSubtitle": "A slow pace circle for calm breathing.",
+  "calmingTitle": "Calm space",
+  "calmingHint": "Soft shapes drift slowly. Nothing to do here.",
+  "calmSoundOn": "Gentle sound on",
+  "calmSoundOff": "Gentle sound off",
+  "sensoryCalmingSubtitle": "Slow pastel patterns to settle the eyes.",
   "routineTitle": "Routine",
   "oneStepAtATime": "One step at a time",
   "routineProgressLabel": "Routine progress",

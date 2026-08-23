@@ -388,6 +388,44 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get breathingTitle => 'Breathe with me';
+
+  @override
+  String get breatheIn => 'Breathe in';
+
+  @override
+  String get breatheHold => 'Hold';
+
+  @override
+  String get breatheOut => 'Breathe out';
+
+  @override
+  String get breathingStart => 'Begin';
+
+  @override
+  String get breathingStop => 'Rest';
+
+  @override
+  String get sensoryBreathingSubtitle =>
+      'A slow pace circle for calm breathing.';
+
+  @override
+  String get calmingTitle => 'Calm space';
+
+  @override
+  String get calmingHint => 'Soft shapes drift slowly. Nothing to do here.';
+
+  @override
+  String get calmSoundOn => 'Gentle sound on';
+
+  @override
+  String get calmSoundOff => 'Gentle sound off';
+
+  @override
+  String get sensoryCalmingSubtitle =>
+      'Slow pastel patterns to settle the eyes.';
+
+  @override
   String get routineTitle => 'Routine';
 
   @override

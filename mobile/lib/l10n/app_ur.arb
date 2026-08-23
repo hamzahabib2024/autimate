@@ -141,6 +141,18 @@
       "total": { "type": "int" }
     }
   },
+  "breathingTitle": "میرے ساتھ سانس لو",
+  "breatheIn": "سانس اندر",
+  "breatheHold": "روکے رکھیں",
+  "breatheOut": "سانس باہر",
+  "breathingStart": "شروع کریں",
+  "breathingStop": "آرام",
+  "sensoryBreathingSubtitle": "پرسکون سانس کے لیے آہستہ گولائی۔",
+  "calmingTitle": "پرسکون جگہ",
+  "calmingHint": "نرم شکلیں آہستہ تیرتی ہیں۔ یہاں کچھ کرنا ضروری نہیں۔",
+  "calmSoundOn": "نرم آواز آن",
+  "calmSoundOff": "نرم آواز بند",
+  "sensoryCalmingSubtitle": "آنکھوں کو ٹھیک رکھنے کے لیے آہستہ ہلکے نقشے۔",
   "routineTitle": "روٹین",
   "oneStepAtATime": "ایک وقت میں ایک قدم",
   "routineProgressLabel": "روٹین کی پیش رفت",
