@@ -8,7 +8,7 @@ Status legend:
 - `[ ]` open
 - `⛔ BLOCKED:` prefix = cannot proceed until the stated external dependency exists (device, SDK, credentials)
 
-Current verified state: `flutter analyze` PASS · `flutter test` PASS (126 tests) · branch `AI`
+Current verified state: `flutter analyze` PASS · `flutter test` PASS (135 tests) · branch `AI`
 
 ---
 
@@ -157,9 +157,9 @@ Current verified state: `flutter analyze` PASS · `flutter test` PASS (126 tests
 
 ### Open
 
-- [ ] Support-level picker UI in Settings wired to the engine (tile is currently a placeholder)
-- [ ] Parent lock toggle UI persisting the chosen level
-- [ ] Audio assistance dimension (spoken question at beginner level)
+- [x] Support-level picker UI in Settings wired to the engine (tile is currently a placeholder) — done
+- [x] Parent lock toggle UI persisting the chosen level — done
+- [x] Audio assistance dimension (spoken question at beginner level) — done
 - [ ] Reward-frequency dimension per level
 - [ ] Level changes reflected live in running sessions (restart prompt)
 
