@@ -58,6 +58,7 @@ class LocalProgressRepository implements ProgressRepository {
       'note': note.note,
       'authorRole': note.authorRole,
       'createdAt': note.createdAt.toIso8601String(),
+      'tag': note.tag,
     });
     await _writeList(_observationsKey, records);
   }
@@ -144,5 +145,6 @@ class LocalProgressRepository implements ProgressRepository {
         authorRole: map['authorRole'] as String? ?? 'parent',
         createdAt: DateTime.tryParse(map['createdAt'] as String? ?? '') ??
             _clock(),
+        tag: map['tag'] as String? ?? 'general',
       );
 }

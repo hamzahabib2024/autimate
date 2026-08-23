@@ -48,6 +48,10 @@ void main() {
   testWidgets('dashboard reflects recorded activities instead of dummy data', (
     tester,
   ) async {
+    tester.view.physicalSize = const Size(900, 2400);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
     await appState.progressRepository.recordSession(
       SessionResult(
         childId: 'demo-child',
@@ -73,6 +77,10 @@ void main() {
   testWidgets('caregiver can log an observation from the dashboard', (
     tester,
   ) async {
+    tester.view.physicalSize = const Size(900, 2400);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
     await tester.pumpWidget(testApp(DashboardScreen(appState: appState)));
     await tester.pumpAndSettle();
 

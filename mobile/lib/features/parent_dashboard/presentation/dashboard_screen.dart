@@ -3,6 +3,7 @@
 import '../../../core/services/app_services.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../progress/domain/progress_models.dart';
+import '../domain/emotion_trend.dart';
 import '../domain/weekly_progress_aggregator.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -16,6 +17,7 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   final WeeklyProgressAggregator _aggregator = const WeeklyProgressAggregator();
+  final EmotionTrendSeries _trendSeries = const EmotionTrendSeries();
 
   late Future<_DashboardData> _data;
   List<ObservationNote> _observations = [];
@@ -63,35 +65,63 @@ class _DashboardScreenState extends State<DashboardScreen> {
         totalSteps: steps.length,
       ),
       stars: widget.appState.stars,
+      trend: _trendSeries.build(sessions, DateTime.now()),
     );
   }
 
   Future<void> _addObservation() async {
     final l10n = AppLocalizations.of(context);
     final controller = TextEditingController();
+    var tag = ObservationNote.knownTags.first;
     final note = await showDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.logObservation),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          maxLines: 3,
-          decoration: InputDecoration(hintText: l10n.observationHint),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: Text(l10n.logObservation),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                key: const ValueKey('observation-text'),
+                controller: controller,
+                autofocus: true,
+                maxLines: 3,
+                decoration: InputDecoration(hintText: l10n.observationHint),
+              ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<String>(
+                key: const ValueKey('observation-tag'),
+                initialValue: tag,
+                decoration: InputDecoration(labelText: l10n.observationTagLabel),
+                items: [
+                  for (final known in ObservationNote.knownTags)
+                    DropdownMenuItem(
+                      value: known,
+                      child: Text(_tagLabel(l10n, known)),
+                    ),
+                ],
+                onChanged: (value) {
+                  if (value == null) return;
+                  setDialogState(() => tag = value);
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(l10n.cancel),
+            ),
+            FilledButton(
+              key: const ValueKey('observation-save'),
+              onPressed: () {
+                final text = controller.text.trim();
+                Navigator.of(context).pop(text.isEmpty ? null : text);
+              },
+              child: Text(l10n.save),
+            ),
+          ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () {
-              final text = controller.text.trim();
-              Navigator.of(context).pop(text.isEmpty ? null : text);
-            },
-            child: Text(l10n.save),
-          ),
-        ],
       ),
     );
     if (note == null) return;
@@ -101,6 +131,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         note: note,
         authorRole: 'parent',
         createdAt: DateTime.now(),
+        tag: tag,
       ),
     );
     final refreshed = _load();
@@ -199,6 +230,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 16),
+                  _TrendCard(
+                    trend: data.trend,
+                    title: l10n.emotionTrendTitle,
+                    emptyHint: l10n.noEmotionDataYet,
+                    latestLabel: (accuracy) => l10n.emotionTrendLatest(
+                      '${(accuracy * 100).round()}%',
+                    ),
+                    dayLabels: [
+                      for (final point in data.trend)
+                        _weekdayLabel(point.day.weekday),
+                    ],
+                  ),
                 ],
               );
             },
@@ -224,6 +268,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     MaterialLocalizations.of(context).formatFullDate(
                       note.createdAt,
                     ),
+                  ),
+                  trailing: Chip(
+                    key: ValueKey('note-tag-${note.tag}'),
+                    label: Text(_tagLabel(l10n, note.tag)),
                   ),
                 ),
               ),
@@ -251,6 +299,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
     DateTime.saturday => 'S',
     _ => 'S',
   };
+
+  String _tagLabel(AppLocalizations l10n, String tag) => switch (tag) {
+    'mood' => l10n.tagMood,
+    'behaviour' => l10n.tagBehaviour,
+    'sensory' => l10n.tagSensory,
+    'communication' => l10n.tagCommunication,
+    _ => l10n.tagGeneral,
+  };
 }
 
 class _DashboardData {
@@ -259,15 +315,149 @@ class _DashboardData {
     required this.activityCount,
     required this.routineRatio,
     required this.stars,
+    required this.trend,
   });
 
   _DashboardData.empty()
-    : this(buckets: const [], activityCount: 0, routineRatio: 0, stars: 0);
+    : this(
+        buckets: const [],
+        activityCount: 0,
+        routineRatio: 0,
+        stars: 0,
+        trend: const [],
+      );
 
   final List<DailyActivityBucket> buckets;
   final int activityCount;
   final double routineRatio;
   final int stars;
+  final List<EmotionTrendPoint> trend;
+}
+
+/// Score/total accuracy over the last seven days as a simple line. Gaps
+/// (days without emotion sessions) are skipped rather than drawn as zero.
+class _TrendCard extends StatelessWidget {
+  const _TrendCard({
+    required this.trend,
+    required this.title,
+    required this.emptyHint,
+    required this.latestLabel,
+    required this.dayLabels,
+  });
+
+  final List<EmotionTrendPoint> trend;
+  final String title;
+  final String emptyHint;
+  final String Function(double accuracy) latestLabel;
+  final List<String> dayLabels;
+
+  @override
+  Widget build(BuildContext context) {
+    final plotted = [
+      for (var i = 0; i < trend.length; i++)
+        if (trend[i].accuracy != null) (index: i, point: trend[i]),
+    ];
+    return Card(
+      child: SizedBox(
+        height: 190,
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(child: Text(title)),
+                  if (plotted.isNotEmpty)
+                    Text(
+                      latestLabel(plotted.last.point.accuracy!),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                ],
+              ),
+              const Spacer(),
+              SizedBox(
+                key: const ValueKey('emotion-trend'),
+                height: 80,
+                width: double.infinity,
+                child:
+                    plotted.isEmpty
+                        ? Text(emptyHint, textAlign: TextAlign.center)
+                        : CustomPaint(
+                          painter: _TrendPainter(
+                            plottedIndexes: [
+                              for (final entry in plotted) entry.index,
+                            ],
+                            values: [
+                              for (final entry in plotted)
+                                entry.point.accuracy!,
+                            ],
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+              ),
+              const SizedBox(height: 4),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [for (final label in dayLabels) Text(label)],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TrendPainter extends CustomPainter {
+  const _TrendPainter({
+    required this.plottedIndexes,
+    required this.values,
+    required this.color,
+  });
+
+  final List<int> plottedIndexes;
+  final List<double> values;
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (values.isEmpty) return;
+    final slots = plottedIndexes.last + 1;
+    Offset slotOffset(int slot, double value) => Offset(
+      slots == 1 ? size.width / 2 : (slot / (slots - 1)) * size.width,
+      size.height * (1 - value.clamp(0.0, 1.0)),
+    );
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.5
+      ..strokeCap = StrokeCap.round;
+    if (values.length == 1) {
+      canvas.drawCircle(slotOffset(plottedIndexes.first, values.first), 4, paint..style = PaintingStyle.fill);
+      return;
+    }
+    final path = Path()
+      ..moveTo(
+        slotOffset(plottedIndexes.first, values.first).dx,
+        slotOffset(plottedIndexes.first, values.first).dy,
+      );
+    for (var i = 1; i < values.length; i++) {
+      final to = slotOffset(plottedIndexes[i], values[i]);
+      path.lineTo(to.dx, to.dy);
+    }
+    canvas.drawPath(path, paint);
+    final dot = Paint()..color = color;
+    for (var i = 0; i < values.length; i++) {
+      canvas.drawCircle(slotOffset(plottedIndexes[i], values[i]), 3.5, dot);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_TrendPainter oldDelegate) =>
+      oldDelegate.values != values || oldDelegate.color != color;
 }
 
 class _Metric extends StatelessWidget {

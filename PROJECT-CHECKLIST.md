@@ -8,7 +8,7 @@ Status legend:
 - `[ ]` open
 - `⛔ BLOCKED:` prefix = cannot proceed until the stated external dependency exists (device, SDK, credentials)
 
-Current verified state: `flutter analyze` PASS · `flutter test` PASS (116 tests) · branch `AI`
+Current verified state: `flutter analyze` PASS · `flutter test` PASS (126 tests) · branch `AI`
 
 ---
 
@@ -142,9 +142,9 @@ Current verified state: `flutter analyze` PASS · `flutter test` PASS (116 tests
 
 ### Open
 
-- [ ] Emotion accuracy-over-time chart (score/total trend line)
-- [ ] Observation tags (optional category per note)
-- [ ] Child profile management UI (create/edit profiles)
+- [x] Emotion accuracy-over-time chart (score/total trend line) — done
+- [x] Observation tags (optional category per note) — done
+- [x] Child profile management UI (create/edit profiles) — done
 - [ ] Teacher/therapist read + observe access limited to assigned children ⛔ BLOCKED: Firebase Auth roles
 
 ## Module 8 — Adaptive Support Levels

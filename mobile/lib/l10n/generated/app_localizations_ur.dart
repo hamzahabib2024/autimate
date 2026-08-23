@@ -420,6 +420,39 @@ class AppLocalizationsUr extends AppLocalizations {
       'آنکھوں کو ٹھیک رکھنے کے لیے آہستہ ہلکے نقشے۔';
 
   @override
+  String get emotionTrendTitle => 'جذبات کی درستگی، گزشتہ ۷ دن';
+
+  @override
+  String emotionTrendLatest(String percent) {
+    return '$percent تازہ ترین';
+  }
+
+  @override
+  String get noEmotionDataYet =>
+      'گزشتہ ۷ دنوں میں ابھی کوئی جذباتی سرگرمی نہیں ہوئی۔';
+
+  @override
+  String get observationTagLabel => 'قسم';
+
+  @override
+  String get tagGeneral => 'عمومی';
+
+  @override
+  String get tagMood => 'مزاج';
+
+  @override
+  String get tagBehaviour => 'رویہ';
+
+  @override
+  String get tagSensory => 'حسی';
+
+  @override
+  String get tagCommunication => 'رابطہ';
+
+  @override
+  String get editProfileTitle => 'پروفائل میں ترمیم';
+
+  @override
   String get routineTitle => 'روٹین';
 
   @override

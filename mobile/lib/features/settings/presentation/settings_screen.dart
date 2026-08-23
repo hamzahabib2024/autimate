@@ -15,19 +15,27 @@ class SettingsScreen extends StatelessWidget {
     _ => l10n.beginnerSupportLevel,
   };
 
-  Future<void> _addChildDialog(BuildContext context, AppLocalizations l10n) {
-    final nameController = TextEditingController();
-    var level = 'Beginner';
+  Future<void> _childDialog(
+    BuildContext context,
+    AppLocalizations l10n, {
+    ChildProfile? existing,
+  }) {
+    final nameController = TextEditingController(text: existing?.name);
+    var level = existing?.supportLevel ?? 'Beginner';
     return showDialog<void>(
       context: context,
       builder: (dialogContext) => StatefulBuilder(
         builder: (dialogContext, setDialogState) => AlertDialog(
-          title: Text(l10n.addChildLabel),
+          title: Text(
+            existing == null ? l10n.addChildLabel : l10n.editProfileTitle,
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
-                key: const ValueKey('add-child-name'),
+                key: ValueKey(
+                  existing == null ? 'add-child-name' : 'edit-child-name',
+                ),
                 controller: nameController,
                 autofocus: true,
                 decoration: InputDecoration(
@@ -60,11 +68,21 @@ class SettingsScreen extends StatelessWidget {
               child: Text(l10n.cancel),
             ),
             FilledButton(
-              key: const ValueKey('add-child-save'),
+              key: ValueKey(
+                existing == null ? 'add-child-save' : 'edit-child-save',
+              ),
               onPressed: () {
                 final name = nameController.text.trim();
                 if (name.isEmpty) return;
-                appState.addChild(name: name, supportLevel: level);
+                if (existing == null) {
+                  appState.addChild(name: name, supportLevel: level);
+                } else {
+                  appState.updateChild(
+                    id: existing.id,
+                    name: name,
+                    supportLevel: level,
+                  );
+                }
                 Navigator.of(dialogContext).pop();
               },
               child: Text(l10n.save),
@@ -155,6 +173,13 @@ class SettingsScreen extends StatelessWidget {
                         value: child.id,
                         title: Text(child.name),
                         subtitle: Text(_levelLabel(l10n, child.supportLevel)),
+                        secondary: IconButton(
+                          key: ValueKey('edit-child-${child.id}'),
+                          icon: const Icon(Icons.edit_outlined),
+                          tooltip: l10n.editProfileTitle,
+                          onPressed: () =>
+                              _childDialog(context, l10n, existing: child),
+                        ),
                       ),
                   ],
                 ),
@@ -163,7 +188,7 @@ class SettingsScreen extends StatelessWidget {
                 key: const ValueKey('add-child-tile'),
                 leading: const Icon(Icons.person_add_alt_outlined),
                 title: Text(l10n.addChildLabel),
-                onTap: () => _addChildDialog(context, l10n),
+                onTap: () => _childDialog(context, l10n),
               ),
               const Divider(),
               ListTile(
