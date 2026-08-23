@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/services/app_services.dart';
 import '../../../l10n/generated/app_localizations.dart';
-import '../../home/presentation/feature_screen.dart';
+import 'support_level_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({required this.appState, super.key});
@@ -138,11 +138,7 @@ class SettingsScreen extends StatelessWidget {
                 subtitle: Text(l10n.supportLevelSubtitle),
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (_) => FeatureScreen(
-                      title: l10n.supportLevel,
-                      description: l10n.supportLevelDescription,
-                      icon: Icons.tune,
-                    ),
+                    builder: (_) => SupportLevelScreen(appState: appState),
                   ),
                 ),
               ),
