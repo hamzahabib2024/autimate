@@ -130,8 +130,11 @@ class _LearningPathScreenState extends State<LearningPathScreen> {
                           l10n.learningWhy(
                             widget.appState.selectedChild.name,
                             interestCatalog
-                                .firstWhere((interest) =>
-                                    interest.id == path[i].viaInterestId)
+                                .firstWhere(
+                                  (interest) =>
+                                      interest.id == path[i].viaInterestId,
+                                  orElse: () => interestCatalog.first,
+                                )
                                 .labelFor(locale),
                           ),
                         ),

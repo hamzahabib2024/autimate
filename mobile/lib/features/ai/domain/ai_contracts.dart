@@ -68,3 +68,27 @@ class AutoGrantCameraPermissions implements CameraPermissionService {
   Future<CameraPermissionStatus> request() async =>
       CameraPermissionStatus.granted;
 }
+
+/// Optional gentle-sound boundary. Implementations must keep volume low,
+/// never loop automatically, and only play after an explicit user action;
+/// the OS-audio adapter will arrive with a real device build.
+abstract interface class AmbientSoundService {
+  bool get isPlaying;
+  Future<void> play();
+  Future<void> stop();
+}
+
+/// No-sound default backing the calm screen until the OS adapter exists:
+/// keeps the toggle honest while producing silence.
+class SilentAmbientSoundService implements AmbientSoundService {
+  bool _playing = false;
+
+  @override
+  bool get isPlaying => _playing;
+
+  @override
+  Future<void> play() async => _playing = true;
+
+  @override
+  Future<void> stop() async => _playing = false;
+}

@@ -8,6 +8,7 @@ import 'connectivity_service.dart';
 import 'tts_service.dart';
 import '../data/local_store.dart';
 import '../../features/communication/domain/card_ranker.dart';
+import '../../features/ai/domain/ai_contracts.dart';
 import '../../features/emotion_recognition/domain/emotion_activity_engine.dart';
 import '../../features/learning/domain/interest_repository.dart';
 import '../../features/progress/domain/progress_models.dart';
@@ -81,6 +82,7 @@ class AppState extends ChangeNotifier {
     ProgressRepository? progressRepository,
     RoutineRepository? routineRepository,
     InterestRepository? interestRepository,
+    AmbientSoundService? ambientSoundService,
     KeyValueStore? settingsStore,
     ConnectivityService? connectivityService,
   }) : _children = const [
@@ -95,6 +97,8 @@ class AppState extends ChangeNotifier {
         routineRepository = routineRepository ?? _defaultRoutineRepository(),
         interestRepository =
             interestRepository ?? _NoopInterestRepository(),
+        ambientSoundService =
+            ambientSoundService ?? SilentAmbientSoundService(),
         _settings = settingsStore,
         _connectivity = connectivityService;
 
@@ -108,6 +112,10 @@ class AppState extends ChangeNotifier {
   final ProgressRepository progressRepository;
   final RoutineRepository routineRepository;
   final InterestRepository interestRepository;
+
+  /// Gentle-sound boundary for the calm screen; silent by default until an
+  /// OS-audio adapter is composed in on a real device.
+  final AmbientSoundService ambientSoundService;
   final KeyValueStore? _settings;
   final ConnectivityService? _connectivity;
   List<ChildProfile> _children;
