@@ -153,6 +153,21 @@
   "calmSoundOn": "نرم آواز آن",
   "calmSoundOff": "نرم آواز بند",
   "sensoryCalmingSubtitle": "آنکھوں کو ٹھیک رکھنے کے لیے آہستہ ہلکے نقشے۔",
+  "emotionTrendTitle": "جذبات کی درستگی، گزشتہ ۷ دن",
+  "emotionTrendLatest": "{percent} تازہ ترین",
+  "@emotionTrendLatest": {
+    "placeholders": {
+      "percent": { "type": "String" }
+    }
+  },
+  "noEmotionDataYet": "گزشتہ ۷ دنوں میں ابھی کوئی جذباتی سرگرمی نہیں ہوئی۔",
+  "observationTagLabel": "قسم",
+  "tagGeneral": "عمومی",
+  "tagMood": "مزاج",
+  "tagBehaviour": "رویہ",
+  "tagSensory": "حسی",
+  "tagCommunication": "رابطہ",
+  "editProfileTitle": "پروفائل میں ترمیم",
   "routineTitle": "روٹین",
   "oneStepAtATime": "ایک وقت میں ایک قدم",
   "routineProgressLabel": "روٹین کی پیش رفت",

@@ -179,6 +179,25 @@ class AppState extends ChangeNotifier {
     return child;
   }
 
+  /// Edits an existing profile in place; unknown ids are ignored so stale
+  /// dialogs cannot resurrect deleted children.
+  void updateChild({
+    required String id,
+    required String name,
+    required String supportLevel,
+  }) {
+    if (!_children.any((child) => child.id == id)) return;
+    _children = [
+      for (final child in _children)
+        if (child.id == id)
+          ChildProfile(id: child.id, name: name, supportLevel: supportLevel)
+        else
+          child,
+    ];
+    unawaited(persistSettings());
+    notifyListeners();
+  }
+
   /// Sets up the first-run profile and enters the main app.
   Future<void> completeOnboarding({
     required String childName,

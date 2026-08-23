@@ -426,6 +426,38 @@ class AppLocalizationsEn extends AppLocalizations {
       'Slow pastel patterns to settle the eyes.';
 
   @override
+  String get emotionTrendTitle => 'Emotion accuracy, last 7 days';
+
+  @override
+  String emotionTrendLatest(String percent) {
+    return '$percent latest';
+  }
+
+  @override
+  String get noEmotionDataYet => 'No emotion sessions in the last 7 days yet.';
+
+  @override
+  String get observationTagLabel => 'Category';
+
+  @override
+  String get tagGeneral => 'General';
+
+  @override
+  String get tagMood => 'Mood';
+
+  @override
+  String get tagBehaviour => 'Behaviour';
+
+  @override
+  String get tagSensory => 'Sensory';
+
+  @override
+  String get tagCommunication => 'Communication';
+
+  @override
+  String get editProfileTitle => 'Edit profile';
+
+  @override
   String get routineTitle => 'Routine';
 
   @override

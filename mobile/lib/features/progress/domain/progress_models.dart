@@ -9,18 +9,29 @@ class ProgressRecord {
 }
 
 /// A free-text caregiver observation. Human-authored, never generated.
+/// The optional tag is a coarse category for filtering, not a diagnosis.
 class ObservationNote {
   const ObservationNote({
     required this.childId,
     required this.note,
     required this.authorRole,
     required this.createdAt,
+    this.tag = 'general',
   });
+
+  static const List<String> knownTags = [
+    'general',
+    'mood',
+    'behaviour',
+    'sensory',
+    'communication',
+  ];
 
   final String childId;
   final String note;
   final String authorRole;
   final DateTime createdAt;
+  final String tag;
 }
 
 abstract interface class ProgressRepository {

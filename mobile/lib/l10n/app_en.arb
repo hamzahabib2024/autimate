@@ -187,6 +187,21 @@
   "calmSoundOn": "Gentle sound on",
   "calmSoundOff": "Gentle sound off",
   "sensoryCalmingSubtitle": "Slow pastel patterns to settle the eyes.",
+  "emotionTrendTitle": "Emotion accuracy, last 7 days",
+  "emotionTrendLatest": "{percent} latest",
+  "@emotionTrendLatest": {
+    "placeholders": {
+      "percent": { "type": "String" }
+    }
+  },
+  "noEmotionDataYet": "No emotion sessions in the last 7 days yet.",
+  "observationTagLabel": "Category",
+  "tagGeneral": "General",
+  "tagMood": "Mood",
+  "tagBehaviour": "Behaviour",
+  "tagSensory": "Sensory",
+  "tagCommunication": "Communication",
+  "editProfileTitle": "Edit profile",
   "routineTitle": "Routine",
   "oneStepAtATime": "One step at a time",
   "routineProgressLabel": "Routine progress",
