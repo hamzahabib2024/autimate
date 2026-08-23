@@ -8,7 +8,7 @@ Status legend:
 - `[ ]` open
 - `⛔ BLOCKED:` prefix = cannot proceed until the stated external dependency exists (device, SDK, credentials)
 
-Current verified state: `flutter analyze` PASS · `flutter test` PASS (108 tests) · branch `AI`
+Current verified state: `flutter analyze` PASS · `flutter test` PASS (116 tests) · branch `AI`
 
 ---
 
@@ -125,11 +125,11 @@ Current verified state: `flutter analyze` PASS · `flutter test` PASS (108 tests
 
 ### Open
 
-- [ ] Guided breathing activity (animated pace circle, haptic-free)
-- [ ] Slow visual patterns calming screen
-- [ ] Gentle sound option (short, low-volume, looped-off by default)
+- [x] Guided breathing activity (animated pace circle, haptic-free) — done
+- [x] Slow visual patterns calming screen — done
+- [x] Gentle sound option (short, low-volume, looped-off by default) — done (silent no-op service until OS-audio adapter)
 - [ ] Brightness/clutter reduction audit on physical device ⛔ BLOCKED: device
-- [ ] Sensory quick-access from child home (already reachable via Sensory support tile; verify reachability in child mode)
+- [x] Sensory quick-access from child home (already reachable via Sensory support tile; verify reachability in child mode) — verified by test
 
 ## Module 7 — Parent & Teacher Dashboard
 
