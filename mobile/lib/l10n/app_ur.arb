@@ -124,6 +124,35 @@
     }
   },
   "deleteAction": "ہٹائیں",
+  "learningEditorTitle": "دلچسپیاں",
+  "learningPickHint": "وہ چنیں جو آپ کا بچہ پسند کرتا ہے۔ سیکھنے کا راستہ اسی مطابق بدلے گا۔",
+  "learningWhy": "{name} کو {interest} پسند ہیں",
+  "@learningWhy": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "interest": { "type": "String" }
+    }
+  },
+  "learningPathEmptyHint": "سرگرمیاں دکھانے کے لیے چند دلچسپیاں منتخب کریں۔",
+  "learningQuestionProgress": "سوال {total} میں سے {done}",
+  "@learningQuestionProgress": {
+    "placeholders": {
+      "done": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "breathingTitle": "میرے ساتھ سانس لو",
+  "breatheIn": "سانس اندر",
+  "breatheHold": "روکے رکھیں",
+  "breatheOut": "سانس باہر",
+  "breathingStart": "شروع کریں",
+  "breathingStop": "آرام",
+  "sensoryBreathingSubtitle": "پرسکون سانس کے لیے آہستہ گولائی۔",
+  "calmingTitle": "پرسکون جگہ",
+  "calmingHint": "نرم شکلیں آہستہ تیرتی ہیں۔ یہاں کچھ کرنا ضروری نہیں۔",
+  "calmSoundOn": "نرم آواز آن",
+  "calmSoundOff": "نرم آواز بند",
+  "sensoryCalmingSubtitle": "آنکھوں کو ٹھیک رکھنے کے لیے آہستہ ہلکے نقشے۔",
   "routineTitle": "روٹین",
   "oneStepAtATime": "ایک وقت میں ایک قدم",
   "routineProgressLabel": "روٹین کی پیش رفت",

@@ -746,6 +746,108 @@ abstract class AppLocalizations {
   /// **'Remove'**
   String get deleteAction;
 
+  /// No description provided for @learningEditorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Interests'**
+  String get learningEditorTitle;
+
+  /// No description provided for @learningPickHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose what your child loves. The learning path updates to match.'**
+  String get learningPickHint;
+
+  /// No description provided for @learningWhy.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} likes {interest}'**
+  String learningWhy(String name, String interest);
+
+  /// No description provided for @learningPathEmptyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a few interests so activities can appear here.'**
+  String get learningPathEmptyHint;
+
+  /// No description provided for @learningQuestionProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Question {done} of {total}'**
+  String learningQuestionProgress(int done, int total);
+
+  /// No description provided for @breathingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathe with me'**
+  String get breathingTitle;
+
+  /// No description provided for @breatheIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathe in'**
+  String get breatheIn;
+
+  /// No description provided for @breatheHold.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold'**
+  String get breatheHold;
+
+  /// No description provided for @breatheOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathe out'**
+  String get breatheOut;
+
+  /// No description provided for @breathingStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Begin'**
+  String get breathingStart;
+
+  /// No description provided for @breathingStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Rest'**
+  String get breathingStop;
+
+  /// No description provided for @sensoryBreathingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A slow pace circle for calm breathing.'**
+  String get sensoryBreathingSubtitle;
+
+  /// No description provided for @calmingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Calm space'**
+  String get calmingTitle;
+
+  /// No description provided for @calmingHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Soft shapes drift slowly. Nothing to do here.'**
+  String get calmingHint;
+
+  /// No description provided for @calmSoundOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Gentle sound on'**
+  String get calmSoundOn;
+
+  /// No description provided for @calmSoundOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Gentle sound off'**
+  String get calmSoundOff;
+
+  /// No description provided for @sensoryCalmingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Slow pastel patterns to settle the eyes.'**
+  String get sensoryCalmingSubtitle;
+
   /// No description provided for @routineTitle.
   ///
   /// In en, this message translates to:
