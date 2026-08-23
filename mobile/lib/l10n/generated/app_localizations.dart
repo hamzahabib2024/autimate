@@ -848,6 +848,66 @@ abstract class AppLocalizations {
   /// **'Slow pastel patterns to settle the eyes.'**
   String get sensoryCalmingSubtitle;
 
+  /// No description provided for @emotionTrendTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotion accuracy, last 7 days'**
+  String get emotionTrendTitle;
+
+  /// No description provided for @emotionTrendLatest.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent} latest'**
+  String emotionTrendLatest(String percent);
+
+  /// No description provided for @noEmotionDataYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No emotion sessions in the last 7 days yet.'**
+  String get noEmotionDataYet;
+
+  /// No description provided for @observationTagLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get observationTagLabel;
+
+  /// No description provided for @tagGeneral.
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get tagGeneral;
+
+  /// No description provided for @tagMood.
+  ///
+  /// In en, this message translates to:
+  /// **'Mood'**
+  String get tagMood;
+
+  /// No description provided for @tagBehaviour.
+  ///
+  /// In en, this message translates to:
+  /// **'Behaviour'**
+  String get tagBehaviour;
+
+  /// No description provided for @tagSensory.
+  ///
+  /// In en, this message translates to:
+  /// **'Sensory'**
+  String get tagSensory;
+
+  /// No description provided for @tagCommunication.
+  ///
+  /// In en, this message translates to:
+  /// **'Communication'**
+  String get tagCommunication;
+
+  /// No description provided for @editProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit profile'**
+  String get editProfileTitle;
+
   /// No description provided for @routineTitle.
   ///
   /// In en, this message translates to:
