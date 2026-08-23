@@ -458,6 +458,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editProfileTitle => 'Edit profile';
 
   @override
+  String levelPickerForChild(String name) {
+    return 'Support level for $name';
+  }
+
+  @override
+  String get levelAutomaticTitle => 'Follow progress automatically';
+
+  @override
+  String get levelAutomaticSubtitle =>
+      'Starts from the profile level; three right answers in a row step up, two wrong answers step down.';
+
+  @override
+  String get levelLockTitle => 'Lock this level';
+
+  @override
+  String get levelLockSubtitle => 'Stops automatic stepping up or down.';
+
+  @override
+  String levelLockedNotice(Object level) {
+    return 'Locked — $level stays fixed.';
+  }
+
+  @override
   String get routineTitle => 'Routine';
 
   @override

@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../../core/services/app_services.dart';
 import '../../../l10n/generated/app_localizations.dart';
+import '../../emotion_recognition/domain/emotion_activity_engine.dart';
 import '../domain/conversation_engine.dart';
 import '../domain/social_content.dart';
 import '../domain/social_models.dart';
@@ -116,7 +119,25 @@ class _StoryReaderState extends State<_StoryReader> {
       _narrate(
         _isUrdu ? story.pages[_page].textUr : story.pages[_page].textEn,
       );
+    } else {
+      unawaited(_speakQuestionIfNeeded());
     }
+  }
+
+  /// Beginner support reads comprehension questions aloud so reading
+  /// skill never gates understanding.
+  Future<void> _speakQuestionIfNeeded() async {
+    if (!mounted || _finished) return;
+    final appState = widget.appState;
+    if (appState.effectiveSupportFor(appState.selectedChild.id) !=
+        SupportLevel.beginner) {
+      return;
+    }
+    final question = widget.story.questions[_questionIndex];
+    await appState.ttsService.speak(
+      _isUrdu ? question.promptUr : question.promptEn,
+      appState.locale,
+    );
   }
 
   void _answerQuestion(int index) {
@@ -129,6 +150,7 @@ class _StoryReaderState extends State<_StoryReader> {
         _lastAnswerCorrect = null;
         if (_questionIndex < widget.story.questions.length - 1) {
           _questionIndex++;
+          unawaited(_speakQuestionIfNeeded());
         } else {
           if (!_finished) widget.appState.awardStars(1);
           _finished = true;

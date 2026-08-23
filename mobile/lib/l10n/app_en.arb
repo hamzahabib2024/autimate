@@ -202,6 +202,17 @@
   "tagSensory": "Sensory",
   "tagCommunication": "Communication",
   "editProfileTitle": "Edit profile",
+  "levelPickerForChild": "Support level for {name}",
+  "@levelPickerForChild": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "levelAutomaticTitle": "Follow progress automatically",
+  "levelAutomaticSubtitle": "Starts from the profile level; three right answers in a row step up, two wrong answers step down.",
+  "levelLockTitle": "Lock this level",
+  "levelLockSubtitle": "Stops automatic stepping up or down.",
+  "levelLockedNotice": "Locked — {level} stays fixed.",
   "routineTitle": "Routine",
   "oneStepAtATime": "One step at a time",
   "routineProgressLabel": "Routine progress",

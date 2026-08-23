@@ -453,6 +453,29 @@ class AppLocalizationsUr extends AppLocalizations {
   String get editProfileTitle => 'پروفائل میں ترمیم';
 
   @override
+  String levelPickerForChild(String name) {
+    return '$name کے لیے معاونت کی سطح';
+  }
+
+  @override
+  String get levelAutomaticTitle => 'پیش رفت کے مطابق خودکار';
+
+  @override
+  String get levelAutomaticSubtitle =>
+      'پروفائل کی سطح سے آغاز؛ مسلسل تین درست جوابات سے سطح بڑھے گی اور دو غلط جوابات سے گھٹے گی۔';
+
+  @override
+  String get levelLockTitle => 'اس سطح کو مقفل کریں';
+
+  @override
+  String get levelLockSubtitle => 'خودکار اضافے یا کمی کو روک دیتا ہے۔';
+
+  @override
+  String levelLockedNotice(Object level) {
+    return 'مقفل — $level ایک ہی رہے گی۔';
+  }
+
+  @override
   String get routineTitle => 'روٹین';
 
   @override

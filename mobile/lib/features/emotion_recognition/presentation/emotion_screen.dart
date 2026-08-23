@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../../core/services/app_services.dart';
@@ -24,8 +26,19 @@ class _EmotionScreenState extends State<EmotionScreen> {
   @override
   void initState() {
     super.initState();
-    _engine = DeterministicEmotionActivityEngine(childId: _boundChildId);
-    _question = _engine.start(level: SupportLevel.beginner);
+    final appState = widget.appState;
+    _engine = DeterministicEmotionActivityEngine(
+      childId: _boundChildId,
+      parentLocked:
+          appState?.isSupportLockedFor(_boundChildId) ?? false,
+      parentOverride: appState?.supportOverrideFor(_boundChildId),
+    );
+    _question = _engine.start(
+      level:
+          appState?.effectiveSupportFor(_boundChildId) ??
+          SupportLevel.beginner,
+    );
+    WidgetsBinding.instance.addPostFrameCallback((_) => _speakPrompt());
   }
 
   /// Sessions must be recorded against the profile that is active.
@@ -159,6 +172,25 @@ class _EmotionScreenState extends State<EmotionScreen> {
     );
   }
 
+  /// Beginner support reads the question aloud so reading skill never
+  /// gates emotion practice.
+  Future<void> _speakPrompt() async {
+    final appState = widget.appState;
+    final question = _question;
+    if (appState == null || question == null || _result != null) return;
+    if (appState.effectiveSupportFor(_boundChildId) !=
+        SupportLevel.beginner) {
+      return;
+    }
+    if (!mounted) return;
+    await appState.ttsService.speak(
+      AppLocalizations.of(context).whichFaceFeels(
+        _label(AppLocalizations.of(context), question.answer),
+      ),
+      appState.locale,
+    );
+  }
+
   void _answer(EmotionLabel emotion) {
     setState(() => _outcome = _engine.submit(emotion));
     Future<void>.delayed(const Duration(milliseconds: 650), () {
@@ -172,6 +204,8 @@ class _EmotionScreenState extends State<EmotionScreen> {
       if (_result != null && widget.appState != null) {
         widget.appState!.awardStars(_result!.starsAwarded);
         widget.appState!.recordSession(_result!);
+      } else {
+        unawaited(_speakPrompt());
       }
     });
   }
@@ -180,8 +214,13 @@ class _EmotionScreenState extends State<EmotionScreen> {
     setState(() {
       _result = null;
       _outcome = null;
-      _question = _engine.start(level: SupportLevel.beginner);
+      _question = _engine.start(
+        level:
+            widget.appState?.effectiveSupportFor(_boundChildId) ??
+            SupportLevel.beginner,
+      );
     });
+    unawaited(_speakPrompt());
   }
 
   String _label(AppLocalizations l10n, EmotionLabel emotion) =>

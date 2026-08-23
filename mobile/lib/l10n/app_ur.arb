@@ -168,6 +168,17 @@
   "tagSensory": "حسی",
   "tagCommunication": "رابطہ",
   "editProfileTitle": "پروفائل میں ترمیم",
+  "levelPickerForChild": "{name} کے لیے معاونت کی سطح",
+  "@levelPickerForChild": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "levelAutomaticTitle": "پیش رفت کے مطابق خودکار",
+  "levelAutomaticSubtitle": "پروفائل کی سطح سے آغاز؛ مسلسل تین درست جوابات سے سطح بڑھے گی اور دو غلط جوابات سے گھٹے گی۔",
+  "levelLockTitle": "اس سطح کو مقفل کریں",
+  "levelLockSubtitle": "خودکار اضافے یا کمی کو روک دیتا ہے۔",
+  "levelLockedNotice": "مقفل — {level} ایک ہی رہے گی۔",
   "routineTitle": "روٹین",
   "oneStepAtATime": "ایک وقت میں ایک قدم",
   "routineProgressLabel": "روٹین کی پیش رفت",

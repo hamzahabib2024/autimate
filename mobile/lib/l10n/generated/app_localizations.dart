@@ -908,6 +908,42 @@ abstract class AppLocalizations {
   /// **'Edit profile'**
   String get editProfileTitle;
 
+  /// No description provided for @levelPickerForChild.
+  ///
+  /// In en, this message translates to:
+  /// **'Support level for {name}'**
+  String levelPickerForChild(String name);
+
+  /// No description provided for @levelAutomaticTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow progress automatically'**
+  String get levelAutomaticTitle;
+
+  /// No description provided for @levelAutomaticSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Starts from the profile level; three right answers in a row step up, two wrong answers step down.'**
+  String get levelAutomaticSubtitle;
+
+  /// No description provided for @levelLockTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock this level'**
+  String get levelLockTitle;
+
+  /// No description provided for @levelLockSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stops automatic stepping up or down.'**
+  String get levelLockSubtitle;
+
+  /// No description provided for @levelLockedNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Locked — {level} stays fixed.'**
+  String levelLockedNotice(Object level);
+
   /// No description provided for @routineTitle.
   ///
   /// In en, this message translates to:

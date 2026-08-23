@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../../core/services/app_services.dart';
 import '../../../l10n/generated/app_localizations.dart';
+import '../../emotion_recognition/domain/emotion_activity_engine.dart';
 import '../../settings/presentation/parent_gate_screen.dart';
 import '../domain/learning_models.dart';
 
@@ -174,6 +177,29 @@ class _ActivityRunnerState extends State<_ActivityRunner> {
 
   Locale get _locale => widget.appState.locale;
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => unawaited(_speakPromptIfNeeded()),
+    );
+  }
+
+  /// Beginner support reads each question aloud so reading skill never
+  /// gates the activity.
+  Future<void> _speakPromptIfNeeded() async {
+    if (!mounted || _finished) return;
+    final appState = widget.appState;
+    if (appState.effectiveSupportFor(appState.selectedChild.id) !=
+        SupportLevel.beginner) {
+      return;
+    }
+    await appState.ttsService.speak(
+      widget.entry.activity.questions[_questionIndex].promptFor(_locale),
+      _locale,
+    );
+  }
+
   void _answer(int index) {
     final question =
         widget.entry.activity.questions[_questionIndex];
@@ -185,6 +211,7 @@ class _ActivityRunnerState extends State<_ActivityRunner> {
         _lastAnswerCorrect = null;
         if (_questionIndex < widget.entry.activity.questions.length - 1) {
           _questionIndex++;
+          unawaited(_speakPromptIfNeeded());
         } else {
           widget.appState.awardStars(1);
           _finished = true;
@@ -199,6 +226,7 @@ class _ActivityRunnerState extends State<_ActivityRunner> {
       _lastAnswerCorrect = null;
       _finished = false;
     });
+    unawaited(_speakPromptIfNeeded());
   }
 
   @override
