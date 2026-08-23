@@ -361,6 +361,65 @@ class AppLocalizationsUr extends AppLocalizations {
   String get deleteAction => 'ہٹائیں';
 
   @override
+  String get learningEditorTitle => 'دلچسپیاں';
+
+  @override
+  String get learningPickHint =>
+      'وہ چنیں جو آپ کا بچہ پسند کرتا ہے۔ سیکھنے کا راستہ اسی مطابق بدلے گا۔';
+
+  @override
+  String learningWhy(String name, String interest) {
+    return '$name کو $interest پسند ہیں';
+  }
+
+  @override
+  String get learningPathEmptyHint =>
+      'سرگرمیاں دکھانے کے لیے چند دلچسپیاں منتخب کریں۔';
+
+  @override
+  String learningQuestionProgress(int done, int total) {
+    return 'سوال $total میں سے $done';
+  }
+
+  @override
+  String get breathingTitle => 'میرے ساتھ سانس لو';
+
+  @override
+  String get breatheIn => 'سانس اندر';
+
+  @override
+  String get breatheHold => 'روکے رکھیں';
+
+  @override
+  String get breatheOut => 'سانس باہر';
+
+  @override
+  String get breathingStart => 'شروع کریں';
+
+  @override
+  String get breathingStop => 'آرام';
+
+  @override
+  String get sensoryBreathingSubtitle => 'پرسکون سانس کے لیے آہستہ گولائی۔';
+
+  @override
+  String get calmingTitle => 'پرسکون جگہ';
+
+  @override
+  String get calmingHint =>
+      'نرم شکلیں آہستہ تیرتی ہیں۔ یہاں کچھ کرنا ضروری نہیں۔';
+
+  @override
+  String get calmSoundOn => 'نرم آواز آن';
+
+  @override
+  String get calmSoundOff => 'نرم آواز بند';
+
+  @override
+  String get sensoryCalmingSubtitle =>
+      'آنکھوں کو ٹھیک رکھنے کے لیے آہستہ ہلکے نقشے۔';
+
+  @override
   String get routineTitle => 'روٹین';
 
   @override

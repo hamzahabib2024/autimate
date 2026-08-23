@@ -128,7 +128,7 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
     final l10n = AppLocalizations.of(context);
     setState(() {
       for (final warning in warnings) {
-        final step = _steps.firstWhere((step) => step.id == warning.stepId);
+        final step = _stepById(warning.stepId);
         if (warning.countdown) {
           _announcedCountdowns.add(warning.stepId);
           _speak(

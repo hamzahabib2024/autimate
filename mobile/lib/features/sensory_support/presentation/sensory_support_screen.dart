@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/services/app_services.dart';
 import '../../../l10n/generated/app_localizations.dart';
+import 'calm_activities_screen.dart';
 
 class SensorySupportScreen extends StatelessWidget {
   const SensorySupportScreen({required this.appState, super.key});
@@ -24,6 +25,32 @@ class SensorySupportScreen extends StatelessWidget {
               subtitle: Text(l10n.sensoryModeSubtitle),
               value: appState.sensoryMode,
               onChanged: appState.toggleSensoryMode,
+            ),
+            Card(
+              child: ListTile(
+                key: const ValueKey('open-breathing'),
+                leading: const Icon(Icons.air),
+                title: Text(l10n.breathingTitle),
+                subtitle: Text(l10n.sensoryBreathingSubtitle),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => BreathingScreen(appState: appState),
+                  ),
+                ),
+              ),
+            ),
+            Card(
+              child: ListTile(
+                key: const ValueKey('open-calming'),
+                leading: const Icon(Icons.blur_on),
+                title: Text(l10n.calmingTitle),
+                subtitle: Text(l10n.sensoryCalmingSubtitle),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => CalmingScreen(appState: appState),
+                  ),
+                ),
+              ),
             ),
             Card(
               child: ListTile(

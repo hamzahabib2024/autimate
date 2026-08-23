@@ -8,7 +8,7 @@ Status legend:
 - `[ ]` open
 - `⛔ BLOCKED:` prefix = cannot proceed until the stated external dependency exists (device, SDK, credentials)
 
-Current verified state: `flutter analyze` PASS · `flutter test` PASS (98 tests) · branch `AI`
+Current verified state: `flutter analyze` PASS · `flutter test` PASS (116 tests) · branch `AI`
 
 ---
 
@@ -109,11 +109,11 @@ Current verified state: `flutter analyze` PASS · `flutter test` PASS (98 tests)
 
 ## Module 5 — Interest-Based Learning (P2)
 
-- [ ] Interest profile editor (cars, animals, trains, space, …)
-- [ ] Deterministic interest → topic mapping table
-- [ ] Learning path screen ordered by mapped topics
-- [ ] Themed activities/quizzes with authored bilingual content
-- [ ] Explainable mapping shown to caregivers (why this activity)
+- [x] Interest profile editor (cars, animals, trains, space) — done
+- [x] Deterministic interest → topic mapping table — done
+- [x] Learning path screen ordered by mapped topics — done
+- [x] Themed activities/quizzes with authored bilingual content — done
+- [x] Explainable mapping shown to caregivers ("{name} likes {interest}" on every activity card) — done
 
 ## Module 6 — Sensory-Friendly Environment
 
@@ -125,11 +125,11 @@ Current verified state: `flutter analyze` PASS · `flutter test` PASS (98 tests)
 
 ### Open
 
-- [ ] Guided breathing activity (animated pace circle, haptic-free)
-- [ ] Slow visual patterns calming screen
-- [ ] Gentle sound option (short, low-volume, looped-off by default)
+- [x] Guided breathing activity (animated pace circle, haptic-free) — done
+- [x] Slow visual patterns calming screen — done
+- [x] Gentle sound option (short, low-volume, looped-off by default) — done (silent no-op service until OS-audio adapter)
 - [ ] Brightness/clutter reduction audit on physical device ⛔ BLOCKED: device
-- [ ] Sensory quick-access from child home (already reachable via Sensory support tile; verify reachability in child mode)
+- [x] Sensory quick-access from child home (already reachable via Sensory support tile; verify reachability in child mode) — verified by test
 
 ## Module 7 — Parent & Teacher Dashboard
 
