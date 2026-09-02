@@ -458,6 +458,73 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editProfileTitle => 'Edit profile';
 
   @override
+  String levelPickerForChild(String name) {
+    return 'Support level for $name';
+  }
+
+  @override
+  String get levelAutomaticTitle => 'Follow progress automatically';
+
+  @override
+  String get levelAutomaticSubtitle =>
+      'Starts from the profile level; three right answers in a row step up, two wrong answers step down.';
+
+  @override
+  String get levelLockTitle => 'Lock this level';
+
+  @override
+  String get levelLockSubtitle => 'Stops automatic stepping up or down.';
+
+  @override
+  String levelLockedNotice(Object level) {
+    return 'Locked — $level stays fixed.';
+  }
+
+  @override
+  String levelChangedPrompt(String level) {
+    return 'Support changed to $level. Restart now to apply it?';
+  }
+
+  @override
+  String get levelRestartAction => 'Restart at new level';
+
+  @override
+  String get levelContinueAction => 'Keep going';
+
+  @override
+  String get rewardCadenceEverySession =>
+      'A star after every completed session.';
+
+  @override
+  String rewardCadenceEveryN(int sessions) {
+    return 'A star every $sessions completed sessions.';
+  }
+
+  @override
+  String get coopTitle => 'We are a team';
+
+  @override
+  String coopSubtitle(String name) {
+    return '$name and you, building every win together.';
+  }
+
+  @override
+  String streakDays(int count) {
+    return '$count days in a row';
+  }
+
+  @override
+  String get badgesSectionTitle => 'Milestones';
+
+  @override
+  String progressOf(int done, int total) {
+    return '$done of $total';
+  }
+
+  @override
+  String get allBadgesEarned => 'Every milestone reached — wonderful teamwork!';
+
+  @override
   String get routineTitle => 'Routine';
 
   @override
@@ -670,4 +737,139 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get offlineBanner =>
       'You are offline. Work is saved on this device and will sync later.';
+
+  @override
+  String get customCardsTitle => 'My cards';
+
+  @override
+  String get customCardsSubtitle => 'Cards you made for this child';
+
+  @override
+  String get addCustomCard => 'Add a card';
+
+  @override
+  String get editCustomCard => 'Edit card';
+
+  @override
+  String get deleteCustomCard => 'Delete card';
+
+  @override
+  String get cardLabelEnglish => 'Label (English)';
+
+  @override
+  String get cardLabelUrdu => 'Label (Urdu)';
+
+  @override
+  String get cardSpokenEnglish => 'Spoken words (English, optional)';
+
+  @override
+  String get cardSpokenUrdu => 'Spoken words (Urdu, optional)';
+
+  @override
+  String get cardCategoryLabel => 'Category';
+
+  @override
+  String get cardPictureLabel => 'Picture';
+
+  @override
+  String get choosePhotoGallery => 'Choose from gallery';
+
+  @override
+  String get takePhoto => 'Take a photo';
+
+  @override
+  String get useSymbolInstead => 'Use a symbol instead';
+
+  @override
+  String get cameraUnavailable =>
+      'No camera or gallery on this device. You can still make a card with a symbol.';
+
+  @override
+  String get customCardAdded => 'Card added';
+
+  @override
+  String get customCardDeleted => 'Card deleted';
+
+  @override
+  String get confirmDeleteCard =>
+      'Delete this card? It will disappear from the board.';
+
+  @override
+  String get myCardsEmpty =>
+      'No cards yet. Add one so it appears on the board.';
+
+  @override
+  String get longPressToEditCard =>
+      'Press and hold a card you made to edit it.';
+
+  @override
+  String get reorderSentenceHint => 'Drag a word to change its place.';
+
+  @override
+  String get removeWordTooltip => 'Remove this word';
+
+  @override
+  String get sentenceStripEmpty => 'Tap a card to start.';
+
+  @override
+  String get homeQuickActions => 'Quick start';
+
+  @override
+  String homeStreak(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days in a row',
+      one: '1 day in a row',
+      zero: 'No days in a row yet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String greetingChild(String name) {
+    return 'Hello, $name';
+  }
+
+  @override
+  String get openSettings => 'Settings';
+
+  @override
+  String get displaySectionTitle => 'Look and feel';
+
+  @override
+  String get themeModeLabel => 'Screen brightness';
+
+  @override
+  String get themeModeSystem => 'Match my device';
+
+  @override
+  String get themeModeLight => 'Light';
+
+  @override
+  String get themeModeDark => 'Dark';
+
+  @override
+  String get themeModeSubtitle => 'Dark can be easier in a dim room.';
+
+  @override
+  String get chooseTheFace => 'Choose the face';
+
+  @override
+  String get tryAgainGently => 'Not that one. Have another look.';
+
+  @override
+  String get wellDone => 'Well done';
+
+  @override
+  String get starEarned => 'You earned a star';
+
+  @override
+  String get nextMilestone => 'Next milestone';
+
+  @override
+  String get earnedLabel => 'Earned';
+
+  @override
+  String get lockedLabel => 'Keep going';
 }

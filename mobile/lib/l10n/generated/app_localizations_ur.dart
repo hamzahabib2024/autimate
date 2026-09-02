@@ -453,6 +453,72 @@ class AppLocalizationsUr extends AppLocalizations {
   String get editProfileTitle => 'پروفائل میں ترمیم';
 
   @override
+  String levelPickerForChild(String name) {
+    return '$name کے لیے معاونت کی سطح';
+  }
+
+  @override
+  String get levelAutomaticTitle => 'پیش رفت کے مطابق خودکار';
+
+  @override
+  String get levelAutomaticSubtitle =>
+      'پروفائل کی سطح سے آغاز؛ مسلسل تین درست جوابات سے سطح بڑھے گی اور دو غلط جوابات سے گھٹے گی۔';
+
+  @override
+  String get levelLockTitle => 'اس سطح کو مقفل کریں';
+
+  @override
+  String get levelLockSubtitle => 'خودکار اضافے یا کمی کو روک دیتا ہے۔';
+
+  @override
+  String levelLockedNotice(Object level) {
+    return 'مقفل — $level ایک ہی رہے گی۔';
+  }
+
+  @override
+  String levelChangedPrompt(String level) {
+    return 'معاونت $level ہو گئی۔ نئی سطح پر دوبارہ شروع کریں؟';
+  }
+
+  @override
+  String get levelRestartAction => 'نئی سطح سے شروع کریں';
+
+  @override
+  String get levelContinueAction => 'آگے جاری رکھیں';
+
+  @override
+  String get rewardCadenceEverySession => 'ہر مکمل سیشن کے بعد ایک ستارہ۔';
+
+  @override
+  String rewardCadenceEveryN(int sessions) {
+    return '$sessions مکمل سیشنز کے بعد ایک ستارہ۔';
+  }
+
+  @override
+  String get coopTitle => 'ہم ایک ٹیم ہیں';
+
+  @override
+  String coopSubtitle(String name) {
+    return '$name اور آپ، ہر کامیابی ساتھ ملی۔';
+  }
+
+  @override
+  String streakDays(int count) {
+    return '$count دن مسلسل';
+  }
+
+  @override
+  String get badgesSectionTitle => 'سنگِ میل';
+
+  @override
+  String progressOf(int done, int total) {
+    return '$total میں سے $done';
+  }
+
+  @override
+  String get allBadgesEarned => 'ہر سنگِ میل حاصل — شاندار ٹیم ورک!';
+
+  @override
   String get routineTitle => 'روٹین';
 
   @override
@@ -667,4 +733,139 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get offlineBanner =>
       'آپ آف لائن ہیں۔ کام اس آلے پر محفوظ ہے اور بعد میں سنک ہوگا۔';
+
+  @override
+  String get customCardsTitle => 'میرے کارڈ';
+
+  @override
+  String get customCardsSubtitle => 'وہ کارڈ جو آپ نے اس بچے کے لیے بنائے';
+
+  @override
+  String get addCustomCard => 'کارڈ شامل کریں';
+
+  @override
+  String get editCustomCard => 'کارڈ میں تبدیلی';
+
+  @override
+  String get deleteCustomCard => 'کارڈ حذف کریں';
+
+  @override
+  String get cardLabelEnglish => 'نام (انگریزی)';
+
+  @override
+  String get cardLabelUrdu => 'نام (اردو)';
+
+  @override
+  String get cardSpokenEnglish => 'بولے جانے والے الفاظ (انگریزی، اختیاری)';
+
+  @override
+  String get cardSpokenUrdu => 'بولے جانے والے الفاظ (اردو، اختیاری)';
+
+  @override
+  String get cardCategoryLabel => 'زمرہ';
+
+  @override
+  String get cardPictureLabel => 'تصویر';
+
+  @override
+  String get choosePhotoGallery => 'گیلری سے منتخب کریں';
+
+  @override
+  String get takePhoto => 'تصویر کھینچیں';
+
+  @override
+  String get useSymbolInstead => 'اس کے بجائے علامت استعمال کریں';
+
+  @override
+  String get cameraUnavailable =>
+      'اس آلے پر کیمرہ یا گیلری دستیاب نہیں۔ آپ پھر بھی علامت کے ساتھ کارڈ بنا سکتے ہیں۔';
+
+  @override
+  String get customCardAdded => 'کارڈ شامل ہو گیا';
+
+  @override
+  String get customCardDeleted => 'کارڈ حذف ہو گیا';
+
+  @override
+  String get confirmDeleteCard => 'یہ کارڈ حذف کریں؟ یہ بورڈ سے ہٹ جائے گا۔';
+
+  @override
+  String get myCardsEmpty =>
+      'ابھی کوئی کارڈ نہیں۔ ایک شامل کریں تاکہ وہ بورڈ پر آ جائے۔';
+
+  @override
+  String get longPressToEditCard =>
+      'اپنا بنایا ہوا کارڈ دبا کر رکھیں تاکہ اس میں تبدیلی ہو سکے۔';
+
+  @override
+  String get reorderSentenceHint => 'لفظ کی جگہ بدلنے کے لیے اسے کھینچیں۔';
+
+  @override
+  String get removeWordTooltip => 'یہ لفظ ہٹائیں';
+
+  @override
+  String get sentenceStripEmpty => 'شروع کرنے کے لیے کارڈ چھوئیں۔';
+
+  @override
+  String get homeQuickActions => 'فوری آغاز';
+
+  @override
+  String homeStreak(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'مسلسل $count دن',
+      one: 'مسلسل ۱ دن',
+      zero: 'ابھی کوئی مسلسل دن نہیں',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String greetingChild(String name) {
+    return 'السلام علیکم، $name';
+  }
+
+  @override
+  String get openSettings => 'ترتیبات';
+
+  @override
+  String get displaySectionTitle => 'شکل و صورت';
+
+  @override
+  String get themeModeLabel => 'اسکرین کی روشنی';
+
+  @override
+  String get themeModeSystem => 'میرے آلے کے مطابق';
+
+  @override
+  String get themeModeLight => 'روشن';
+
+  @override
+  String get themeModeDark => 'گہرا';
+
+  @override
+  String get themeModeSubtitle =>
+      'کم روشنی والے کمرے میں گہرا رنگ آسان ہو سکتا ہے۔';
+
+  @override
+  String get chooseTheFace => 'چہرہ منتخب کریں';
+
+  @override
+  String get tryAgainGently => 'یہ نہیں۔ ایک بار پھر دیکھیں۔';
+
+  @override
+  String get wellDone => 'بہت خوب';
+
+  @override
+  String get starEarned => 'آپ نے ستارہ حاصل کیا';
+
+  @override
+  String get nextMilestone => 'اگلا سنگِ میل';
+
+  @override
+  String get earnedLabel => 'حاصل شدہ';
+
+  @override
+  String get lockedLabel => 'کوشش جاری رکھیں';
 }

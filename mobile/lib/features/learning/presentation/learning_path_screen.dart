@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../../core/services/app_services.dart';
 import '../../../l10n/generated/app_localizations.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../emotion_recognition/domain/emotion_activity_engine.dart';
 import '../../settings/presentation/parent_gate_screen.dart';
 import '../domain/learning_models.dart';
 
@@ -81,7 +85,7 @@ class _LearningPathScreenState extends State<LearningPathScreen> {
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : ListView(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(AppSpacing.lg),
               children: [
                 Text(
                   l10n.oneStepAtATime,
@@ -171,8 +175,40 @@ class _ActivityRunnerState extends State<_ActivityRunner> {
   int _questionIndex = 0;
   bool? _lastAnswerCorrect;
   bool _finished = false;
+  SupportLevel? _levelAtStart;
+  bool _dismissedLevelChange = false;
 
   Locale get _locale => widget.appState.locale;
+
+  String _levelLabel(AppLocalizations l10n, SupportLevel level) =>
+      switch (level) {
+        SupportLevel.intermediate => l10n.intermediateSupportLevel,
+        SupportLevel.advanced => l10n.advancedSupportLevel,
+        _ => l10n.beginnerSupportLevel,
+      };
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => unawaited(_speakPromptIfNeeded()),
+    );
+  }
+
+  /// Beginner support reads each question aloud so reading skill never
+  /// gates the activity.
+  Future<void> _speakPromptIfNeeded() async {
+    if (!mounted || _finished) return;
+    final appState = widget.appState;
+    if (appState.effectiveSupportFor(appState.selectedChild.id) !=
+        SupportLevel.beginner) {
+      return;
+    }
+    await appState.ttsService.speak(
+      widget.entry.activity.questions[_questionIndex].promptFor(_locale),
+      _locale,
+    );
+  }
 
   void _answer(int index) {
     final question =
@@ -185,8 +221,14 @@ class _ActivityRunnerState extends State<_ActivityRunner> {
         _lastAnswerCorrect = null;
         if (_questionIndex < widget.entry.activity.questions.length - 1) {
           _questionIndex++;
+          unawaited(_speakPromptIfNeeded());
         } else {
-          widget.appState.awardStars(1);
+          final appState = widget.appState;
+          appState.recordSessionCompleted(
+            childId: appState.selectedChild.id,
+            level: _levelAtStart ??
+                appState.effectiveSupportFor(appState.selectedChild.id),
+          );
           _finished = true;
         }
       }
@@ -199,6 +241,7 @@ class _ActivityRunnerState extends State<_ActivityRunner> {
       _lastAnswerCorrect = null;
       _finished = false;
     });
+    unawaited(_speakPromptIfNeeded());
   }
 
   @override
@@ -210,10 +253,18 @@ class _ActivityRunnerState extends State<_ActivityRunner> {
       body: AnimatedBuilder(
         animation: widget.appState,
         builder: (context, _) {
+          // Live support-level changes: offer a restart instead of
+          // silently switching difficulty mid-session.
+          final currentLevel = widget.appState.effectiveSupportFor(
+            widget.appState.selectedChild.id,
+          );
+          _levelAtStart ??= currentLevel;
+          final levelChanged =
+              !_dismissedLevelChange && _levelAtStart != currentLevel;
           if (_finished) {
             return Center(
               child: Padding(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.all(AppSpacing.xl),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -237,11 +288,58 @@ class _ActivityRunnerState extends State<_ActivityRunner> {
               ),
             );
           }
+          if (levelChanged) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.xl),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.tune, size: 48),
+                    const SizedBox(height: 12),
+                    Text(
+                      key: const ValueKey('level-change-prompt'),
+                      l10n.levelChangedPrompt(
+                        _levelLabel(l10n, currentLevel),
+                      ),
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 16),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(minHeight: 64),
+                      child: FilledButton.icon(
+                        key: const ValueKey('level-restart'),
+                        onPressed: () {
+                          setState(() {
+                            _questionIndex = 0;
+                            _lastAnswerCorrect = null;
+                            _finished = false;
+                            _dismissedLevelChange = true;
+                          });
+                          unawaited(_speakPromptIfNeeded());
+                        },
+                        icon: const Icon(Icons.refresh),
+                        label: Text(l10n.levelRestartAction),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    TextButton(
+                      key: const ValueKey('level-continue'),
+                      onPressed: () =>
+                          setState(() => _dismissedLevelChange = true),
+                      child: Text(l10n.levelContinueAction),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
           final question = activity.questions[_questionIndex];
           final feedback = _lastAnswerCorrect;
           return ListView(
             key: const ValueKey('quiz-page'),
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(AppSpacing.xl),
             children: [
               Semantics(
                 header: true,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/services/app_services.dart';
 import '../../../l10n/generated/app_localizations.dart';
+import '../../../core/theme/app_spacing.dart';
 import '../../settings/presentation/parent_gate_screen.dart';
 import '../domain/routine_models.dart';
 
@@ -171,7 +172,7 @@ class _RoutineEditorScreenState extends State<RoutineEditorScreen> {
     }
     final lead = widget.appState.transitionLeadMinutes;
     return ListView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       children: [
         Text(l10n.leadMinutesLabel,
             style: Theme.of(context).textTheme.titleMedium),

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../../../core/services/app_services.dart';
 import '../../../l10n/generated/app_localizations.dart';
+import '../../../core/theme/app_spacing.dart';
 
 /// Numeric PIN gate in front of every caregiver surface.
 ///
@@ -69,7 +70,7 @@ class _ParentGateScreenState extends State<ParentGateScreen> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(AppSpacing.xl),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

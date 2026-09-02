@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 
 import '../../../core/services/app_services.dart';
 import '../../../l10n/generated/app_localizations.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../shared/widgets/app_widgets.dart';
 
 /// First-run setup: language, child profile, and the caregiver PIN.
 ///
@@ -63,19 +65,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Icon(
-                      Icons.spa_outlined,
-                      size: 56,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    const SizedBox(height: 12),
+                    const Center(child: Mascot(size: 120)),
+                    const SizedBox(height: AppSpacing.sm),
                     Text(
                       l10n.onboardingTitle,
                       textAlign: TextAlign.center,
                       style: Theme.of(context)
                           .textTheme
-                          .headlineSmall
-                          ?.copyWith(fontWeight: FontWeight.bold),
+                          .headlineMedium
+                          ?.copyWith(fontWeight: FontWeight.w700),
                     ),
                     const SizedBox(height: 6),
                     Text(
@@ -161,14 +159,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ),
                     const SizedBox(height: 24),
                     ConstrainedBox(
-                      constraints: const BoxConstraints(minHeight: 64),
+                      constraints: const BoxConstraints(
+                        minHeight: AppTouch.child,
+                      ),
                       child: FilledButton.icon(
                         key: const ValueKey('onboard-start'),
                         onPressed: _valid ? () => _start(l10n) : null,
                         icon: const Icon(Icons.arrow_forward),
                         label: Text(
                           l10n.getStarted,
-                          style: const TextStyle(fontSize: 18),
+                          style: Theme.of(context).textTheme.titleMedium,
                         ),
                       ),
                     ),

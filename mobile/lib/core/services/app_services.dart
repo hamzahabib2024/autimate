@@ -8,7 +8,9 @@ import 'connectivity_service.dart';
 import 'tts_service.dart';
 import '../data/local_store.dart';
 import '../../features/communication/domain/card_ranker.dart';
+import '../../features/communication/domain/custom_card_repository.dart';
 import '../../features/ai/domain/ai_contracts.dart';
+import '../../features/gamification/domain/reward_policy.dart';
 import '../../features/emotion_recognition/domain/emotion_activity_engine.dart';
 import '../../features/learning/domain/interest_repository.dart';
 import '../../features/progress/domain/progress_models.dart';
@@ -21,7 +23,6 @@ class ChildProfile {
     required this.name,
     required this.supportLevel,
   });
-
   final String id;
   final String name;
   final String supportLevel;
@@ -75,6 +76,27 @@ class MockFeatureRepository implements FeatureRepository {
   ];
 }
 
+/// Caregiver-controlled adaptive-support preference for one child.
+class SupportPreference {
+  const SupportPreference({this.level, this.locked = false});
+
+  final SupportLevel? level;
+  final bool locked;
+
+  Map<String, dynamic> toJson() => {
+    'level': level?.name,
+    'locked': locked,
+  };
+
+  static SupportPreference fromJson(Map<String, dynamic> json) =>
+      SupportPreference(
+        level: SupportLevel.values.where(
+          (level) => level.name == json['level'],
+        ).firstOrNull,
+        locked: json['locked'] as bool? ?? false,
+      );
+}
+
 class AppState extends ChangeNotifier {
   AppState(
     this.authRepository,
@@ -82,6 +104,7 @@ class AppState extends ChangeNotifier {
     ProgressRepository? progressRepository,
     RoutineRepository? routineRepository,
     InterestRepository? interestRepository,
+    CustomCardRepository? customCardRepository,
     AmbientSoundService? ambientSoundService,
     KeyValueStore? settingsStore,
     ConnectivityService? connectivityService,
@@ -97,6 +120,8 @@ class AppState extends ChangeNotifier {
         routineRepository = routineRepository ?? _defaultRoutineRepository(),
         interestRepository =
             interestRepository ?? _NoopInterestRepository(),
+        customCardRepository =
+            customCardRepository ?? InMemoryCustomCardRepository(),
         ambientSoundService =
             ambientSoundService ?? SilentAmbientSoundService(),
         _settings = settingsStore,
@@ -113,6 +138,9 @@ class AppState extends ChangeNotifier {
   final RoutineRepository routineRepository;
   final InterestRepository interestRepository;
 
+  /// Caregiver-authored AAC cards, stored locally per child.
+  final CustomCardRepository customCardRepository;
+
   /// Gentle-sound boundary for the calm screen; silent by default until an
   /// OS-audio adapter is composed in on a real device.
   final AmbientSoundService ambientSoundService;
@@ -122,6 +150,7 @@ class AppState extends ChangeNotifier {
   String _selectedChildId = 'demo-child';
   Locale _locale = const Locale('en');
   bool _sensoryMode = false;
+  ThemeMode _themeMode = ThemeMode.system;
   bool _signedIn = true;
   bool _childMode = false;
   bool _onboarded = false;
@@ -130,10 +159,28 @@ class AppState extends ChangeNotifier {
 
   /// Lead time in minutes for transition countdown warnings.
   int _leadMinutes = 5;
+
+  /// Per-child caregiver support preferences (override level and lock).
+  final Map<String, SupportPreference> _supportPrefs = {};
+
+  /// Completed-session ledger per child driving reward frequency.
+  final Map<String, int> _rewardCounters = {};
   StreamSubscription<bool>? _connectivitySubscription;
 
   Locale get locale => _locale;
   bool get sensoryMode => _sensoryMode;
+
+  /// Light, dark, or follow the device. Dark is a comfort setting here, not
+  /// a style one — a bright screen in a dim room is a common sensory
+  /// complaint, so it is surfaced beside the other sensory controls.
+  ThemeMode get themeMode => _themeMode;
+
+  void setThemeMode(ThemeMode mode) {
+    if (mode == _themeMode) return;
+    _themeMode = mode;
+    unawaited(persistSettings());
+    notifyListeners();
+  }
   bool get signedIn => _signedIn;
   bool get childMode => _childMode;
   bool get onboarded => _onboarded;
@@ -150,6 +197,69 @@ class AppState extends ChangeNotifier {
     unawaited(persistSettings());
     notifyListeners();
   }
+
+  /// Caregiver-locked adaptive level for [childId]; null means the rules
+  /// (and the profile's base level) decide.
+  SupportLevel? supportOverrideFor(String childId) =>
+      _supportPrefs[childId]?.level;
+
+  bool isSupportLockedFor(String childId) =>
+      _supportPrefs[childId]?.locked ?? false;
+
+  /// The level a new session should start from: the caregiver override when
+  /// present, otherwise the profile's assessed base level.
+  SupportLevel effectiveSupportFor(String childId) {
+    final override = supportOverrideFor(childId);
+    if (override != null) return override;
+    final child = children.where((child) => child.id == childId).firstOrNull;
+    return switch (child?.supportLevel) {
+      'Intermediate' => SupportLevel.intermediate,
+      'Advanced' => SupportLevel.advanced,
+      _ => SupportLevel.beginner,
+    };
+  }
+
+  /// Persists the caregiver's picker choice. An unlocked null override
+  /// returns the child fully to rule-based adaptation.
+  void setSupportPreference({
+    required String childId,
+    required bool locked,
+    SupportLevel? level,
+  }) {
+    if (!locked && level == null) {
+      if (_supportPrefs.remove(childId) == null &&
+          !isSupportLockedFor(childId)) {
+        return;
+      }
+      unawaited(persistSettings());
+      notifyListeners();
+      return;
+    }
+    _supportPrefs[childId] = SupportPreference(level: level, locked: locked);
+    unawaited(persistSettings());
+    notifyListeners();
+  }
+
+  /// Counts a finished session and pays the level's reward when due
+  /// (beginner: every session, intermediate: every second, advanced: every
+  /// third). Returns true when a star was awarded.
+  bool recordSessionCompleted({
+    required String childId,
+    required SupportLevel level,
+  }) {
+    final completed = (_rewardCounters[childId] ?? 0) + 1;
+    _rewardCounters[childId] = completed;
+    final due = const RewardPolicy().shouldReward(
+      level: level,
+      completedSessions: completed,
+    );
+    if (due) awardStars(1);
+    unawaited(persistSettings());
+    notifyListeners();
+    return due;
+  }
+
+  int completedSessionsFor(String childId) => _rewardCounters[childId] ?? 0;
 
   String? _parentPinHash;
 
@@ -266,6 +376,13 @@ class AppState extends ChangeNotifier {
     }
     final sensory = await store.read(_keySensoryMode);
     if (sensory != null) _sensoryMode = sensory == 'true';
+    final themeMode = await store.read(_keyThemeMode);
+    if (themeMode != null) {
+      _themeMode = ThemeMode.values.firstWhere(
+        (mode) => mode.name == themeMode,
+        orElse: () => ThemeMode.system,
+      );
+    }
     final stars = int.tryParse(await store.read(_keyStars) ?? '');
     if (stars != null && stars >= 0) _stars = stars;
     final childMode = await store.read(_keyChildMode);
@@ -274,6 +391,39 @@ class AppState extends ChangeNotifier {
     if (onboarded != null) _onboarded = onboarded == 'true';
     final lead = int.tryParse(await store.read(_keyLeadMinutes) ?? '');
     if (lead != null && lead >= 0 && lead <= 60) _leadMinutes = lead;
+    final supportJson = await store.read(_keySupportPrefs);
+    if (supportJson != null) {
+      try {
+        final decoded = jsonDecode(supportJson) as Map<String, dynamic>;
+        _supportPrefs
+          ..clear()
+          ..addAll(
+            decoded.map(
+              (childId, value) => MapEntry(
+                childId,
+                SupportPreference.fromJson(value as Map<String, dynamic>),
+              ),
+            ),
+          );
+      } on FormatException {
+        // Corrupt payload: fall back to rule-based adaptation.
+      }
+    }
+    final rewardJson = await store.read(_keyRewardCounters);
+    if (rewardJson != null) {
+      try {
+        final decoded = jsonDecode(rewardJson) as Map<String, dynamic>;
+        _rewardCounters
+          ..clear()
+          ..addAll(
+            decoded.map(
+              (childId, value) => MapEntry(childId, value as int? ?? 0),
+            ),
+          );
+      } on FormatException {
+        // Corrupt payload: restart the ledger at zero.
+      }
+    }
     _parentPinHash = await store.read(_keyParentPinHash);
     final childrenJson = await store.read(_keyChildren);
     if (childrenJson != null) {
@@ -306,10 +456,23 @@ class AppState extends ChangeNotifier {
     if (store == null) return;
     await store.write(_keyLanguage, _locale.languageCode);
     await store.write(_keySensoryMode, '$_sensoryMode');
+    await store.write(_keyThemeMode, _themeMode.name);
     await store.write(_keyStars, '$_stars');
     await store.write(_keyChildMode, '$_childMode');
     await store.write(_keyOnboarded, '$_onboarded');
     await store.write(_keyLeadMinutes, '$_leadMinutes');
+    await store.write(
+      _keySupportPrefs,
+      jsonEncode(
+        _supportPrefs.map(
+          (childId, pref) => MapEntry(childId, pref.toJson()),
+        ),
+      ),
+    );
+    await store.write(
+      _keyRewardCounters,
+      jsonEncode(_rewardCounters),
+    );
     final pinHash = _parentPinHash;
     if (pinHash == null) {
       await store.remove(_keyParentPinHash);
@@ -325,10 +488,13 @@ class AppState extends ChangeNotifier {
 
   static const String _keyLanguage = 'autimate.settings.language';
   static const String _keySensoryMode = 'autimate.settings.sensoryMode';
+  static const String _keyThemeMode = 'autimate.settings.themeMode';
   static const String _keyStars = 'autimate.settings.stars';
   static const String _keyChildMode = 'autimate.settings.childMode';
   static const String _keyOnboarded = 'autimate.settings.onboarded';
   static const String _keyLeadMinutes = 'autimate.routine.leadMinutes';
+  static const String _keySupportPrefs = 'autimate.support.v1';
+  static const String _keyRewardCounters = 'autimate.reward.v1';
   static const String _keyParentPinHash = 'autimate.settings.parentPinHash';
   static const String _keyChildren = 'autimate.children';
   static const String _keySelectedChild = 'autimate.selectedChild';
@@ -362,6 +528,39 @@ class AppState extends ChangeNotifier {
 
   Future<void> recordSession(SessionResult result) =>
       progressRepository.recordSession(result);
+
+  // --- Custom AAC cards ---------------------------------------------------
+
+  List<CustomCard> _customCards = const [];
+  String? _customCardsChildId;
+
+  /// Caregiver-created cards for the active child. Empty until
+  /// [loadCustomCards] resolves, so callers must tolerate a first frame
+  /// with only the built-in deck.
+  List<CustomCard> get customCards => _customCards;
+
+  /// Reloads the custom deck, and does so again whenever the active child
+  /// changes — cards belong to one child, never to the device.
+  Future<void> loadCustomCards({bool force = false}) async {
+    final childId = selectedChild.id;
+    if (!force && _customCardsChildId == childId) return;
+    _customCardsChildId = childId;
+    final cards = await customCardRepository.cardsFor(childId);
+    if (_customCardsChildId != childId) return;
+    _customCards = cards;
+    notifyListeners();
+  }
+
+  Future<CustomCard> saveCustomCard(CustomCard card) async {
+    await customCardRepository.save(card);
+    await loadCustomCards(force: true);
+    return card;
+  }
+
+  Future<void> deleteCustomCard(String cardId) async {
+    await customCardRepository.delete(cardId);
+    await loadCustomCards(force: true);
+  }
 
   Future<void> recordCardUsage(CardUsageEvent event) =>
       progressRepository.recordCardUsage(event);

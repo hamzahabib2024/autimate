@@ -1,6 +1,9 @@
 ﻿import 'package:flutter/material.dart';
 
 import '../../../core/services/app_services.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../shared/widgets/app_widgets.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../progress/domain/progress_models.dart';
 import '../domain/emotion_trend.dart';
@@ -161,13 +164,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
         label: Text(l10n.observationButton),
       ),
       body: ListView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.lg,
+          AppSpacing.lg,
+          AppSpacing.lg,
+          96,
+        ),
         children: [
           Text(
             l10n.childWeekHeader(widget.appState.selectedChild.name),
-            style: Theme.of(context).textTheme.headlineSmall,
+            style: Theme.of(context).textTheme.headlineMedium,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.md),
           FutureBuilder<_DashboardData>(
             future: _data,
             builder: (context, snapshot) {
@@ -178,40 +186,52 @@ class _DashboardScreenState extends State<DashboardScreen> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  IntrinsicHeight(
+                    child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Expanded(
-                        child: _Metric(
+                        child: CaregiverStatTile(
                           label: l10n.metricActivities,
                           value: '${data.activityCount}',
+                          icon: Icons.check_circle_outline,
+                          accent: context.palette.communicate,
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: AppSpacing.sm),
                       Expanded(
-                        child: _Metric(
+                        child: CaregiverStatTile(
                           label: l10n.metricRoutine,
                           value: '${(data.routineRatio * 100).round()}%',
+                          icon: Icons.today_outlined,
+                          accent: context.palette.routine,
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: AppSpacing.sm),
                       Expanded(
-                        child: _Metric(
+                        child: CaregiverStatTile(
                           label: l10n.metricStars,
                           value: '${widget.appState.stars}',
+                          icon: Icons.star_outline,
+                          accent: context.palette.progress,
                         ),
                       ),
                     ],
                   ),
+                  ),
                   const SizedBox(height: 20),
                   Card(
                     child: SizedBox(
-                      height: 190,
+                      height: 210,
                       child: Padding(
-                        padding: const EdgeInsets.all(20),
+                        padding: const EdgeInsets.all(AppSpacing.lg),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(l10n.activitiesThisWeek),
+                            SectionHeader(
+                              title: l10n.activitiesThisWeek,
+                              accent: context.palette.communicate,
+                            ),
                             const Spacer(),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.end,
@@ -254,10 +274,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
             subtitle: Text(l10n.explainableProgressMessage),
           ),
           const SizedBox(height: 8),
-          Text(l10n.caregiverNotes, style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: 8),
+          SectionHeader(
+            title: l10n.caregiverNotes,
+            accent: context.palette.learning,
+          ),
           if (_observations.isEmpty)
-            Text(l10n.noObservationsYet)
+            EmptyState(
+              message: l10n.noObservationsYet,
+              icon: Icons.sticky_note_2_outlined,
+            )
           else
             ..._observations.take(5).map(
               (note) => Card(
@@ -460,29 +485,6 @@ class _TrendPainter extends CustomPainter {
       oldDelegate.values != values || oldDelegate.color != color;
 }
 
-class _Metric extends StatelessWidget {
-  const _Metric({required this.label, required this.value});
-  final String label;
-  final String value;
-  @override
-  Widget build(BuildContext context) => Card(
-    child: Padding(
-      padding: const EdgeInsets.all(12),
-      child: Column(
-        children: [
-          Text(
-            value,
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-          ),
-          Text(label, textAlign: TextAlign.center),
-        ],
-      ),
-    ),
-  );
-}
-
 class _Bar extends StatelessWidget {
   const _Bar({required this.height, required this.label, required this.count});
   final double height;
@@ -493,14 +495,20 @@ class _Bar extends StatelessWidget {
     label: label,
     value: '$count',
     child: Column(
+      mainAxisAlignment: MainAxisAlignment.end,
       children: [
         Container(
-          width: 28,
+          width: 26,
           height: height,
-          color: Theme.of(context).colorScheme.primary,
+          decoration: BoxDecoration(
+            color: context.palette.communicate,
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(6),
+            ),
+          ),
         ),
-        const SizedBox(height: 4),
-        Text(label),
+        const SizedBox(height: AppSpacing.xxs),
+        Text(label, style: Theme.of(context).textTheme.labelSmall),
       ],
     ),
   );

@@ -24,7 +24,9 @@
   "storyPagesCount": "{count} pages",
   "@storyPagesCount": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "learningPathTileTitle": "Learning path",
@@ -33,7 +35,9 @@
   "starsEarned": "{count} stars earned",
   "@starsEarned": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "comingNextPhase": "Coming in the next phase",
@@ -64,23 +68,35 @@
   "sessionSummary": "{score} of {total} correct • {stars} stars earned",
   "@sessionSummary": {
     "placeholders": {
-      "score": { "type": "int" },
-      "total": { "type": "int" },
-      "stars": { "type": "int" }
+      "score": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "stars": {
+        "type": "int"
+      }
     }
   },
   "practiseAgain": "Practise again",
   "questionProgress": "Question {index} of {total}",
   "@questionProgress": {
     "placeholders": {
-      "index": { "type": "int" },
-      "total": { "type": "int" }
+      "index": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "whichFaceFeels": "Which face feels {emotion}?",
   "@whichFaceFeels": {
     "placeholders": {
-      "emotion": { "type": "String" }
+      "emotion": {
+        "type": "String"
+      }
     }
   },
   "emotionHappy": "Happy",
@@ -104,14 +120,20 @@
   "expressionSmileProgress": "{done} of {total} smiles held",
   "@expressionSmileProgress": {
     "placeholders": {
-      "done": { "type": "int" },
-      "total": { "type": "int" }
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "expressionSessionComplete": "Great smiling! {stars} stars earned",
   "@expressionSessionComplete": {
     "placeholders": {
-      "stars": { "type": "int" }
+      "stars": {
+        "type": "int"
+      }
     }
   },
   "expressionPrivacyTitle": "Private by design",
@@ -136,8 +158,12 @@
   "countdownWarning": "{minutes} minutes left: {title}",
   "@countdownWarning": {
     "placeholders": {
-      "minutes": { "type": "int" },
-      "title": { "type": "String" }
+      "minutes": {
+        "type": "int"
+      },
+      "title": {
+        "type": "String"
+      }
     }
   },
   "flexibilityTitle": "Friendly changes",
@@ -154,7 +180,9 @@
   "routineDeleteStepBody": "\"{title}\" will no longer appear in the daily routine.",
   "@routineDeleteStepBody": {
     "placeholders": {
-      "title": { "type": "String" }
+      "title": {
+        "type": "String"
+      }
     }
   },
   "deleteAction": "Remove",
@@ -163,16 +191,24 @@
   "learningWhy": "{name} likes {interest}",
   "@learningWhy": {
     "placeholders": {
-      "name": { "type": "String" },
-      "interest": { "type": "String" }
+      "name": {
+        "type": "String"
+      },
+      "interest": {
+        "type": "String"
+      }
     }
   },
   "learningPathEmptyHint": "Pick a few interests so activities can appear here.",
   "learningQuestionProgress": "Question {done} of {total}",
   "@learningQuestionProgress": {
     "placeholders": {
-      "done": { "type": "int" },
-      "total": { "type": "int" }
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "breathingTitle": "Breathe with me",
@@ -191,7 +227,9 @@
   "emotionTrendLatest": "{percent} latest",
   "@emotionTrendLatest": {
     "placeholders": {
-      "percent": { "type": "String" }
+      "percent": {
+        "type": "String"
+      }
     }
   },
   "noEmotionDataYet": "No emotion sessions in the last 7 days yet.",
@@ -202,14 +240,80 @@
   "tagSensory": "Sensory",
   "tagCommunication": "Communication",
   "editProfileTitle": "Edit profile",
+  "levelPickerForChild": "Support level for {name}",
+  "@levelPickerForChild": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "levelAutomaticTitle": "Follow progress automatically",
+  "levelAutomaticSubtitle": "Starts from the profile level; three right answers in a row step up, two wrong answers step down.",
+  "levelLockTitle": "Lock this level",
+  "levelLockSubtitle": "Stops automatic stepping up or down.",
+  "levelLockedNotice": "Locked — {level} stays fixed.",
+  "levelChangedPrompt": "Support changed to {level}. Restart now to apply it?",
+  "@levelChangedPrompt": {
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "levelRestartAction": "Restart at new level",
+  "levelContinueAction": "Keep going",
+  "rewardCadenceEverySession": "A star after every completed session.",
+  "rewardCadenceEveryN": "A star every {sessions} completed sessions.",
+  "@rewardCadenceEveryN": {
+    "placeholders": {
+      "sessions": {
+        "type": "int"
+      }
+    }
+  },
+  "coopTitle": "We are a team",
+  "coopSubtitle": "{name} and you, building every win together.",
+  "@coopSubtitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "streakDays": "{count} days in a row",
+  "@streakDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "badgesSectionTitle": "Milestones",
+  "progressOf": "{done} of {total}",
+  "@progressOf": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "allBadgesEarned": "Every milestone reached — wonderful teamwork!",
   "routineTitle": "Routine",
   "oneStepAtATime": "One step at a time",
   "routineProgressLabel": "Routine progress",
   "stepsDone": "{done} of {total} steps done",
   "@stepsDone": {
     "placeholders": {
-      "done": { "type": "int" },
-      "total": { "type": "int" }
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "transitionWarnings": "Transition warnings",
@@ -219,7 +323,9 @@
   "childWeekHeader": "{name}'s week",
   "@childWeekHeader": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "metricActivities": "Activities",
@@ -279,5 +385,59 @@
   "childModeSubtitle": "Hide caregiver areas behind the parent lock",
   "profilesSectionTitle": "Children",
   "addChildLabel": "Add child",
-  "offlineBanner": "You are offline. Work is saved on this device and will sync later."
+  "offlineBanner": "You are offline. Work is saved on this device and will sync later.",
+  "customCardsTitle": "My cards",
+  "customCardsSubtitle": "Cards you made for this child",
+  "addCustomCard": "Add a card",
+  "editCustomCard": "Edit card",
+  "deleteCustomCard": "Delete card",
+  "cardLabelEnglish": "Label (English)",
+  "cardLabelUrdu": "Label (Urdu)",
+  "cardSpokenEnglish": "Spoken words (English, optional)",
+  "cardSpokenUrdu": "Spoken words (Urdu, optional)",
+  "cardCategoryLabel": "Category",
+  "cardPictureLabel": "Picture",
+  "choosePhotoGallery": "Choose from gallery",
+  "takePhoto": "Take a photo",
+  "useSymbolInstead": "Use a symbol instead",
+  "cameraUnavailable": "No camera or gallery on this device. You can still make a card with a symbol.",
+  "customCardAdded": "Card added",
+  "customCardDeleted": "Card deleted",
+  "confirmDeleteCard": "Delete this card? It will disappear from the board.",
+  "myCardsEmpty": "No cards yet. Add one so it appears on the board.",
+  "longPressToEditCard": "Press and hold a card you made to edit it.",
+  "reorderSentenceHint": "Drag a word to change its place.",
+  "removeWordTooltip": "Remove this word",
+  "sentenceStripEmpty": "Tap a card to start.",
+  "homeQuickActions": "Quick start",
+  "homeStreak": "{count, plural, =0{No days in a row yet} =1{1 day in a row} other{{count} days in a row}}",
+  "@homeStreak": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "greetingChild": "Hello, {name}",
+  "@greetingChild": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "openSettings": "Settings",
+  "displaySectionTitle": "Look and feel",
+  "themeModeLabel": "Screen brightness",
+  "themeModeSystem": "Match my device",
+  "themeModeLight": "Light",
+  "themeModeDark": "Dark",
+  "themeModeSubtitle": "Dark can be easier in a dim room.",
+  "chooseTheFace": "Choose the face",
+  "tryAgainGently": "Not that one. Have another look.",
+  "wellDone": "Well done",
+  "starEarned": "You earned a star",
+  "nextMilestone": "Next milestone",
+  "earnedLabel": "Earned",
+  "lockedLabel": "Keep going"
 }
