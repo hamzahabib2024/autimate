@@ -3,6 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../../core/services/app_services.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_motion.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_typography.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../../shared/widgets/app_widgets.dart';
 import 'expression_screen.dart';
@@ -22,6 +26,8 @@ class _EmotionScreenState extends State<EmotionScreen> {
   EmotionQuestion? _question;
   AnswerOutcome? _outcome;
   SessionResult? _result;
+  SupportLevel? _levelAtStart;
+  bool _dismissedLevelChange = false;
 
   @override
   void initState() {
@@ -56,24 +62,108 @@ class _EmotionScreenState extends State<EmotionScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final appState = widget.appState;
-    if (appState == null) return _buildBody(context, l10n);
+    if (appState == null) return _buildBody(context, l10n, null);
     _rebindChild();
     return AnimatedBuilder(
       animation: appState,
-      builder: (context, _) => _buildBody(context, l10n),
+      builder: (context, _) {
+        final currentLevel = appState.effectiveSupportFor(_boundChildId);
+        _levelAtStart ??= currentLevel;
+        final levelChanged =
+            !_dismissedLevelChange &&
+            _result == null &&
+            _levelAtStart != currentLevel;
+        return _buildBody(context, l10n,
+            levelChanged ? currentLevel : null);
+      },
     );
   }
 
-  Widget _buildBody(BuildContext context, AppLocalizations l10n) {
+  Widget _buildBody(
+    BuildContext context,
+    AppLocalizations l10n,
+    SupportLevel? changedToLevel,
+  ) {
     final question = _question;
     final result = _result;
-    return Scaffold(
+    final palette = context.palette;
+    final reduced = AppMotion.reduced(
+      context,
+      sensoryMode: widget.appState?.sensoryMode ?? false,
+    );
+    return ChildTextScale(
+      child: Scaffold(
       appBar: AppBar(title: Text(l10n.emotionPracticeTitle)),
       body: ListView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(AppSpacing.lg),
         children: [
+          if (changedToLevel != null) ...[
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    Text(
+                      key: const ValueKey('level-change-prompt'),
+                      l10n.levelChangedPrompt(
+                        switch (changedToLevel) {
+                          SupportLevel.intermediate =>
+                            l10n.intermediateSupportLevel,
+                          SupportLevel.advanced =>
+                            l10n.advancedSupportLevel,
+                          _ => l10n.beginnerSupportLevel,
+                        },
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(minHeight: 64),
+                      child: FilledButton.icon(
+                        key: const ValueKey('level-restart'),
+                        onPressed: () {
+                          setState(() {
+                            _dismissedLevelChange = true;
+                            _levelAtStart = changedToLevel;
+                          });
+                          _restart();
+                        },
+                        icon: const Icon(Icons.refresh),
+                        label: Text(l10n.levelRestartAction),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    TextButton(
+                      key: const ValueKey('level-continue'),
+                      onPressed: () =>
+                          setState(() => _dismissedLevelChange = true),
+                      child: Text(l10n.levelContinueAction),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
           if (result != null) ...[
+            if (result.starsAwarded > 0)
+              Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                child: Column(
+                  children: [
+                    RewardStar(
+                      key: const ValueKey('reward-star'),
+                      sensoryMode: widget.appState?.sensoryMode ?? false,
+                    ),
+                    Text(
+                      l10n.starEarned,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ],
+                ),
+              ),
             StatePanel(
+              accent: palette.emotions,
               title: l10n.sessionComplete,
               message: l10n.sessionSummary(
                 result.score,
@@ -102,39 +192,23 @@ class _EmotionScreenState extends State<EmotionScreen> {
             ),
             const SizedBox(height: 20),
             Card(
-              child: SizedBox(
-                height: 180,
-                child: Center(
-                  child: Icon(
-                    _iconFor(question.answer),
-                    size: 120,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: AppSpacing.sm,
                 ),
-              ),
-            ),
-            if (question.hintVisible)
-              Padding(
-                padding: const EdgeInsets.only(top: 12),
-                child: Text(l10n.beginnerHint),
-              ),
-            const SizedBox(height: 20),
-            ...question.choices.map(
-              (emotion) => Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(minHeight: 64),
-                  child: FilledButton.tonal(
-                    onPressed:
-                        _outcome == null ? () => _answer(emotion) : null,
-                    child: Text(_label(l10n, emotion)),
+                child: Center(
+                  child: EmotionFace(
+                    key: ValueKey('emotion-face-${question.answer.name}'),
+                    emotion: question.answer,
+                    size: 148,
+                    animate: !reduced,
                   ),
                 ),
               ),
             ),
             if (_outcome != null)
               Padding(
-                padding: const EdgeInsets.only(top: 8),
+                padding: const EdgeInsets.only(top: AppSpacing.sm),
                 child: Semantics(
                   liveRegion: true,
                   child: Text(
@@ -142,12 +216,61 @@ class _EmotionScreenState extends State<EmotionScreen> {
                         ? l10n.answerCorrect
                         : l10n.answerIncorrect,
                     textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: _outcome!.correct
+                          ? palette.success
+                          : Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ),
               ),
+            if (question.hintVisible)
+              Padding(
+                padding: const EdgeInsets.only(top: AppSpacing.sm),
+                child: Text(l10n.beginnerHint),
+              ),
+            const SizedBox(height: 20),
+            ...question.choices.map(
+              (emotion) => Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    minHeight: AppTouch.child + 8,
+                  ),
+                  child: FilledButton.tonal(
+                    key: ValueKey('emotion-answer-${emotion.name}'),
+                    onPressed:
+                        _outcome == null ? () => _answer(emotion) : null,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Beginner support turns identification into
+                        // matching: the same flag that reveals the hint
+                        // also shows the face beside each word.
+                        if (question.hintVisible) ...[
+                          EmotionFace(
+                            emotion: emotion,
+                            size: 44,
+                            animate: false,
+                          ),
+                          const SizedBox(width: AppSpacing.sm),
+                        ],
+                        Flexible(
+                          child: Text(
+                            _label(l10n, emotion),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
           const SizedBox(height: 20),
           StatePanel(
+            accent: palette.emotions,
             title: l10n.cameraPracticeTitle,
             message: l10n.cameraPracticeMessage,
             icon: Icons.camera_alt_outlined,
@@ -168,6 +291,7 @@ class _EmotionScreenState extends State<EmotionScreen> {
               ),
             ),
         ],
+      ),
       ),
     );
   }
@@ -202,8 +326,13 @@ class _EmotionScreenState extends State<EmotionScreen> {
         if (next == null) _result = _engine.finish();
       });
       if (_result != null && widget.appState != null) {
-        widget.appState!.awardStars(_result!.starsAwarded);
+        // Session history keeps the engine's raw score; the star payout
+        // follows the caregiver's reward-frequency policy.
         widget.appState!.recordSession(_result!);
+        widget.appState!.recordSessionCompleted(
+          childId: _boundChildId,
+          level: _result!.levelPlayed,
+        );
       } else {
         unawaited(_speakPrompt());
       }
@@ -232,13 +361,4 @@ class _EmotionScreenState extends State<EmotionScreen> {
         EmotionLabel.scared => l10n.emotionScared,
         EmotionLabel.neutral => l10n.emotionNeutral,
       };
-
-  IconData _iconFor(EmotionLabel emotion) => switch (emotion) {
-    EmotionLabel.happy => Icons.sentiment_satisfied,
-    EmotionLabel.sad => Icons.sentiment_dissatisfied,
-    EmotionLabel.angry => Icons.mood_bad,
-    EmotionLabel.surprised => Icons.sentiment_very_satisfied,
-    EmotionLabel.scared => Icons.sentiment_very_dissatisfied,
-    EmotionLabel.neutral => Icons.sentiment_neutral,
-  };
 }

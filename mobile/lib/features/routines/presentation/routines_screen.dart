@@ -3,6 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../../core/services/app_services.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_motion.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_typography.dart';
+import '../../../shared/widgets/app_widgets.dart';
 import '../../../core/services/tts_service.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../domain/routine_models.dart';
@@ -176,7 +181,13 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
     final change = _change;
     final changeCompleted =
         change != null && _completed.contains(change.stepId);
-    return Scaffold(
+    final palette = context.palette;
+    final reduced = AppMotion.reduced(
+      context,
+      sensoryMode: widget.appState.sensoryMode,
+    );
+    return ChildTextScale(
+      child: Scaffold(
       appBar: AppBar(
         title: Text(l10n.routineTitle),
         actions: [
@@ -192,24 +203,55 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(AppSpacing.lg),
         children: [
-          Text(
-            l10n.oneStepAtATime,
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
-          const SizedBox(height: 16),
-          Semantics(
-            label: l10n.routineProgressLabel,
-            value: '${(progress * 100).round()}%',
-            child: LinearProgressIndicator(
-              value: progress,
-              minHeight: 12,
-              borderRadius: BorderRadius.circular(6),
+          // The day at a glance. A ring reads as "how much is left" faster
+          // than a bar does, which is the question this screen answers.
+          Container(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            decoration: BoxDecoration(
+              color: palette.accentTint(palette.routine, 0.86),
+              borderRadius: BorderRadius.circular(AppRadius.lg),
+              border: Border.all(color: palette.routine, width: 2),
+            ),
+            child: Row(
+              children: [
+                Semantics(
+                  label: l10n.routineProgressLabel,
+                  value: '${(progress * 100).round()}%',
+                  child: ProgressRing(
+                    progress: progress,
+                    size: 84,
+                    strokeWidth: 9,
+                    color: palette.routine,
+                    animate: !reduced,
+                    child: Text(
+                      '${(progress * 100).round()}%',
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l10n.oneStepAtATime,
+                        style: Theme.of(context).textTheme.titleLarge
+                            ?.copyWith(fontWeight: FontWeight.w700),
+                      ),
+                      const SizedBox(height: AppSpacing.xxs),
+                      Text(
+                        l10n.stepsDone(_completed.length, _steps.length),
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 8),
-          Text(l10n.stepsDone(_completed.length, _steps.length)),
           if (countdowns.isNotEmpty) ...[
             const SizedBox(height: 12),
             for (final warning in countdowns)
@@ -285,6 +327,7 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
           ),
         ],
       ),
+      ),
     );
   }
 
@@ -309,14 +352,43 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
     // The subtitle always shows the original label in the other language
     // so the step stays recognisable even when a friendly change renames it.
     final subtitle = localeUr ? step.titleEn : step.titleUr;
+    final palette = context.palette;
+    final done = _completed.contains(step.id);
     return Card(
+      margin: const EdgeInsets.only(bottom: AppSpacing.xs),
       child: ListTile(
         key: ValueKey('routine-step-${step.id}'),
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 8,
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.xs,
         ),
-        leading: CircleAvatar(child: Icon(step.iconCode)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          side: BorderSide(
+            color: done ? palette.success : palette.outline,
+            width: done ? 2 : 1,
+          ),
+        ),
+        // Completion is signalled by fill, icon, and border together, so
+        // it never depends on colour perception alone.
+        leading: Container(
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(
+            color: done
+                ? palette.accentTint(palette.success, 0.74)
+                : palette.accentTint(palette.routine, 0.84),
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: done ? palette.success : palette.routine,
+              width: 2,
+            ),
+          ),
+          child: Icon(
+            done ? Icons.check : step.iconCode,
+            color: done ? palette.success : palette.routine,
+          ),
+        ),
         title: Text(title),
         subtitle: changed
             ? Column(

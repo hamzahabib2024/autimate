@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/services/app_services.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_typography.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../../shared/widgets/app_widgets.dart';
 import '../../authentication/presentation/auth_screen.dart';
@@ -111,138 +114,167 @@ class _AppShellState extends State<AppShell> {
     );
   }
 
+  /// The child's landing surface.
+  ///
+  /// Module accents do the wayfinding here: a child learns "the green tile
+  /// is my routine" well before they can read the label, so each module
+  /// keeps its colour on every surface it owns.
   Widget _home(BuildContext context, AppLocalizations l10n) {
-    return SafeArea(
-      child: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            title: const Text('AutiMate'),
-            actions: [
-              IconButton(
-                tooltip: l10n.settingsTooltip,
-                onPressed: _openSettings,
-                icon: const Icon(Icons.settings_outlined),
-              ),
-            ],
-          ),
-          SliverPadding(
-            padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 20, 24),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate([
-                Text(
-                  l10n.homeGreeting,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+    final palette = context.palette;
+    return ChildTextScale(
+      child: SafeArea(
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              title: const Text('AutiMate'),
+              floating: true,
+              actions: [
+                IconButton(
+                  tooltip: l10n.settingsTooltip,
+                  onPressed: _openSettings,
+                  icon: const Icon(Icons.settings_outlined),
                 ),
-                const SizedBox(height: 6),
-                Text(l10n.homeTagline),
-                const SizedBox(height: 20),
-                _summaryCard(context, l10n),
-                const SizedBox(height: 20),
-                Text(l10n.homeToday, style: Theme.of(context).textTheme.titleLarge),
-                const SizedBox(height: 12),
-                FeatureTile(
-                  title: l10n.emotionPracticeTileTitle,
-                  subtitle: l10n.emotionPracticeTileSubtitle,
-                  icon: Icons.emoji_emotions_outlined,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => EmotionScreen(appState: widget.appState),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                FeatureTile(
-                  title: l10n.socialStoriesTileTitle,
-                  subtitle: l10n.socialStoriesTileSubtitle,
-                  icon: Icons.auto_stories_outlined,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => SocialStoriesScreen(
-                        appState: widget.appState,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                FeatureTile(
-                  title: l10n.learningPathTileTitle,
-                  subtitle: l10n.learningPathTileSubtitle,
-                  icon: Icons.lightbulb_outline,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => LearningPathScreen(
-                        appState: widget.appState,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                FeatureTile(
-                  title: l10n.gamificationTileTitle,
-                  subtitle: l10n.gamificationTileSubtitle,
-                  icon: Icons.stars_outlined,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) =>
-                          GamificationScreen(appState: widget.appState),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                FeatureTile(
-                  title: l10n.sensorySupportTileTitle,
-                  subtitle: l10n.sensorySupportTileSubtitle,
-                  icon: Icons.spa_outlined,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) =>
-                          SensorySupportScreen(appState: widget.appState),
-                    ),
-                  ),
-                ),
-              ]),
+              ],
             ),
-          ),
-        ],
+            SliverPadding(
+              padding: const EdgeInsetsDirectional.fromSTEB(
+                AppSpacing.lg,
+                AppSpacing.xs,
+                AppSpacing.lg,
+                AppSpacing.xl,
+              ),
+              sliver: SliverList(
+                delegate: SliverChildListDelegate([
+                  _summaryCard(context, l10n),
+                  const SizedBox(height: AppSpacing.xl),
+                  SectionHeader(
+                    title: l10n.homeToday,
+                    accent: palette.communicate,
+                  ),
+                  GridView.count(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisCount: 2,
+                    crossAxisSpacing: AppSpacing.sm,
+                    mainAxisSpacing: AppSpacing.sm,
+                    childAspectRatio: 0.98,
+                    children: [
+                      ChildActionCard(
+                        title: l10n.emotionPracticeTileTitle,
+                        subtitle: l10n.emotionPracticeTileSubtitle,
+                        icon: Icons.emoji_emotions_outlined,
+                        accent: palette.emotions,
+                        onTap: () => _push(
+                          EmotionScreen(appState: widget.appState),
+                        ),
+                      ),
+                      ChildActionCard(
+                        title: l10n.socialStoriesTileTitle,
+                        subtitle: l10n.socialStoriesTileSubtitle,
+                        icon: Icons.auto_stories_outlined,
+                        accent: palette.routine,
+                        onTap: () => _push(
+                          SocialStoriesScreen(appState: widget.appState),
+                        ),
+                      ),
+                      ChildActionCard(
+                        title: l10n.learningPathTileTitle,
+                        subtitle: l10n.learningPathTileSubtitle,
+                        icon: Icons.lightbulb_outline,
+                        accent: palette.learning,
+                        onTap: () => _push(
+                          LearningPathScreen(appState: widget.appState),
+                        ),
+                      ),
+                      ChildActionCard(
+                        title: l10n.gamificationTileTitle,
+                        subtitle: l10n.gamificationTileSubtitle,
+                        icon: Icons.stars_outlined,
+                        accent: palette.progress,
+                        onTap: () => _push(
+                          GamificationScreen(appState: widget.appState),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  FeatureTile(
+                    title: l10n.sensorySupportTileTitle,
+                    subtitle: l10n.sensorySupportTileSubtitle,
+                    icon: Icons.spa_outlined,
+                    accent: palette.sensory,
+                    onTap: () => _push(
+                      SensorySupportScreen(appState: widget.appState),
+                    ),
+                  ),
+                ]),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
+  void _push(Widget screen) => Navigator.of(context).push(
+    MaterialPageRoute(builder: (_) => screen),
+  );
+
+  /// Profile header: who is using the app, and how they are doing.
   Widget _summaryCard(BuildContext context, AppLocalizations l10n) {
-    return Card(
-      color: Theme.of(context).colorScheme.primaryContainer,
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.appState.selectedChild.name,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
+    final palette = context.palette;
+    return Semantics(
+      label: l10n.greetingChild(widget.appState.selectedChild.name),
+      child: Container(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: palette.accentTint(palette.communicate, 0.86),
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(color: palette.communicate, width: 2),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.homeGreeting,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                Text(
+                  widget.appState.selectedChild.name,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.xxs),
+                Text(
+                  l10n.homeTagline,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.star_rounded,
+                      color: palette.progress,
+                      size: 26,
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(l10n.beginnerSupportLevel),
-                  const SizedBox(height: 14),
-                  Text(
-                    l10n.starsEarned(widget.appState.stars),
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                ],
-              ),
+                    const SizedBox(width: AppSpacing.xxs),
+                    Text(
+                      l10n.starsEarned(widget.appState.stars),
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                  ],
+                ),
+              ],
             ),
-            const CircleAvatar(
-              radius: 32,
-              child: Icon(Icons.child_care, size: 34),
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          const Mascot(size: 92),
+        ],
+      ),
       ),
     );
   }
