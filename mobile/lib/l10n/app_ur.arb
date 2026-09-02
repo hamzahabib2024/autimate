@@ -24,7 +24,9 @@
   "storyPagesCount": "{count} صفحات",
   "@storyPagesCount": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "learningPathTileTitle": "سیکھنے کا راستہ",
@@ -102,8 +104,12 @@
   "countdownWarning": "{minutes} منٹ باقی ہیں: {title}",
   "@countdownWarning": {
     "placeholders": {
-      "minutes": { "type": "int" },
-      "title": { "type": "String" }
+      "minutes": {
+        "type": "int"
+      },
+      "title": {
+        "type": "String"
+      }
     }
   },
   "flexibilityTitle": "دوستانہ تبدیلیاں",
@@ -120,7 +126,9 @@
   "routineDeleteStepBody": "«{title}» روزانہ کی روٹین میں اب نہیں دکھے گا۔",
   "@routineDeleteStepBody": {
     "placeholders": {
-      "title": { "type": "String" }
+      "title": {
+        "type": "String"
+      }
     }
   },
   "deleteAction": "ہٹائیں",
@@ -129,16 +137,24 @@
   "learningWhy": "{name} کو {interest} پسند ہیں",
   "@learningWhy": {
     "placeholders": {
-      "name": { "type": "String" },
-      "interest": { "type": "String" }
+      "name": {
+        "type": "String"
+      },
+      "interest": {
+        "type": "String"
+      }
     }
   },
   "learningPathEmptyHint": "سرگرمیاں دکھانے کے لیے چند دلچسپیاں منتخب کریں۔",
   "learningQuestionProgress": "سوال {total} میں سے {done}",
   "@learningQuestionProgress": {
     "placeholders": {
-      "done": { "type": "int" },
-      "total": { "type": "int" }
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "breathingTitle": "میرے ساتھ سانس لو",
@@ -157,7 +173,9 @@
   "emotionTrendLatest": "{percent} تازہ ترین",
   "@emotionTrendLatest": {
     "placeholders": {
-      "percent": { "type": "String" }
+      "percent": {
+        "type": "String"
+      }
     }
   },
   "noEmotionDataYet": "گزشتہ ۷ دنوں میں ابھی کوئی جذباتی سرگرمی نہیں ہوئی۔",
@@ -171,7 +189,9 @@
   "levelPickerForChild": "{name} کے لیے معاونت کی سطح",
   "@levelPickerForChild": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "levelAutomaticTitle": "پیش رفت کے مطابق خودکار",
@@ -179,6 +199,55 @@
   "levelLockTitle": "اس سطح کو مقفل کریں",
   "levelLockSubtitle": "خودکار اضافے یا کمی کو روک دیتا ہے۔",
   "levelLockedNotice": "مقفل — {level} ایک ہی رہے گی۔",
+  "levelChangedPrompt": "معاونت {level} ہو گئی۔ نئی سطح پر دوبارہ شروع کریں؟",
+  "@levelChangedPrompt": {
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "levelRestartAction": "نئی سطح سے شروع کریں",
+  "levelContinueAction": "آگے جاری رکھیں",
+  "rewardCadenceEverySession": "ہر مکمل سیشن کے بعد ایک ستارہ۔",
+  "rewardCadenceEveryN": "{sessions} مکمل سیشنز کے بعد ایک ستارہ۔",
+  "@rewardCadenceEveryN": {
+    "placeholders": {
+      "sessions": {
+        "type": "int"
+      }
+    }
+  },
+  "coopTitle": "ہم ایک ٹیم ہیں",
+  "coopSubtitle": "{name} اور آپ، ہر کامیابی ساتھ ملی۔",
+  "@coopSubtitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "streakDays": "{count} دن مسلسل",
+  "@streakDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "badgesSectionTitle": "سنگِ میل",
+  "progressOf": "{total} میں سے {done}",
+  "@progressOf": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "allBadgesEarned": "ہر سنگِ میل حاصل — شاندار ٹیم ورک!",
   "routineTitle": "روٹین",
   "oneStepAtATime": "ایک وقت میں ایک قدم",
   "routineProgressLabel": "روٹین کی پیش رفت",
@@ -245,5 +314,45 @@
   "childModeSubtitle": "نگہبان کے حصے والدین کے لاک کے پیچھے چھپائیں",
   "profilesSectionTitle": "بچے",
   "addChildLabel": "بچہ شامل کریں",
-  "offlineBanner": "آپ آف لائن ہیں۔ کام اس آلے پر محفوظ ہے اور بعد میں سنک ہوگا۔"
+  "offlineBanner": "آپ آف لائن ہیں۔ کام اس آلے پر محفوظ ہے اور بعد میں سنک ہوگا۔",
+  "customCardsTitle": "میرے کارڈ",
+  "customCardsSubtitle": "وہ کارڈ جو آپ نے اس بچے کے لیے بنائے",
+  "addCustomCard": "کارڈ شامل کریں",
+  "editCustomCard": "کارڈ میں تبدیلی",
+  "deleteCustomCard": "کارڈ حذف کریں",
+  "cardLabelEnglish": "نام (انگریزی)",
+  "cardLabelUrdu": "نام (اردو)",
+  "cardSpokenEnglish": "بولے جانے والے الفاظ (انگریزی، اختیاری)",
+  "cardSpokenUrdu": "بولے جانے والے الفاظ (اردو، اختیاری)",
+  "cardCategoryLabel": "زمرہ",
+  "cardPictureLabel": "تصویر",
+  "choosePhotoGallery": "گیلری سے منتخب کریں",
+  "takePhoto": "تصویر کھینچیں",
+  "useSymbolInstead": "اس کے بجائے علامت استعمال کریں",
+  "cameraUnavailable": "اس آلے پر کیمرہ یا گیلری دستیاب نہیں۔ آپ پھر بھی علامت کے ساتھ کارڈ بنا سکتے ہیں۔",
+  "customCardAdded": "کارڈ شامل ہو گیا",
+  "customCardDeleted": "کارڈ حذف ہو گیا",
+  "confirmDeleteCard": "یہ کارڈ حذف کریں؟ یہ بورڈ سے ہٹ جائے گا۔",
+  "myCardsEmpty": "ابھی کوئی کارڈ نہیں۔ ایک شامل کریں تاکہ وہ بورڈ پر آ جائے۔",
+  "longPressToEditCard": "اپنا بنایا ہوا کارڈ دبا کر رکھیں تاکہ اس میں تبدیلی ہو سکے۔",
+  "reorderSentenceHint": "لفظ کی جگہ بدلنے کے لیے اسے کھینچیں۔",
+  "removeWordTooltip": "یہ لفظ ہٹائیں",
+  "sentenceStripEmpty": "شروع کرنے کے لیے کارڈ چھوئیں۔",
+  "homeQuickActions": "فوری آغاز",
+  "homeStreak": "{count, plural, =0{ابھی کوئی مسلسل دن نہیں} =1{مسلسل ۱ دن} other{مسلسل {count} دن}}",
+  "greetingChild": "السلام علیکم، {name}",
+  "openSettings": "ترتیبات",
+  "displaySectionTitle": "شکل و صورت",
+  "themeModeLabel": "اسکرین کی روشنی",
+  "themeModeSystem": "میرے آلے کے مطابق",
+  "themeModeLight": "روشن",
+  "themeModeDark": "گہرا",
+  "themeModeSubtitle": "کم روشنی والے کمرے میں گہرا رنگ آسان ہو سکتا ہے۔",
+  "chooseTheFace": "چہرہ منتخب کریں",
+  "tryAgainGently": "یہ نہیں۔ ایک بار پھر دیکھیں۔",
+  "wellDone": "بہت خوب",
+  "starEarned": "آپ نے ستارہ حاصل کیا",
+  "nextMilestone": "اگلا سنگِ میل",
+  "earnedLabel": "حاصل شدہ",
+  "lockedLabel": "کوشش جاری رکھیں"
 }
