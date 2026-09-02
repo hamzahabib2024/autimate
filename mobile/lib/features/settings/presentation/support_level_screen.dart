@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../../../core/services/app_services.dart';
 import '../../../l10n/generated/app_localizations.dart';
+import '../../../core/theme/app_spacing.dart';
 import '../../emotion_recognition/domain/emotion_activity_engine.dart'
     show SupportLevel;
+import '../../gamification/domain/reward_policy.dart';
 
 /// Caregiver control for the child's adaptive support level. Choosing a
 /// level pins the starting point; the lock stops automatic promotion and
@@ -32,7 +34,7 @@ class SupportLevelScreen extends StatelessWidget {
           final override = appState.supportOverrideFor(childId);
           final locked = appState.isSupportLockedFor(childId);
           return ListView(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(AppSpacing.lg),
             children: [
               Text(
                 l10n.levelPickerForChild(appState.selectedChild.name),
@@ -59,6 +61,14 @@ class SupportLevelScreen extends StatelessWidget {
                         key: ValueKey('level-option-${level.name}'),
                         value: level,
                         title: Text(_levelLabel(l10n, level)),
+                        subtitle: Text(
+                          level == SupportLevel.beginner
+                              ? l10n.rewardCadenceEverySession
+                              : l10n.rewardCadenceEveryN(
+                                  const RewardPolicy()
+                                      .sessionsPerStar(level),
+                                ),
+                        ),
                       ),
                   ],
                 ),
