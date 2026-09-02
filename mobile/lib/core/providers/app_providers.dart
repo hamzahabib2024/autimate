@@ -7,6 +7,8 @@ import '../data/offline_sync_queue.dart';
 import '../services/app_services.dart';
 import '../services/connectivity_service.dart';
 import '../services/tts_service.dart';
+import '../../features/communication/data/image_source_service.dart';
+import '../../features/communication/domain/custom_card_repository.dart';
 import '../../features/progress/domain/progress_models.dart';
 import '../../features/routines/domain/routine_repository.dart';
 
@@ -49,6 +51,17 @@ final routineRepositoryProvider = Provider<RoutineRepository>(
   (ref) => LocalRoutineRepository(store: ref.watch(keyValueStoreProvider)),
 );
 
+/// Durable store for caregiver-authored AAC cards.
+final customCardRepositoryProvider = Provider<CustomCardRepository>(
+  (ref) => LocalCustomCardRepository(ref.watch(keyValueStoreProvider)),
+);
+
+/// Gallery/camera boundary for custom-card pictures. Tests and desktop
+/// runs override this with [UnavailableImageSourceService].
+final imageSourceServiceProvider = Provider<ImageSourceService>(
+  (ref) => PlatformImageSourceService(),
+);
+
 /// Connectivity boundary. A verified connectivity_plus adapter replaces
 /// the static implementation on device.
 final connectivityServiceProvider = Provider<ConnectivityService>(
@@ -62,6 +75,7 @@ final appStateProvider = ChangeNotifierProvider<AppState>((ref) {
     ref.watch(ttsServiceProvider),
     progressRepository: ref.watch(progressRepositoryProvider),
     routineRepository: ref.watch(routineRepositoryProvider),
+    customCardRepository: ref.watch(customCardRepositoryProvider),
     settingsStore: ref.watch(keyValueStoreProvider),
     connectivityService: ref.watch(connectivityServiceProvider),
   );

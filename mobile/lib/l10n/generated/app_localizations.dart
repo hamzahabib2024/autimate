@@ -944,6 +944,72 @@ abstract class AppLocalizations {
   /// **'Locked — {level} stays fixed.'**
   String levelLockedNotice(Object level);
 
+  /// No description provided for @levelChangedPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Support changed to {level}. Restart now to apply it?'**
+  String levelChangedPrompt(String level);
+
+  /// No description provided for @levelRestartAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Restart at new level'**
+  String get levelRestartAction;
+
+  /// No description provided for @levelContinueAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep going'**
+  String get levelContinueAction;
+
+  /// No description provided for @rewardCadenceEverySession.
+  ///
+  /// In en, this message translates to:
+  /// **'A star after every completed session.'**
+  String get rewardCadenceEverySession;
+
+  /// No description provided for @rewardCadenceEveryN.
+  ///
+  /// In en, this message translates to:
+  /// **'A star every {sessions} completed sessions.'**
+  String rewardCadenceEveryN(int sessions);
+
+  /// No description provided for @coopTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We are a team'**
+  String get coopTitle;
+
+  /// No description provided for @coopSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} and you, building every win together.'**
+  String coopSubtitle(String name);
+
+  /// No description provided for @streakDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} days in a row'**
+  String streakDays(int count);
+
+  /// No description provided for @badgesSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Milestones'**
+  String get badgesSectionTitle;
+
+  /// No description provided for @progressOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{done} of {total}'**
+  String progressOf(int done, int total);
+
+  /// No description provided for @allBadgesEarned.
+  ///
+  /// In en, this message translates to:
+  /// **'Every milestone reached — wonderful teamwork!'**
+  String get allBadgesEarned;
+
   /// No description provided for @routineTitle.
   ///
   /// In en, this message translates to:
@@ -1345,6 +1411,246 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You are offline. Work is saved on this device and will sync later.'**
   String get offlineBanner;
+
+  /// No description provided for @customCardsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My cards'**
+  String get customCardsTitle;
+
+  /// No description provided for @customCardsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cards you made for this child'**
+  String get customCardsSubtitle;
+
+  /// No description provided for @addCustomCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a card'**
+  String get addCustomCard;
+
+  /// No description provided for @editCustomCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit card'**
+  String get editCustomCard;
+
+  /// No description provided for @deleteCustomCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete card'**
+  String get deleteCustomCard;
+
+  /// No description provided for @cardLabelEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'Label (English)'**
+  String get cardLabelEnglish;
+
+  /// No description provided for @cardLabelUrdu.
+  ///
+  /// In en, this message translates to:
+  /// **'Label (Urdu)'**
+  String get cardLabelUrdu;
+
+  /// No description provided for @cardSpokenEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'Spoken words (English, optional)'**
+  String get cardSpokenEnglish;
+
+  /// No description provided for @cardSpokenUrdu.
+  ///
+  /// In en, this message translates to:
+  /// **'Spoken words (Urdu, optional)'**
+  String get cardSpokenUrdu;
+
+  /// No description provided for @cardCategoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get cardCategoryLabel;
+
+  /// No description provided for @cardPictureLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Picture'**
+  String get cardPictureLabel;
+
+  /// No description provided for @choosePhotoGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from gallery'**
+  String get choosePhotoGallery;
+
+  /// No description provided for @takePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a photo'**
+  String get takePhoto;
+
+  /// No description provided for @useSymbolInstead.
+  ///
+  /// In en, this message translates to:
+  /// **'Use a symbol instead'**
+  String get useSymbolInstead;
+
+  /// No description provided for @cameraUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No camera or gallery on this device. You can still make a card with a symbol.'**
+  String get cameraUnavailable;
+
+  /// No description provided for @customCardAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Card added'**
+  String get customCardAdded;
+
+  /// No description provided for @customCardDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Card deleted'**
+  String get customCardDeleted;
+
+  /// No description provided for @confirmDeleteCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this card? It will disappear from the board.'**
+  String get confirmDeleteCard;
+
+  /// No description provided for @myCardsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No cards yet. Add one so it appears on the board.'**
+  String get myCardsEmpty;
+
+  /// No description provided for @longPressToEditCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Press and hold a card you made to edit it.'**
+  String get longPressToEditCard;
+
+  /// No description provided for @reorderSentenceHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag a word to change its place.'**
+  String get reorderSentenceHint;
+
+  /// No description provided for @removeWordTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this word'**
+  String get removeWordTooltip;
+
+  /// No description provided for @sentenceStripEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a card to start.'**
+  String get sentenceStripEmpty;
+
+  /// No description provided for @homeQuickActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick start'**
+  String get homeQuickActions;
+
+  /// No description provided for @homeStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No days in a row yet} =1{1 day in a row} other{{count} days in a row}}'**
+  String homeStreak(int count);
+
+  /// No description provided for @greetingChild.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello, {name}'**
+  String greetingChild(String name);
+
+  /// No description provided for @openSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get openSettings;
+
+  /// No description provided for @displaySectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Look and feel'**
+  String get displaySectionTitle;
+
+  /// No description provided for @themeModeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Screen brightness'**
+  String get themeModeLabel;
+
+  /// No description provided for @themeModeSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'Match my device'**
+  String get themeModeSystem;
+
+  /// No description provided for @themeModeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get themeModeLight;
+
+  /// No description provided for @themeModeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get themeModeDark;
+
+  /// No description provided for @themeModeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark can be easier in a dim room.'**
+  String get themeModeSubtitle;
+
+  /// No description provided for @chooseTheFace.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the face'**
+  String get chooseTheFace;
+
+  /// No description provided for @tryAgainGently.
+  ///
+  /// In en, this message translates to:
+  /// **'Not that one. Have another look.'**
+  String get tryAgainGently;
+
+  /// No description provided for @wellDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Well done'**
+  String get wellDone;
+
+  /// No description provided for @starEarned.
+  ///
+  /// In en, this message translates to:
+  /// **'You earned a star'**
+  String get starEarned;
+
+  /// No description provided for @nextMilestone.
+  ///
+  /// In en, this message translates to:
+  /// **'Next milestone'**
+  String get nextMilestone;
+
+  /// No description provided for @earnedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Earned'**
+  String get earnedLabel;
+
+  /// No description provided for @lockedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep going'**
+  String get lockedLabel;
 }
 
 class _AppLocalizationsDelegate
