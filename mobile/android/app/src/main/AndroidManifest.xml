@@ -1,4 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Expression practice only. Frames are analysed on device and
+         discarded; nothing is recorded or uploaded. -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!-- required="false" keeps the app installable on a device with no
+         camera: every other feature works without one. -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.front" android:required="false" />
+
     <application
         android:label="AutiMate"
         android:name="${applicationName}"

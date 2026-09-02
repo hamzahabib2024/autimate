@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_depth.dart';
 import '../../core/theme/app_motion.dart';
 import '../../core/theme/app_spacing.dart';
 
 export 'child_widgets.dart';
+export 'entrance.dart';
 export 'emotion_face.dart';
 export 'mascot.dart';
 
@@ -40,7 +42,15 @@ class FeatureTile extends StatelessWidget {
     return Semantics(
       button: true,
       label: title,
-      child: Card(
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          boxShadow: AppDepth.card(
+            context,
+            sensoryMode: Theme.of(context).cardTheme.elevation == 0,
+          ),
+        ),
+        child: Card(
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onTap,
@@ -108,6 +118,7 @@ class FeatureTile extends StatelessWidget {
               ],
             ),
           ),
+        ),
         ),
       ),
     );

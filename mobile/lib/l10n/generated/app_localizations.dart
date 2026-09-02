@@ -1651,6 +1651,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Keep going'**
   String get lockedLabel;
+
+  /// No description provided for @ambientTrackLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sound'**
+  String get ambientTrackLabel;
+
+  /// No description provided for @ambientTrackSoftRain.
+  ///
+  /// In en, this message translates to:
+  /// **'Soft rain'**
+  String get ambientTrackSoftRain;
+
+  /// No description provided for @ambientTrackSlowOcean.
+  ///
+  /// In en, this message translates to:
+  /// **'Slow waves'**
+  String get ambientTrackSlowOcean;
+
+  /// No description provided for @ambientTrackWarmHum.
+  ///
+  /// In en, this message translates to:
+  /// **'Warm hum'**
+  String get ambientTrackWarmHum;
+
+  /// No description provided for @ambientVolumeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'How loud'**
+  String get ambientVolumeLabel;
+
+  /// No description provided for @ambientVolumeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The app keeps a quiet upper limit, even at maximum.'**
+  String get ambientVolumeHint;
+
+  /// No description provided for @symbolSizeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Card size'**
+  String get symbolSizeLabel;
+
+  /// No description provided for @symbolSizeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Bigger cards mean fewer on screen, which is often easier.'**
+  String get symbolSizeSubtitle;
+
+  /// No description provided for @symbolSizeComfortable.
+  ///
+  /// In en, this message translates to:
+  /// **'Comfortable'**
+  String get symbolSizeComfortable;
+
+  /// No description provided for @symbolSizeLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'Large'**
+  String get symbolSizeLarge;
+
+  /// No description provided for @symbolSizeLargest.
+  ///
+  /// In en, this message translates to:
+  /// **'Largest'**
+  String get symbolSizeLargest;
 }
 
 class _AppLocalizationsDelegate

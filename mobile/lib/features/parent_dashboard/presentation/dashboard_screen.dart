@@ -73,70 +73,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> _addObservation() async {
-    final l10n = AppLocalizations.of(context);
-    final controller = TextEditingController();
-    var tag = ObservationNote.knownTags.first;
-    final note = await showDialog<String>(
+    // The dialog owns its controller. Disposing one here instead would fire
+    // while the dialog's exit animation is still rebuilding the field —
+    // "A TextEditingController was used after being disposed".
+    final result = await showDialog<_ObservationDraft>(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          title: Text(l10n.logObservation),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                key: const ValueKey('observation-text'),
-                controller: controller,
-                autofocus: true,
-                maxLines: 3,
-                decoration: InputDecoration(hintText: l10n.observationHint),
-              ),
-              const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                key: const ValueKey('observation-tag'),
-                initialValue: tag,
-                decoration: InputDecoration(labelText: l10n.observationTagLabel),
-                items: [
-                  for (final known in ObservationNote.knownTags)
-                    DropdownMenuItem(
-                      value: known,
-                      child: Text(_tagLabel(l10n, known)),
-                    ),
-                ],
-                onChanged: (value) {
-                  if (value == null) return;
-                  setDialogState(() => tag = value);
-                },
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(l10n.cancel),
-            ),
-            FilledButton(
-              key: const ValueKey('observation-save'),
-              onPressed: () {
-                final text = controller.text.trim();
-                Navigator.of(context).pop(text.isEmpty ? null : text);
-              },
-              child: Text(l10n.save),
-            ),
-          ],
-        ),
-      ),
+      builder: (_) => const _ObservationDialog(),
     );
-    if (note == null) return;
+    if (result == null || !mounted) return;
     await widget.appState.progressRepository.recordObservation(
       ObservationNote(
         childId: widget.appState.selectedChild.id,
-        note: note,
+        note: result.note,
         authorRole: 'parent',
         createdAt: DateTime.now(),
-        tag: tag,
+        tag: result.tag,
       ),
     );
+    if (!mounted) return;
     final refreshed = _load();
     setState(() {
       _data = refreshed;
@@ -159,6 +113,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.progressTitle)),
       floatingActionButton: FloatingActionButton.extended(
+        key: const ValueKey('observation-button'),
         onPressed: _addObservation,
         icon: const Icon(Icons.edit_note),
         label: Text(l10n.observationButton),
@@ -325,14 +280,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
     _ => 'S',
   };
 
-  String _tagLabel(AppLocalizations l10n, String tag) => switch (tag) {
-    'mood' => l10n.tagMood,
-    'behaviour' => l10n.tagBehaviour,
-    'sensory' => l10n.tagSensory,
-    'communication' => l10n.tagCommunication,
-    _ => l10n.tagGeneral,
-  };
+  String _tagLabel(AppLocalizations l10n, String tag) =>
+      observationTagLabel(l10n, tag);
 }
+
+/// Localized name for an observation tag. Top-level so the dashboard list
+/// and the entry dialog cannot drift apart.
+String observationTagLabel(AppLocalizations l10n, String tag) =>
+    switch (tag) {
+      'mood' => l10n.tagMood,
+      'behaviour' => l10n.tagBehaviour,
+      'sensory' => l10n.tagSensory,
+      'communication' => l10n.tagCommunication,
+      _ => l10n.tagGeneral,
+    };
 
 class _DashboardData {
   const _DashboardData({
@@ -514,3 +475,87 @@ class _Bar extends StatelessWidget {
   );
 }
 
+/// What the observation dialog returns.
+class _ObservationDraft {
+  const _ObservationDraft({required this.note, required this.tag});
+
+  final String note;
+  final String tag;
+}
+
+/// Caregiver observation entry.
+///
+/// A `StatefulWidget` rather than a `StatefulBuilder` so the controller is
+/// owned by an element Flutter disposes on unmount. A controller created by
+/// the caller and disposed when `showDialog` resolves is disposed too early:
+/// the route is still animating out and still rebuilding the field.
+class _ObservationDialog extends StatefulWidget {
+  const _ObservationDialog();
+
+  @override
+  State<_ObservationDialog> createState() => _ObservationDialogState();
+}
+
+class _ObservationDialogState extends State<_ObservationDialog> {
+  final TextEditingController _controller = TextEditingController();
+  String _tag = ObservationNote.knownTags.first;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return AlertDialog(
+      title: Text(l10n.logObservation),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            key: const ValueKey('observation-text'),
+            controller: _controller,
+            autofocus: true,
+            maxLines: 3,
+            decoration: InputDecoration(hintText: l10n.observationHint),
+          ),
+          const SizedBox(height: 12),
+          DropdownButtonFormField<String>(
+            key: const ValueKey('observation-tag'),
+            initialValue: _tag,
+            decoration: InputDecoration(labelText: l10n.observationTagLabel),
+            items: [
+              for (final known in ObservationNote.knownTags)
+                DropdownMenuItem(
+                  value: known,
+                  child: Text(observationTagLabel(l10n, known)),
+                ),
+            ],
+            onChanged: (value) {
+              if (value == null) return;
+              setState(() => _tag = value);
+            },
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(l10n.cancel),
+        ),
+        FilledButton(
+          key: const ValueKey('observation-save'),
+          onPressed: () {
+            final text = _controller.text.trim();
+            Navigator.of(context).pop(
+              text.isEmpty ? null : _ObservationDraft(note: text, tag: _tag),
+            );
+          },
+          child: Text(l10n.save),
+        ),
+      ],
+    );
+  }
+}

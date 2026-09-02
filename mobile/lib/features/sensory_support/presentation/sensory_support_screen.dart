@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/services/app_services.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../features/communication/domain/symbol_scale.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../../shared/widgets/app_widgets.dart';
 import 'calm_activities_screen.dart';
@@ -86,6 +87,47 @@ class SensorySupportScreen extends StatelessWidget {
                             selected: appState.themeMode == entry.$1,
                             onSelected: (_) =>
                                 appState.setThemeMode(entry.$1),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+
+            // Image magnification under the user's control is a repeated
+            // recommendation in the AAC literature for this audience.
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.symbolSizeLabel,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    Text(
+                      l10n.symbolSizeSubtitle,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    Wrap(
+                      spacing: AppSpacing.xs,
+                      runSpacing: AppSpacing.xs,
+                      children: [
+                        for (final entry in <(SymbolScale, String)>[
+                          (SymbolScale.comfortable, l10n.symbolSizeComfortable),
+                          (SymbolScale.large, l10n.symbolSizeLarge),
+                          (SymbolScale.largest, l10n.symbolSizeLargest),
+                        ])
+                          ChoiceChip(
+                            key: ValueKey('symbol-scale-${entry.$1.name}'),
+                            label: Text(entry.$2),
+                            selected: appState.symbolScale == entry.$1,
+                            onSelected: (_) =>
+                                appState.setSymbolScale(entry.$1),
                           ),
                       ],
                     ),

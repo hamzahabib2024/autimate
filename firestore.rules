@@ -4,11 +4,19 @@ rules_version = '2';
 //
 // Model:
 //   - Only authenticated caregivers (parents/teachers) may touch data.
-//   - A child document lists its caregiver UIDs in `caregiverIds`.
-//   - Progress, observations, and AAC usage live in per-child subcollections
-//     and are write-once from the app (no deletes; history is explainable).
+//   - A child document lists its caregiver UIDs in `caregiverIds`. Access is
+//     membership of that array and nothing else, which is what lets a
+//     therapist be assigned one child without seeing a whole caseload.
+//   - Sessions, card usage, and observations are append-only evidence. A
+//     history that can be silently rewritten is not evidence.
+//   - Routine definitions and per-day completion ARE mutable: a caregiver
+//     edits the schedule and a child ticks steps off.
 //   - Children are never readable by other families. There is no public or
 //     anonymous access to any document.
+//
+// These paths mirror `mobile/lib/core/data/firebase/firestore_paths.dart`
+// exactly. Change one and you must change the other; the adapter tests in
+// `test/firebase_backend_test.dart` assert the shape from the Dart side.
 service cloud.firestore {
   match /databases/{database}/documents {
 
@@ -16,32 +24,64 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    function isCaregiverOf(childId) {
-      return signedIn()
-        && request.auth.uid in get(/databases/$(database)/documents/children/$(childId)).data.caregiverIds;
+    function childDoc(childId) {
+      return get(/databases/$(database)/documents/children/$(childId)).data;
     }
 
-    // Child profiles: readable/writable only by their listed caregivers.
-    match /children/{childId} {
-      allow read, update, delete: if isCaregiverOf(childId);
-      allow create: if signedIn()
-        && request.auth.uid in request.resource.data.caregiverIds;
+    function isCaregiverOf(childId) {
+      return signedIn()
+        && request.auth.uid in childDoc(childId).caregiverIds;
+    }
 
-      // Recorded sessions and card usage: append-only evidence.
-      match /progress/{recordId} {
+    // A caregiver may never write themselves out of, or a stranger into,
+    // a child they can already see.
+    function keepsSelfAsCaregiver() {
+      return request.auth.uid in request.resource.data.caregiverIds;
+    }
+
+    // Child profiles: readable and writable only by their listed caregivers.
+    match /children/{childId} {
+      allow read: if isCaregiverOf(childId);
+      allow create: if signedIn() && keepsSelfAsCaregiver();
+      allow update: if isCaregiverOf(childId) && keepsSelfAsCaregiver();
+      allow delete: if isCaregiverOf(childId);
+
+      // Emotion and expression session history: append-only.
+      match /sessions/{recordId} {
         allow read: if isCaregiverOf(childId);
-        allow create, update: if isCaregiverOf(childId)
-          && request.resource.data.childId == childId;
+        allow create: if isCaregiverOf(childId);
+        // Update is permitted only so the offline queue can replay a write
+        // under its own deterministic id after a crash. It cannot change
+        // which child a record belongs to.
+        allow update: if isCaregiverOf(childId)
+          && request.resource.data.childId == resource.data.childId;
+        allow delete: if false;
+      }
+
+      // AAC card taps feeding the frequent-cards ranking: append-only.
+      match /cardUsage/{recordId} {
+        allow read: if isCaregiverOf(childId);
+        allow create, update: if isCaregiverOf(childId);
         allow delete: if false;
       }
 
       // Human-authored caregiver observations: append-only.
+      // No automatic behavioural labelling is ever written here.
       match /observations/{noteId} {
         allow read: if isCaregiverOf(childId);
-        allow create: if isCaregiverOf(childId)
-          && request.resource.data.childId == childId
+        allow create, update: if isCaregiverOf(childId)
           && request.resource.data.authorRole in ['parent', 'teacher'];
-        allow update, delete: if false;
+        allow delete: if false;
+      }
+
+      // Routine definitions: mutable, because a caregiver edits the day.
+      match /routineSteps/{stepId} {
+        allow read, write: if isCaregiverOf(childId);
+      }
+
+      // Per-day completion: mutable, because a child ticks steps off.
+      match /routineDays/{dayId} {
+        allow read, write: if isCaregiverOf(childId);
       }
     }
 

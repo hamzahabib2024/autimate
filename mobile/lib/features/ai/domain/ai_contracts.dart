@@ -1,5 +1,15 @@
 import 'dart:async';
 
+/// The ambient-sound contract used to live here. It has nothing to do with
+/// inference, so it now lives in `sensory_support/domain/ambient_sound.dart`
+/// and is re-exported to keep existing imports working.
+export '../../sensory_support/domain/ambient_sound.dart'
+    show
+        AmbientTrack,
+        AmbientVolumePolicy,
+        AmbientSoundService,
+        SilentAmbientSoundService;
+
 class PredictionResult {
   const PredictionResult({
     required this.label,
@@ -69,26 +79,3 @@ class AutoGrantCameraPermissions implements CameraPermissionService {
       CameraPermissionStatus.granted;
 }
 
-/// Optional gentle-sound boundary. Implementations must keep volume low,
-/// never loop automatically, and only play after an explicit user action;
-/// the OS-audio adapter will arrive with a real device build.
-abstract interface class AmbientSoundService {
-  bool get isPlaying;
-  Future<void> play();
-  Future<void> stop();
-}
-
-/// No-sound default backing the calm screen until the OS adapter exists:
-/// keeps the toggle honest while producing silence.
-class SilentAmbientSoundService implements AmbientSoundService {
-  bool _playing = false;
-
-  @override
-  bool get isPlaying => _playing;
-
-  @override
-  Future<void> play() async => _playing = true;
-
-  @override
-  Future<void> stop() async => _playing = false;
-}

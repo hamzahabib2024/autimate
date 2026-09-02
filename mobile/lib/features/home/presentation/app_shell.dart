@@ -159,7 +159,10 @@ class _AppShellState extends State<AppShell> {
                     mainAxisSpacing: AppSpacing.sm,
                     childAspectRatio: 0.98,
                     children: [
-                      ChildActionCard(
+                      Entrance(
+                        index: 0,
+                        sensoryMode: widget.appState.sensoryMode,
+                        child: ChildActionCard(
                         title: l10n.emotionPracticeTileTitle,
                         subtitle: l10n.emotionPracticeTileSubtitle,
                         icon: Icons.emoji_emotions_outlined,
@@ -168,7 +171,11 @@ class _AppShellState extends State<AppShell> {
                           EmotionScreen(appState: widget.appState),
                         ),
                       ),
-                      ChildActionCard(
+                      ),
+                      Entrance(
+                        index: 1,
+                        sensoryMode: widget.appState.sensoryMode,
+                        child: ChildActionCard(
                         title: l10n.socialStoriesTileTitle,
                         subtitle: l10n.socialStoriesTileSubtitle,
                         icon: Icons.auto_stories_outlined,
@@ -177,7 +184,11 @@ class _AppShellState extends State<AppShell> {
                           SocialStoriesScreen(appState: widget.appState),
                         ),
                       ),
-                      ChildActionCard(
+                      ),
+                      Entrance(
+                        index: 2,
+                        sensoryMode: widget.appState.sensoryMode,
+                        child: ChildActionCard(
                         title: l10n.learningPathTileTitle,
                         subtitle: l10n.learningPathTileSubtitle,
                         icon: Icons.lightbulb_outline,
@@ -186,7 +197,11 @@ class _AppShellState extends State<AppShell> {
                           LearningPathScreen(appState: widget.appState),
                         ),
                       ),
-                      ChildActionCard(
+                      ),
+                      Entrance(
+                        index: 3,
+                        sensoryMode: widget.appState.sensoryMode,
+                        child: ChildActionCard(
                         title: l10n.gamificationTileTitle,
                         subtitle: l10n.gamificationTileSubtitle,
                         icon: Icons.stars_outlined,
@@ -194,6 +209,7 @@ class _AppShellState extends State<AppShell> {
                         onTap: () => _push(
                           GamificationScreen(appState: widget.appState),
                         ),
+                      ),
                       ),
                     ],
                   ),

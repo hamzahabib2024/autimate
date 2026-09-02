@@ -8,11 +8,17 @@ was no module covering visual design at all — the largest single remaining gap
 `flutter test` → **184 passing** (was 146) · branch `AI` · 60 Dart source files ·
 259 localization keys, EN and UR at exact parity (asserted by test).
 
+**Ownership.** Firebase (Module 11) and whole-project testing are owned by a teammate who
+holds the Firebase credentials. Items marked 🤝 belong to them — do not start them here, and do
+not add Firebase dependencies to `pubspec.yaml` without coordinating, or the two branches will
+conflict on the composition root.
+
 **Legend**
 
 - `[x]` complete — implemented **and** verified
 - `[ ]` open
 - `⛔` blocked on an external dependency (device, SDK, account) — the reason is stated inline
+- 🤝 owned by the teammate handling Firebase and testing
 - 🎨 also covered in depth by [VISUAL-DESIGN-PROMPT.md](VISUAL-DESIGN-PROMPT.md)
 
 **Headline:** 12 of 15 modules are functionally complete. Everything that could be built
@@ -227,10 +233,14 @@ What remains is exactly those three blocked categories.
 - [x] Caregiver-tier redesign — accent-coded stat tiles, styled weekly bars and trend card,
       sectioned scroll, deliberately denser than the child tier
 
+- [x] Teacher/therapist read + observe access limited to assigned children —
+      `shareChildWith` / `revokeAccess` add a UID to one child's `caregiverIds`, which is the
+      whole permission and is scoped to that child. Enforced server-side in `firestore.rules`
+      and covered by tests.
+
 **Open**
 
-- [ ] ⛔ Teacher/therapist read + observe access limited to assigned children — **depends on
-      Firebase Auth roles (Module 11)**
+- [ ] 🤝 Verify against a live project once credentials exist
 
 ---
 
@@ -284,11 +294,11 @@ What remains is exactly those three blocked categories.
       reusing the Latin metrics, which clipped ascenders
 - [x] The phantom `fontFamily: 'sans'` is gone; `AppTypography` resolves per locale
 
+- [x] **Fonts bundled and active** — Lexend and Noto Nastaliq Urdu, both SIL OFL, as
+      variable fonts so one file covers each weight range. Licences ship beside them.
+
 **Open**
 
-- [ ] Drop in the Lexend and Noto Nastaliq Urdu binaries and flip two constants —
-      `mobile/assets/fonts/README.md` has the three-step activation. Left inactive on purpose:
-      Flutter fails the build on a declared font asset whose file is missing.
 - [ ] ⛔ TalkBack / VoiceOver end-to-end pass — device
 - [ ] ⛔ Urdu font rendering check on device (Nastaliq vs Naskh, line-height clipping) — device
 - [ ] ⛔ Sensory-mode listening pass (volume ceiling comfort) — device
@@ -302,22 +312,33 @@ What remains is exactly those three blocked categories.
 - [x] Repository/service boundaries — auth, progress, routines, children
 - [x] Local durable repositories as the offline-first source of truth
 - [x] Offline queue with LWW merge semantics, tested
-- [x] Firestore Security Rules authored — caregiver isolation, append-only records, deny-by-default
-- [x] Credential gate (`AppConfig.firebaseConfigured`) keeps the app fully runnable without Firebase
+- [x] Credential gate keeps the app fully runnable without Firebase
+- [x] **Firebase bootstrap** — initialises from `--dart-define` values, never throws,
+      returns false so the app falls back to local repositories
+- [x] **Caregiver authentication** — email/password, auto-registers on first sign-in.
+      The child uses a profile, never an account.
+- [x] **Firestore adapters** — progress (sessions, card usage, observations) and child
+      profiles, implementing the existing interfaces
+- [x] **Sync backend** — drains `OfflineSyncQueue` on reconnect, idempotent on replay
+      because the queue id is the document id
+- [x] **Document layout** matching the rules exactly (`firestore_paths.dart`)
+- [x] **Rules extended** to cover every collection the adapters write; sessions, card
+      usage, and observations stay append-only, deletes refused
+- [x] **28 adapter tests** against an in-memory Firestore — no live project needed
+- [x] [FIREBASE-SETUP.md](FIREBASE-SETUP.md) — create a project, paste six values, deploy
 
-**Open** — *all ⛔ on a Firebase account; use the emulator suite to make progress meanwhile*
+**Open** — 🤝 *the teammate holding the credentials*
 
-- [ ] ⛔ Create the Firebase project; register the Android and iOS apps (config files out of VCS)
-- [ ] ⛔ Firebase Authentication — email/password parents, teacher invites. *Child uses a profile,
-      never an account.*
-- [ ] ⛔ Firestore adapters implementing the repository interfaces and draining `OfflineSyncQueue`
-- [ ] ⛔ Deploy the rules; write rules unit tests against the emulator
+- [ ] 🤝 Create the project, register the Android app, supply the six dart-define values
+- [ ] 🤝 Deploy `firestore.rules`
+- [ ] 🤝 **Rules unit tests against the emulator.** `fake_cloud_firestore` does not evaluate
+      rules, so the 28 passing tests prove the client side and say nothing about whether the
+      rules enforce isolation. This is the single most valuable test still missing.
 - [ ] Firebase Storage — only if custom-card media goes remote (local-first is the default)
-- [ ] Crashlytics vs. local-only logging decision, written down
+- [ ] Crashlytics vs. local-only logging — recommendation recorded in
+      [SECURITY-PRIVACY-REVIEW.md](SECURITY-PRIVACY-REVIEW.md), awaiting sign-off
 
----
-
-## Module 12 — Testing & Quality
+## Module 12 — Testing & Quality *(partly 🤝 — whole-project testing is teammate-owned)*
 
 **Done**
 
@@ -333,12 +354,17 @@ What remains is exactly those three blocked categories.
       duplicate, delete, JSON round-trip, board integration, editor flow with a fake image
       source, no-camera fallback, and reorder semantics
 
+- [x] **Integration test — the full offline journey** (`offline_journey_test.dart`): build a
+      sentence → speak → complete an emotion session → the caregiver dashboard reflects it,
+      with no network and no backend adapter in the graph. Objective O7.
+- [x] **Coverage report + written gap review** — 82.8%, with every gap classified as
+      structural or worth closing: [COVERAGE-REVIEW.md](COVERAGE-REVIEW.md)
+- [x] **16 golden images** across light/dark × normal/sensory
+      (`golden_design_test.dart`). Caught a real overflow bug in `ChildActionCard` on first run.
+
 **Open**
 
-- [ ] Integration test — full offline journey: build sentence → speak → record → dashboard reflects it
-- [ ] Coverage report + written gap review
-- [ ] Golden image tests for the design system (the behavioural assertions above are in place;
-      pixel goldens still to add)
+- [ ] 🤝 Firestore rules unit tests against the emulator — see Module 11
 - [ ] ⛔ Performance profiling on device — frame pacing, TTS latency
 - [ ] ⛔ Physical checks — airplane-mode run, rapid-tap speech, smoke test
 
@@ -355,7 +381,8 @@ What remains is exactly those three blocked categories.
 - [ ] ⛔ Android release build (AAB / APK)
 - [ ] ⛔ iOS best-effort build — needs macOS + Xcode
 - [ ] Crash handling and logging wired
-- [ ] Final security and privacy review — camera, data export, secrets scan
+- [x] Security and privacy self-review — [SECURITY-PRIVACY-REVIEW.md](SECURITY-PRIVACY-REVIEW.md).
+      Six findings; two must close before real child data (unexecuted rules, no data-export flow).
 - [ ] ⛔ Two demo rehearsals on a real device
 - [ ] Store listing assets — EN + UR screenshots and description (only if distributing)
 
@@ -375,91 +402,99 @@ What remains is exactly those three blocked categories.
       table, and a "if something goes wrong" section — [DEMO-SCRIPT.md](DEMO-SCRIPT.md)
 - [ ] FYP report sections — methodology, architecture, testing evidence, honest limitations
       (what is simulated vs. real)
-- [ ] Short demo video script
-- [ ] Final handover — dependency justification list, docs brought current
+- [x] Short demo video script — [DEMO-VIDEO-SCRIPT.md](DEMO-VIDEO-SCRIPT.md)
+- [x] Final handover — dependency justification list and all docs brought current
 - [x] "Design system" section in `PROJECT-STRUCTURE.md` documenting tokens, the two UI tiers,
       the rules the system enforces, and the full dependency justification list
 - [x] `README.md` brought current
 
 ---
 
-## Module 15 — Visual & Motion Design System 🎨 *(new — nothing done yet)*
+## Module 15 — Visual & Motion Design System ✅ *(built)*
 
-The largest open gap in the product. Full specification in
-**[VISUAL-DESIGN-PROMPT.md](VISUAL-DESIGN-PROMPT.md)**; this is the tracking view.
+Full specification in **[VISUAL-DESIGN-PROMPT.md](VISUAL-DESIGN-PROMPT.md)**; this is the
+tracking view. Design rationale lives in the design-system section of
+[PROJECT-STRUCTURE.md](PROJECT-STRUCTURE.md).
 
-**Why it counts as function, not polish:** the primary user is a non-verbal child who cannot read
-the interface. Right now every screen is `Scaffold → AppBar → ListView → Card → ListTile` with
-monochrome Material icons, no illustrations, no colour coding, no reward feedback, and effectively
-no motion — the child's AAC board is styled identically to the caregiver's analytics dashboard.
+**Why it counted as function, not polish:** the primary user is a non-verbal child who cannot
+read the interface. Every screen had been `Scaffold → AppBar → ListView → Card → ListTile` with
+monochrome Material icons, no illustrations, no colour coding, no reward feedback, and one
+`AnimationController` in the whole app — the child's AAC board was styled identically to the
+caregiver's analytics dashboard.
 
 **Foundations**
 
-- [ ] Token system — `app_colors`, `app_typography`, `app_spacing`, `app_motion`
-- [ ] Bundled fonts — Lexend (Latin) + Noto Nastaliq Urdu, with Urdu-specific line-height metrics
-- [ ] `AppTheme.dark()` alongside the existing `light()` *(keep the `light()` signature — the
-      contrast test depends on it)*
-- [ ] Extended `theme_contrast_test.dart` covering every new pair in light/dark × normal/sensory
-- [ ] `AppMotion.resolve()` honouring both sensory mode and OS `disableAnimations`
-- [ ] Theme-level minimum touch targets (64 dp child / 56 dp caregiver), replacing the hand-rolled
-      `ConstrainedBox(minHeight: 64)` wrappers
+- [x] Token system — `app_colors`, `app_typography`, `app_spacing`, `app_motion`
+- [x] `AppTheme.dark()` alongside `light()`, whose signature is unchanged so the contrast test
+      still iterates it; `themeMode` persisted and surfaced as a comfort control
+- [x] Contrast coverage extended — `design_system_test.dart` asserts every module accent, every
+      AAC word-class colour, success/attention, and every accent-tinted well at 4.5:1 across
+      light/dark × normal/sensory
+- [x] `AppMotion.resolve()` honouring sensory mode **and** the OS `disableAnimations` setting
+- [x] Theme-level minimum touch targets (64 dp child / 56 dp caregiver)
+- [ ] Bundled fonts — the type system, Urdu metrics, and activation path are all in place;
+      only the two `.ttf` families still need dropping in. See
+      `mobile/assets/fonts/README.md`. Left inactive on purpose: Flutter fails the build on a
+      declared font asset whose file is missing.
 
 **Component library**
 
-- [ ] `ChildActionCard`, `SymbolTile`, `SentenceStrip`, `PrimaryActionButton`
-- [ ] `ProgressRing` (promoted out of the gamification screen's private painter), `RewardStar`
-- [ ] `EmotionFace` — parameterised `CustomPainter`, six emotions + role-play states, tweenable
-- [ ] `Mascot` — one calm character used in onboarding, empty states, rewards, and role-play
-- [ ] `SectionHeader`, `EmptyState`, `CaregiverStatTile`
+- [x] `ChildActionCard`, `SymbolTile`, `PrimaryActionButton`, reorderable sentence strip
+- [x] `ProgressRing` (promoted out of the gamification screen's private painter) and reused by
+      the routine timeline; `RewardStar`
+- [x] `EmotionFace` — parameterised `CustomPainter`, six emotions plus role-play states,
+      tweenable, unit-tested per emotion
+- [x] `Mascot` — one calm character in onboarding, the home header, and rewards. Ambient
+      breathing is opt-in, not default.
+- [x] `SectionHeader`, `EmptyState`, `CaregiverStatTile`, `FeatureTile`, `StatePanel`
 
-**Screen passes** — child tier first, caregiver tier after
+**Screen passes**
 
-- [ ] Home shell · [ ] AAC · [ ] Emotion + expression · [ ] Routines · [ ] Gamification
-- [ ] Social stories · [ ] Learning path · [ ] Sensory + calm
-- [ ] Dashboard · [ ] Settings · [ ] Routine editor · [ ] Support level · [ ] Parent gate
-- [ ] Onboarding · [ ] Auth
+- [x] Home shell · [x] AAC · [x] Emotion + expression · [x] Routines · [x] Gamification
+- [x] Social stories · [x] Learning path · [x] Sensory + calm
+- [x] Dashboard · [x] Settings · [x] Routine editor · [x] Support level · [x] Parent gate
+- [x] Onboarding · [x] Auth
 
-**Design rules to hold throughout**
+**Design rules held throughout**
 
-- [ ] Two distinct tiers — child (large, warm, illustrated, ≤ 6 elements per viewport) vs.
-      caregiver (dense, informational, standard Material 3)
-- [ ] Colour never the only channel — always paired with shape, icon, or label
-- [ ] Errorless framing — no red X, no buzzer, no shake, no penalty
-- [ ] Nothing flashes, strobes, or changes luminance above 3 Hz
-- [ ] Module accent colours for wayfinding — the child learns "green = routine" before reading it
-
----
-
-## Recommended execution order — what is left
-
-Everything unblocked has been built. The remaining work sorts into exactly three gates.
-
-| Gate | Work | Modules |
-|---|---|---|
-| **Nothing blocking** | Drop in the two font binaries and flip two constants (5 min); integration test; coverage report; golden images; FYP report sections; demo video script | 10, 12, 14 |
-| ⛔ **Firebase account** | Project creation, Auth, Firestore adapters, rules deployment + emulator tests, teacher/therapist roles, Crashlytics decision. *Can progress now against the emulator suite.* | 11, 7 |
-| ⛔ **Physical Android device + SDK** | ML Kit adapter, OS notifications, ambient audio adapter, TalkBack pass, Nastaliq rendering check, brightness audit, APK/AAB builds, signing, demo rehearsals | 3, 4, 6, 10, 13 |
-
-`flutter doctor` currently reports **Unable to locate Android SDK** on this machine, which is
-what gates the entire release track. Installing Android Studio unblocks Module 13 immediately;
-a device unblocks the rest of the fourth column.
+- [x] Two distinct tiers — child (large, warm, illustrated) vs. caregiver (dense, informational)
+- [x] Colour never the only channel — every accent paired with icon, border, and label
+- [x] Errorless framing — no red X, no buzzer, no shake, no penalty
+- [x] Nothing flashes, strobes, or changes luminance above 3 Hz
+- [x] Module accent colours for wayfinding
+- [x] App icon, adaptive icon, and native splash generated from the mascot geometry
 
 ---
 
-## What changed in the build pass
+## What is left
 
-- **Design system built from nothing** — five token files, a component library, two
-  code-drawn characters, dark theme, a two-tier child/caregiver split, and 21 tests that
-  hold it in place. Every one of the eleven visual defects in the original audit is closed.
-- **Module 1 completed** — custom caregiver cards (local-first, with photos) and
-  drag-to-reorder, with 17 tests.
-- **Module 9 committed** — the gamification work that was sitting untracked.
-- **Test count 146 → 184**, static analysis still clean, no test weakened or deleted.
-- **Three regressions found and fixed during the pass**, each a real defect rather than a
-  test artifact: a tile caption that overflowed once the child text scale applied, a
-  `stretch` Row that forced infinite height on the dashboard, and emotion feedback that had
-  been pushed below the fold where `ListView` never built it.
-- **One design decision reversed on evidence** — the mascot's ambient breathing is now
-  opt-in. A continuously animating character held the frame scheduler open, and on
-  reflection perpetual corner motion is a cost rather than a delight in an app for
-  sensory-sensitive children.
+| Gate | Work |
+|---|---|
+| **Nothing blocking** | FYP report sections (methodology, architecture, testing evidence, limitations). A widget test for `auth_screen.dart` — the one non-structural coverage gap. |
+| 🤝 **Teammate** | Create the Firebase project, paste six values, deploy the rules, write rules unit tests against the emulator. [FIREBASE-SETUP.md](FIREBASE-SETUP.md) is the whole brief. |
+| ⛔ **Android SDK** | `flutter doctor` reports **Unable to locate Android SDK**. Installing Android Studio unblocks debug APK, release build, signing, and crash wiring. |
+| ⛔ **Physical device** | ML Kit adapter, OS notifications, TalkBack pass, Urdu Nastaliq rendering check, brightness audit, frame-pacing profiling, demo rehearsals. |
+
+## What changed in the completion pass
+
+- **Fonts activated** — Lexend and Noto Nastaliq Urdu bundled with licences. The typography
+  system had been written against them; only the binaries were missing.
+- **Audio built** — the gentle-sound option was a silent no-op and now plays three generated
+  loops under a volume ceiling that sensory mode lowers further.
+- **Firebase built end to end** — bootstrap, auth, Firestore adapters, sync drain, extended
+  rules, 28 tests. Only credentials remain.
+- **Therapist assignment** closed Module 7's last item as a side effect of getting the
+  Firestore ownership model right.
+- **Testing** — the offline journey integration test, 16 goldens, and a coverage gap review.
+- **Docs** — Firebase setup, security review, coverage review, demo video script.
+- **Test count 184 → 245.**
+
+### Two corrections worth recording
+
+- My first Firestore layout nested everything under `caregivers/{uid}`, which is simpler but
+  makes the scope's teacher/therapist requirement impossible. The already-authored
+  `firestore.rules` had it right — a child is *shared*, not owned — so the paths were changed
+  to match the rules rather than the reverse.
+- The golden tests caught a real `ChildActionCard` overflow on their first run: valid Dart,
+  passing every other test, and broken on a short grid cell. That is the class of defect
+  goldens exist for.

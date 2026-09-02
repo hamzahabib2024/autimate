@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../shared/widgets/entrance.dart';
 import 'app_colors.dart';
 import 'app_motion.dart';
 import 'app_spacing.dart';
@@ -74,15 +75,20 @@ class AppTheme {
           : InkSparkle.splashFactory,
       extensions: [palette],
 
-      // Sensory mode replaces the shared-axis slide with a plain fade.
-      pageTransitionsTheme: sensoryMode
-          ? const PageTransitionsTheme(
-              builders: {
+      // Material's default slide moves the whole viewport, which the
+      // motion-sensitivity guidance warns against. Both modes fade through
+      // instead; sensory mode drops even the 2% scale.
+      pageTransitionsTheme: PageTransitionsTheme(
+        builders: sensoryMode
+            ? const {
                 TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
-                TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+                TargetPlatform.iOS: FadeUpwardsPageTransitionsBuilder(),
+              }
+            : const {
+                TargetPlatform.android: CalmPageTransitionsBuilder(),
+                TargetPlatform.iOS: CalmPageTransitionsBuilder(),
               },
-            )
-          : const PageTransitionsTheme(),
+      ),
 
       appBarTheme: AppBarTheme(
         backgroundColor: palette.canvas,
@@ -94,9 +100,14 @@ class AppTheme {
         titleTextStyle: text.titleLarge,
       ),
 
+      // Elevation is kept at zero and depth is drawn explicitly with
+      // AppDepth instead: Material's single hard shadow reads as harsh
+      // against these soft grounds, and two very light layers read as a
+      // real object without adding visual load.
       cardTheme: CardThemeData(
         color: palette.card,
         elevation: cardElevation,
+        shadowColor: scheme.shadow.withValues(alpha: 0.5),
         margin: EdgeInsets.zero,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(

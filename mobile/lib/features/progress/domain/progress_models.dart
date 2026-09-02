@@ -80,37 +80,8 @@ class InMemoryProgressRepository implements ProgressRepository {
       );
 }
 
-class FirestoreProgressRepository implements ProgressRepository {
-  @override
-  Future<void> recordSession(SessionResult result) async {
-    // TODO: BACKEND INTEGRATION - write progress through Firestore rules.
-  }
+/// The real Firestore implementation lives in
+/// `core/data/firebase/firestore_progress_repository.dart`. The empty stub
+/// that used to sit here has been removed so there is only one class with
+/// that name and no chance of wiring the inert one by mistake.
 
-  @override
-  Future<void> recordCardUsage(CardUsageEvent event) async {
-    // TODO: BACKEND INTEGRATION - persist usage for explainable ranking.
-  }
-
-  @override
-  Future<void> recordObservation(ObservationNote note) async {
-    // TODO: BACKEND INTEGRATION - persist caregiver observations.
-  }
-
-  @override
-  Future<List<ProgressRecord>> getSessions(String childId) async {
-    // TODO: BACKEND INTEGRATION - query progress for the authenticated child.
-    return const [];
-  }
-
-  @override
-  Future<List<CardUsageEvent>> getCardUsage(String childId) async {
-    // TODO: BACKEND INTEGRATION - query usage for the authenticated child.
-    return const [];
-  }
-
-  @override
-  Future<List<ObservationNote>> getObservations(String childId) async {
-    // TODO: BACKEND INTEGRATION - query observations for the child.
-    return const [];
-  }
-}

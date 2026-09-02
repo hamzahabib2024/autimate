@@ -9,6 +9,7 @@ import 'tts_service.dart';
 import '../data/local_store.dart';
 import '../../features/communication/domain/card_ranker.dart';
 import '../../features/communication/domain/custom_card_repository.dart';
+import '../../features/communication/domain/symbol_scale.dart';
 import '../../features/ai/domain/ai_contracts.dart';
 import '../../features/gamification/domain/reward_policy.dart';
 import '../../features/emotion_recognition/domain/emotion_activity_engine.dart';
@@ -375,7 +376,31 @@ class AppState extends ChangeNotifier {
       _locale = const Locale('en');
     }
     final sensory = await store.read(_keySensoryMode);
-    if (sensory != null) _sensoryMode = sensory == 'true';
+    if (sensory != null) {
+      _sensoryMode = sensory == 'true';
+      await ambientSoundService.setSensoryMode(_sensoryMode);
+    }
+    final ambientTrack = await store.read(_keyAmbientTrack);
+    if (ambientTrack != null) {
+      await ambientSoundService.selectTrack(
+        AmbientTrack.values.firstWhere(
+          (value) => value.name == ambientTrack,
+          orElse: () => AmbientTrack.softRain,
+        ),
+      );
+    }
+    final ambientVolume =
+        double.tryParse(await store.read(_keyAmbientVolume) ?? '');
+    if (ambientVolume != null) {
+      await ambientSoundService.setVolumePreference(ambientVolume);
+    }
+    final symbolScale = await store.read(_keySymbolScale);
+    if (symbolScale != null) {
+      _symbolScale = SymbolScale.values.firstWhere(
+        (value) => value.name == symbolScale,
+        orElse: () => SymbolScale.comfortable,
+      );
+    }
     final themeMode = await store.read(_keyThemeMode);
     if (themeMode != null) {
       _themeMode = ThemeMode.values.firstWhere(
@@ -457,6 +482,12 @@ class AppState extends ChangeNotifier {
     await store.write(_keyLanguage, _locale.languageCode);
     await store.write(_keySensoryMode, '$_sensoryMode');
     await store.write(_keyThemeMode, _themeMode.name);
+    await store.write(_keySymbolScale, _symbolScale.name);
+    await store.write(_keyAmbientTrack, ambientSoundService.track.name);
+    await store.write(
+      _keyAmbientVolume,
+      ambientSoundService.volumePreference.toStringAsFixed(3),
+    );
     await store.write(_keyStars, '$_stars');
     await store.write(_keyChildMode, '$_childMode');
     await store.write(_keyOnboarded, '$_onboarded');
@@ -489,6 +520,9 @@ class AppState extends ChangeNotifier {
   static const String _keyLanguage = 'autimate.settings.language';
   static const String _keySensoryMode = 'autimate.settings.sensoryMode';
   static const String _keyThemeMode = 'autimate.settings.themeMode';
+  static const String _keySymbolScale = 'autimate.aac.symbolScale';
+  static const String _keyAmbientTrack = 'autimate.sensory.ambientTrack';
+  static const String _keyAmbientVolume = 'autimate.sensory.ambientVolume';
   static const String _keyStars = 'autimate.settings.stars';
   static const String _keyChildMode = 'autimate.settings.childMode';
   static const String _keyOnboarded = 'autimate.settings.onboarded';
@@ -502,6 +536,9 @@ class AppState extends ChangeNotifier {
   @override
   void dispose() {
     unawaited(_connectivitySubscription?.cancel());
+    // Without this the ambient bed keeps playing and its AudioPlayer and
+    // fade timer outlive the state that owned them.
+    unawaited(ambientSoundService.dispose());
     super.dispose();
   }
 
@@ -516,7 +553,52 @@ class AppState extends ChangeNotifier {
     if (ttsService is QueuedTtsService) {
       (ttsService as QueuedTtsService).setSensoryMode(value);
     }
+    // Sensory mode lowers the ambient ceiling too, and must take effect on
+    // a bed that is already playing rather than only on the next start.
+    unawaited(ambientSoundService.setSensoryMode(value));
     unawaited(persistSettings());
+    notifyListeners();
+  }
+
+  /// How large the AAC symbols are drawn. Persisted per device rather than
+  /// per child: it usually tracks the device and who is holding it.
+  SymbolScale _symbolScale = SymbolScale.comfortable;
+
+  SymbolScale get symbolScale => _symbolScale;
+
+  void setSymbolScale(SymbolScale scale) {
+    if (scale == _symbolScale) return;
+    _symbolScale = scale;
+    unawaited(persistSettings());
+    notifyListeners();
+  }
+
+  // --- Ambient sound ------------------------------------------------------
+
+  /// Caregiver's chosen loop and level. The service applies the ceiling;
+  /// these are the raw preferences, persisted per device.
+  AmbientTrack get ambientTrack => ambientSoundService.track;
+
+  double get ambientVolume => ambientSoundService.volumePreference;
+
+  Future<void> setAmbientTrack(AmbientTrack track) async {
+    await ambientSoundService.selectTrack(track);
+    unawaited(persistSettings());
+    notifyListeners();
+  }
+
+  Future<void> setAmbientVolume(double value) async {
+    await ambientSoundService.setVolumePreference(value);
+    unawaited(persistSettings());
+    notifyListeners();
+  }
+
+  Future<void> toggleAmbientSound() async {
+    if (ambientSoundService.isPlaying) {
+      await ambientSoundService.stop();
+    } else {
+      await ambientSoundService.play();
+    }
     notifyListeners();
   }
 

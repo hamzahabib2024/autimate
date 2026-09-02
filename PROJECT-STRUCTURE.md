@@ -11,8 +11,12 @@
 - `mobile/lib/l10n/` - English/Urdu ARB files and generated localization classes.
 - `mobile/lib/shared/widgets/` - the shared component library.
 - `mobile/assets/icon/` - generated launcher, adaptive, and splash art.
-- `mobile/assets/fonts/` - bundled type (see `assets/fonts/README.md`).
+- `mobile/assets/fonts/` - bundled type: Lexend and Noto Nastaliq Urdu, both SIL OFL, with licences.
+- `mobile/assets/audio/` - the three generated ambient loops.
+- `mobile/lib/core/data/firebase/` - Firestore adapters, paths, codec, and sync backend.
+- `mobile/test/goldens/` - 16 committed golden images for the design system.
 - `mobile/tool/make_icon.py` - regenerates the icon art from the mascot geometry.
+- `mobile/tool/make_ambient_audio.py` - regenerates the ambient loops.
 - `docs/diagrams/` - source architecture and product diagrams.
 - `tools/urdu_tts_probe/` - throwaway physical-device Urdu TTS verification app.
 
@@ -34,6 +38,7 @@ The theme is a token system in `lib/core/theme/`, not a single file. Screens con
 | `app_typography.dart` | Two type scales (child and caregiver) plus the Urdu metrics, and the `ChildTextScale` wrapper. |
 | `app_spacing.dart` | `AppSpacing`, `AppRadius`, `AppTouch`, `AppElevation`. |
 | `app_motion.dart` | Durations, curves, and `AppMotion.resolve` — the single gate every animation passes through. |
+| `app_depth.dart` | Layered soft shadows, the barely-there sheen, and the focal halo. |
 | `app_theme.dart` | Assembles `ThemeData` for `light()` and `dark()`, each in normal and sensory mode. |
 
 ### Two UI tiers
@@ -57,6 +62,36 @@ The size difference is itself a signal: a caregiver glancing at the device can t
 - **No flashing, strobing, or luminance change above 3 Hz** anywhere, ever.
 - **Errorless framing.** A wrong answer gets a calm redirect, never a red X, a buzzer, or a penalty. Red is reserved for caregiver-facing danger.
 - **Every semantic colour pair is contrast-tested.** `theme_contrast_test.dart` covers the Material scheme; `design_system_test.dart` covers every accent and tint across light/dark × normal/sensory at 4.5:1.
+
+### Depth, motion, and the intro
+
+The research on this audience is consistent — calm palettes, muted colour,
+stable layouts, clutter-free surfaces — which rules out the usual routes to
+"eye-catching": saturated gradients, heavy shadows, glass blur, neon glow.
+Every one of them raises visual load.
+
+Depth is therefore built the way print does it: **many very soft layers
+rather than one hard one**, with light falling consistently from above. A
+resting card carries a tight contact shadow plus a wide ambient one, each
+under 6% alpha; colour-coded surfaces borrow their accent's hue for the
+shadow, because a neutral grey shadow under a coloured card reads as dirty.
+The `sheen` gradient varies lightness by under 5% — it exists only to stop a
+large flat fill looking dead, and sensory mode removes it entirely.
+
+Motion follows the accessibility guidance for vestibular sensitivity:
+
+- **Entry travel is 10 dp**, not the 40–60 a marketing site would use.
+  Movement large enough to notice as movement is large enough to disorient.
+- **Stagger is capped**, so a long list never becomes a wave rolling down
+  the screen.
+- **Page transitions fade through** with a 2% scale rather than sliding the
+  viewport, which the guidance specifically warns against.
+- **`Entrance` uses an `Interval` on one controller**, never a delayed
+  start — a stranded timer outliving a widget is what a fast scroll causes.
+- The **intro animation** runs 1.9 s, keeps all movement inside the middle
+  third of the screen, is skippable by a tap anywhere, and ends itself. Under
+  reduced motion it collapses to a single fade with a beat of stillness,
+  because an instant cut is its own kind of jolt.
 
 ### Artwork is drawn in code
 
@@ -105,6 +140,8 @@ The project adds a dependency only when nothing already present can do the job, 
 | `crypto` | SHA-256 hashing for the caregiver PIN. Nothing in the existing set provides secure hashing. |
 | `image_picker` | Caregiver custom cards need a photo of the child's own object or person. Used only behind `ImageSourceService`, never called from a screen. |
 | `path_provider` | Custom-card images are copied into the app documents directory so they survive restarts and stay offline-first. Only the platform can report that directory. |
+| `audioplayers` | Plays the bundled calming loops. Nothing else in the set reaches the platform audio output, and the gentle-sound option was a silent no-op without it. Used only behind `AmbientSoundService`. |
+| `firebase_core`, `firebase_auth`, `cloud_firestore` | Module 11. All three sit behind the existing repository interfaces and are constructed **only** when credentials are present, so the app stays fully runnable without them. |
 
 ### Build-time only (never shipped in the app)
 
@@ -112,7 +149,27 @@ The project adds a dependency only when nothing already present can do the job, 
 |---|---|
 | `flutter_launcher_icons` | Generates the launcher and adaptive icons from one source image so the Android density buckets cannot drift apart by hand. |
 | `flutter_native_splash` | Writes the native splash so the first frame is the app's own calm ground. A white launch flash is exactly the kind of sudden luminance change this app exists to avoid. |
+| `fake_cloud_firestore` | An in-memory Firestore so the backend adapters are covered by real tests with no live project, credentials, or emulator. |
 | `flutter_lints` | Lint set. |
+
+### Audio
+
+Three ambient loops, generated rather than sourced, because the constraints
+are specific: no transients, energy below ~1 kHz, seamless loop seams, and
+fades at both file edges. Volume is bounded by `AmbientVolumePolicy` — the
+caregiver's preference is a fraction of a ceiling rather than of full
+output, so the loudest possible level is capped by construction, and sensory
+mode lowers the ceiling again on already-playing audio.
+
+### Backend
+
+Firebase sits entirely behind the existing repository interfaces. Two gates,
+deliberately distinct: `AppConfig.firebaseConfigured` says credentials are
+present; `FirebaseBootstrap` says Firebase actually initialised. Only the
+second switches the app off local repositories. Data is modelled as
+`children/{childId}` with a `caregiverIds` array — a child is shared, not
+owned — which is what makes per-child therapist assignment possible. See
+[FIREBASE-SETUP.md](FIREBASE-SETUP.md).
 
 ### Deliberately not added
 

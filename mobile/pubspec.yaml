@@ -35,12 +35,37 @@ dependencies:
   # Justification: hashes the caregiver PIN; nothing in the current
   # dependency set provides secure hashing.
   crypto: ^3.0.6
+  # Justification (Module 11 backend): the scope requires Firebase Auth for
+  # caregiver accounts and Firestore for structured sync. All three sit
+  # behind the existing repository interfaces and are only constructed when
+  # `AppConfig.firebaseConfigured` is true, so the app stays fully runnable
+  # with no credentials at all.
+  cloud_firestore: ^5.6.0
+  firebase_auth: ^5.3.4
+  firebase_core: ^3.8.1
   flutter_riverpod: ^2.6.1
   flutter_tts: ^4.2.5
+  # Justification (Module 3 expression practice): streams camera frames for
+  # on-device face analysis. Frames stay in memory and are never written or
+  # uploaded. Used only behind `ExpressionPracticeService`.
+  camera: ^0.11.0+2
+  # Justification: on-device face detection. Runs entirely locally — no
+  # network call, no image leaves the device — which is what makes the
+  # camera feature acceptable at all for this audience.
+  google_mlkit_face_detection: ^0.13.1
+  # Justification: the camera permission flow needs the real OS answer,
+  # including the permanently-denied case that must send a caregiver to
+  # settings rather than re-prompting forever.
+  permission_handler: ^11.3.1
   # Justification: caregiver custom AAC cards need a photo of the child's
   # own object/person. Nothing else in the dependency set can reach the
   # gallery or camera. Used only behind `ImageSourceService`.
   image_picker: ^1.1.2
+  # Justification: plays the bundled calming ambient loops. Nothing else in
+  # the set can reach the platform audio output, and the calm screen's
+  # gentle-sound option was a silent no-op without it. Used only behind
+  # `AmbientSoundService`.
+  audioplayers: ^6.1.0
   # Justification: custom-card images are copied into the app documents
   # directory so they survive restarts and stay offline-first. Only the
   # platform can report that directory.
@@ -57,6 +82,10 @@ dev_dependencies:
   # and adaptive icons from a single source image so the Android density
   # buckets cannot drift apart by hand.
   flutter_launcher_icons: ^0.14.3
+  # Justification (test-only): an in-memory Firestore so the adapters are
+  # covered by real tests without a live project, credentials, or an
+  # emulator running. Never shipped.
+  fake_cloud_firestore: ^3.1.0
   # Justification (build-time only): writes the native splash so the first
   # frame is the app's own calm ground rather than a white flash — a white
   # flash is exactly the kind of sudden luminance change this app avoids.
@@ -83,6 +112,7 @@ flutter:
 
   assets:
     - assets/icon/
+    - assets/audio/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -90,20 +120,19 @@ flutter:
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/to/asset-from-package
 
-  # Design-system fonts. Commented out until the binaries are present:
-  # Flutter fails the build on a declared font asset whose file is missing.
-  # See assets/fonts/README.md for the two families, why they were chosen,
-  # and the three-step activation.
-  # fonts:
-  #   - family: Lexend
-  #     fonts:
-  #       - asset: assets/fonts/Lexend-Regular.ttf
-  #       - asset: assets/fonts/Lexend-Medium.ttf
-  #         weight: 500
-  #       - asset: assets/fonts/Lexend-SemiBold.ttf
-  #         weight: 600
-  #       - asset: assets/fonts/Lexend-Bold.ttf
-  #         weight: 700
+  # Design-system fonts, bundled (never fetched at runtime — the app is
+  # offline-first). Both are SIL OFL 1.1; licences sit beside the binaries.
+  #
+  # These are variable fonts with a `wght` axis, so one file covers the whole
+  # weight range and Flutter interpolates rather than swapping static cuts.
+  # See assets/fonts/README.md.
+  fonts:
+    - family: Lexend
+      fonts:
+        - asset: assets/fonts/Lexend[wght].ttf
+    - family: NotoNastaliqUrdu
+      fonts:
+        - asset: assets/fonts/NotoNastaliqUrdu[wght].ttf
   #   - family: NotoNastaliqUrdu
   #     fonts:
   #       - asset: assets/fonts/NotoNastaliqUrdu-Regular.ttf

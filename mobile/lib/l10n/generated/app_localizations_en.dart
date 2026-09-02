@@ -872,4 +872,39 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get lockedLabel => 'Keep going';
+
+  @override
+  String get ambientTrackLabel => 'Sound';
+
+  @override
+  String get ambientTrackSoftRain => 'Soft rain';
+
+  @override
+  String get ambientTrackSlowOcean => 'Slow waves';
+
+  @override
+  String get ambientTrackWarmHum => 'Warm hum';
+
+  @override
+  String get ambientVolumeLabel => 'How loud';
+
+  @override
+  String get ambientVolumeHint =>
+      'The app keeps a quiet upper limit, even at maximum.';
+
+  @override
+  String get symbolSizeLabel => 'Card size';
+
+  @override
+  String get symbolSizeSubtitle =>
+      'Bigger cards mean fewer on screen, which is often easier.';
+
+  @override
+  String get symbolSizeComfortable => 'Comfortable';
+
+  @override
+  String get symbolSizeLarge => 'Large';
+
+  @override
+  String get symbolSizeLargest => 'Largest';
 }

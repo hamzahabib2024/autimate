@@ -45,7 +45,16 @@ class SimulatedExpressionService implements ExpressionPracticeService {
   Future<void> stop() async {
     _ticker?.cancel();
     _ticker = null;
-    await _controller?.close();
+    // The field is cleared *before* the await, not after.
+    //
+    // `start()` calls `stop()` without awaiting it. With the clear after
+    // the await, that assignment landed in a microtask that ran once
+    // `start()` had already installed the new controller — so it wiped the
+    // new one, the ticker fired into a null field, and the stream emitted
+    // nothing at all. Capturing locally makes the teardown touch only the
+    // controller it was asked to close.
+    final controller = _controller;
     _controller = null;
+    await controller?.close();
   }
 }

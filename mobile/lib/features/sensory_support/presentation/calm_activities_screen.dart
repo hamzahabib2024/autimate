@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart' show Ticker;
 
 import '../../../core/services/app_services.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
 import '../../../l10n/generated/app_localizations.dart';
+import '../domain/ambient_sound.dart';
 
 /// Guided breathing: a slow pace circle expanding on the inhale, holding,
 /// then contracting on the exhale. No haptics anywhere. Sensory mode slows
@@ -203,9 +206,80 @@ class _CalmingScreenState extends State<CalmingScreen>
   }
 
   Future<void> _toggleSound() async {
-    final service = widget.appState.ambientSoundService;
-    service.isPlaying ? await service.stop() : await service.play();
+    await widget.appState.toggleAmbientSound();
     if (mounted) setState(() {});
+  }
+
+  Future<void> _selectTrack(AmbientTrack track) async {
+    await widget.appState.setAmbientTrack(track);
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _setVolume(double value) async {
+    await widget.appState.setAmbientVolume(value);
+    if (mounted) setState(() {});
+  }
+
+  String _trackLabel(AppLocalizations l10n, AmbientTrack track) =>
+      switch (track) {
+        AmbientTrack.softRain => l10n.ambientTrackSoftRain,
+        AmbientTrack.slowOcean => l10n.ambientTrackSlowOcean,
+        AmbientTrack.warmHum => l10n.ambientTrackWarmHum,
+      };
+
+  IconData _trackIcon(AmbientTrack track) => switch (track) {
+        AmbientTrack.softRain => Icons.water_drop_outlined,
+        AmbientTrack.slowOcean => Icons.waves_outlined,
+        AmbientTrack.warmHum => Icons.graphic_eq,
+      };
+
+  /// Track picker and level, revealed only while the bed is playing so the
+  /// resting screen stays as bare as the rest of the calm surfaces.
+  Widget _soundControls(BuildContext context, AppLocalizations l10n) {
+    final palette = context.palette;
+    final appState = widget.appState;
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.sm),
+      child: Column(
+        children: [
+          Wrap(
+            spacing: AppSpacing.xs,
+            runSpacing: AppSpacing.xs,
+            alignment: WrapAlignment.center,
+            children: [
+              for (final track in AmbientTrack.values)
+                ChoiceChip(
+                  key: ValueKey('ambient-track-${track.name}'),
+                  avatar: Icon(_trackIcon(track), size: 18),
+                  label: Text(_trackLabel(l10n, track)),
+                  selected: appState.ambientTrack == track,
+                  onSelected: (_) => _selectTrack(track),
+                ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Row(
+            children: [
+              Icon(Icons.volume_mute, size: 20, color: palette.sensory),
+              Expanded(
+                child: Slider(
+                  key: const ValueKey('ambient-volume'),
+                  value: appState.ambientVolume,
+                  onChanged: _setVolume,
+                  label: l10n.ambientVolumeLabel,
+                ),
+              ),
+              Icon(Icons.volume_up, size: 20, color: palette.sensory),
+            ],
+          ),
+          Text(
+            l10n.ambientVolumeHint,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.labelSmall,
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -281,6 +355,8 @@ class _CalmingScreenState extends State<CalmingScreen>
                     ),
                   ),
                 ),
+                if (widget.appState.ambientSoundService.isPlaying)
+                  _soundControls(context, l10n),
               ],
             ),
           ),

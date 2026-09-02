@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'core/config/app_config.dart';
+import 'core/data/firebase/firebase_bootstrap.dart';
 import 'core/providers/app_providers.dart';
 import 'core/services/app_services.dart';
 import 'core/services/tts_service.dart';
@@ -9,6 +13,7 @@ import 'core/data/local_store.dart';
 import 'core/theme/app_theme.dart';
 import 'features/home/presentation/app_shell.dart';
 import 'features/onboarding/presentation/onboarding_screen.dart';
+import 'features/onboarding/presentation/splash_screen.dart';
 import 'l10n/generated/app_localizations.dart';
 
 Future<void> main() async {
@@ -20,13 +25,32 @@ Future<void> main() async {
   final ttsService = QueuedTtsService();
   await ttsService.initialise();
 
+  // Firebase is attempted only when credentials were injected at build
+  // time, and a failure here is not fatal: the app falls back to local
+  // repositories so a misconfigured backend can never cost a child the app.
+  final config = AppConfig.fromEnvironment();
+  final firebaseReady = await FirebaseBootstrap.ensureInitialised(config);
+
   final container = ProviderContainer(
-    overrides: [keyValueStoreProvider.overrideWithValue(keyValueStore)],
+    overrides: [
+      keyValueStoreProvider.overrideWithValue(keyValueStore),
+      firebaseReadyProvider.overrideWithValue(firebaseReady),
+    ],
   );
 
   final appState = container.read(appStateProvider);
   await appState.loadPersistedSettings();
   appState.startListeningToConnectivity();
+
+  // Replay anything queued while offline, then again on every reconnect.
+  final syncBackend = container.read(syncBackendProvider);
+  if (syncBackend != null) {
+    final queue = container.read(offlineSyncQueueProvider);
+    unawaited(syncBackend.drain(queue));
+    appState.addListener(() {
+      if (!appState.offline) unawaited(syncBackend.drain(queue));
+    });
+  }
 
   runApp(
     UncontrolledProviderScope(
@@ -36,13 +60,23 @@ Future<void> main() async {
   );
 }
 
-class AutiMateApp extends StatelessWidget {
+class AutiMateApp extends StatefulWidget {
   const AutiMateApp({required this.appState, super.key});
 
   final AppState appState;
 
   @override
+  State<AutiMateApp> createState() => _AutiMateAppState();
+}
+
+class _AutiMateAppState extends State<AutiMateApp> {
+  /// The intro plays once per launch and is never a gate — it ends itself,
+  /// and a tap anywhere ends it sooner.
+  bool _introDone = false;
+
+  @override
   Widget build(BuildContext context) {
+    final appState = widget.appState;
     return AnimatedBuilder(
       animation: appState,
       builder: (context, child) => MaterialApp(
@@ -60,7 +94,12 @@ class AutiMateApp extends StatelessWidget {
         locale: appState.locale,
         supportedLocales: const [Locale('en'), Locale('ur')],
         localizationsDelegates: AppLocalizations.localizationsDelegates,
-        home: appState.onboarded
+        home: !_introDone
+            ? SplashScreen(
+                appState: appState,
+                onComplete: () => setState(() => _introDone = true),
+              )
+            : appState.onboarded
             ? AppShell(appState: appState)
             : OnboardingScreen(appState: appState),
       ),
