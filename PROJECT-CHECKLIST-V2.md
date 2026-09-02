@@ -8,11 +8,17 @@ was no module covering visual design at all — the largest single remaining gap
 `flutter test` → **184 passing** (was 146) · branch `AI` · 60 Dart source files ·
 259 localization keys, EN and UR at exact parity (asserted by test).
 
+**Ownership.** Firebase (Module 11) and whole-project testing are owned by a teammate who
+holds the Firebase credentials. Items marked 🤝 belong to them — do not start them here, and do
+not add Firebase dependencies to `pubspec.yaml` without coordinating, or the two branches will
+conflict on the composition root.
+
 **Legend**
 
 - `[x]` complete — implemented **and** verified
 - `[ ]` open
 - `⛔` blocked on an external dependency (device, SDK, account) — the reason is stated inline
+- 🤝 owned by the teammate handling Firebase and testing
 - 🎨 also covered in depth by [VISUAL-DESIGN-PROMPT.md](VISUAL-DESIGN-PROMPT.md)
 
 **Headline:** 12 of 15 modules are functionally complete. Everything that could be built
@@ -229,8 +235,8 @@ What remains is exactly those three blocked categories.
 
 **Open**
 
-- [ ] ⛔ Teacher/therapist read + observe access limited to assigned children — **depends on
-      Firebase Auth roles (Module 11)**
+- [ ] 🤝 Teacher/therapist read + observe access limited to assigned children — **depends on
+      Firebase Auth roles (Module 11), so it lands with the teammate's work**
 
 ---
 
@@ -295,7 +301,7 @@ What remains is exactly those three blocked categories.
 
 ---
 
-## Module 11 — Backend & Data Sync (Firebase)
+## Module 11 — Backend & Data Sync (Firebase) 🤝 *teammate-owned*
 
 **Done**
 
@@ -305,7 +311,12 @@ What remains is exactly those three blocked categories.
 - [x] Firestore Security Rules authored — caregiver isolation, append-only records, deny-by-default
 - [x] Credential gate (`AppConfig.firebaseConfigured`) keeps the app fully runnable without Firebase
 
-**Open** — *all ⛔ on a Firebase account; use the emulator suite to make progress meanwhile*
+**Open** — 🤝 *owned by the teammate holding the credentials*
+
+What this side has already prepared for them: repository interfaces to implement,
+`OfflineSyncQueue` with last-write-wins drain semantics and tests, authored
+`firestore.rules`, and the `AppConfig.firebaseConfigured` gate that keeps the app fully
+runnable with no credentials. The adapters slot in behind those contracts.
 
 - [ ] ⛔ Create the Firebase project; register the Android and iOS apps (config files out of VCS)
 - [ ] ⛔ Firebase Authentication — email/password parents, teacher invites. *Child uses a profile,
@@ -317,7 +328,7 @@ What remains is exactly those three blocked categories.
 
 ---
 
-## Module 12 — Testing & Quality
+## Module 12 — Testing & Quality *(partly 🤝 — whole-project testing is teammate-owned)*
 
 **Done**
 
@@ -383,50 +394,59 @@ What remains is exactly those three blocked categories.
 
 ---
 
-## Module 15 — Visual & Motion Design System 🎨 *(new — nothing done yet)*
+## Module 15 — Visual & Motion Design System ✅ *(built)*
 
-The largest open gap in the product. Full specification in
-**[VISUAL-DESIGN-PROMPT.md](VISUAL-DESIGN-PROMPT.md)**; this is the tracking view.
+Full specification in **[VISUAL-DESIGN-PROMPT.md](VISUAL-DESIGN-PROMPT.md)**; this is the
+tracking view. Design rationale lives in the design-system section of
+[PROJECT-STRUCTURE.md](PROJECT-STRUCTURE.md).
 
-**Why it counts as function, not polish:** the primary user is a non-verbal child who cannot read
-the interface. Right now every screen is `Scaffold → AppBar → ListView → Card → ListTile` with
-monochrome Material icons, no illustrations, no colour coding, no reward feedback, and effectively
-no motion — the child's AAC board is styled identically to the caregiver's analytics dashboard.
+**Why it counted as function, not polish:** the primary user is a non-verbal child who cannot
+read the interface. Every screen had been `Scaffold → AppBar → ListView → Card → ListTile` with
+monochrome Material icons, no illustrations, no colour coding, no reward feedback, and one
+`AnimationController` in the whole app — the child's AAC board was styled identically to the
+caregiver's analytics dashboard.
 
 **Foundations**
 
-- [ ] Token system — `app_colors`, `app_typography`, `app_spacing`, `app_motion`
-- [ ] Bundled fonts — Lexend (Latin) + Noto Nastaliq Urdu, with Urdu-specific line-height metrics
-- [ ] `AppTheme.dark()` alongside the existing `light()` *(keep the `light()` signature — the
-      contrast test depends on it)*
-- [ ] Extended `theme_contrast_test.dart` covering every new pair in light/dark × normal/sensory
-- [ ] `AppMotion.resolve()` honouring both sensory mode and OS `disableAnimations`
-- [ ] Theme-level minimum touch targets (64 dp child / 56 dp caregiver), replacing the hand-rolled
-      `ConstrainedBox(minHeight: 64)` wrappers
+- [x] Token system — `app_colors`, `app_typography`, `app_spacing`, `app_motion`
+- [x] `AppTheme.dark()` alongside `light()`, whose signature is unchanged so the contrast test
+      still iterates it; `themeMode` persisted and surfaced as a comfort control
+- [x] Contrast coverage extended — `design_system_test.dart` asserts every module accent, every
+      AAC word-class colour, success/attention, and every accent-tinted well at 4.5:1 across
+      light/dark × normal/sensory
+- [x] `AppMotion.resolve()` honouring sensory mode **and** the OS `disableAnimations` setting
+- [x] Theme-level minimum touch targets (64 dp child / 56 dp caregiver)
+- [ ] Bundled fonts — the type system, Urdu metrics, and activation path are all in place;
+      only the two `.ttf` families still need dropping in. See
+      `mobile/assets/fonts/README.md`. Left inactive on purpose: Flutter fails the build on a
+      declared font asset whose file is missing.
 
 **Component library**
 
-- [ ] `ChildActionCard`, `SymbolTile`, `SentenceStrip`, `PrimaryActionButton`
-- [ ] `ProgressRing` (promoted out of the gamification screen's private painter), `RewardStar`
-- [ ] `EmotionFace` — parameterised `CustomPainter`, six emotions + role-play states, tweenable
-- [ ] `Mascot` — one calm character used in onboarding, empty states, rewards, and role-play
-- [ ] `SectionHeader`, `EmptyState`, `CaregiverStatTile`
+- [x] `ChildActionCard`, `SymbolTile`, `PrimaryActionButton`, reorderable sentence strip
+- [x] `ProgressRing` (promoted out of the gamification screen's private painter) and reused by
+      the routine timeline; `RewardStar`
+- [x] `EmotionFace` — parameterised `CustomPainter`, six emotions plus role-play states,
+      tweenable, unit-tested per emotion
+- [x] `Mascot` — one calm character in onboarding, the home header, and rewards. Ambient
+      breathing is opt-in, not default.
+- [x] `SectionHeader`, `EmptyState`, `CaregiverStatTile`, `FeatureTile`, `StatePanel`
 
-**Screen passes** — child tier first, caregiver tier after
+**Screen passes**
 
-- [ ] Home shell · [ ] AAC · [ ] Emotion + expression · [ ] Routines · [ ] Gamification
-- [ ] Social stories · [ ] Learning path · [ ] Sensory + calm
-- [ ] Dashboard · [ ] Settings · [ ] Routine editor · [ ] Support level · [ ] Parent gate
-- [ ] Onboarding · [ ] Auth
+- [x] Home shell · [x] AAC · [x] Emotion + expression · [x] Routines · [x] Gamification
+- [x] Social stories · [x] Learning path · [x] Sensory + calm
+- [x] Dashboard · [x] Settings · [x] Routine editor · [x] Support level · [x] Parent gate
+- [x] Onboarding · [x] Auth
 
-**Design rules to hold throughout**
+**Design rules held throughout**
 
-- [ ] Two distinct tiers — child (large, warm, illustrated, ≤ 6 elements per viewport) vs.
-      caregiver (dense, informational, standard Material 3)
-- [ ] Colour never the only channel — always paired with shape, icon, or label
-- [ ] Errorless framing — no red X, no buzzer, no shake, no penalty
-- [ ] Nothing flashes, strobes, or changes luminance above 3 Hz
-- [ ] Module accent colours for wayfinding — the child learns "green = routine" before reading it
+- [x] Two distinct tiers — child (large, warm, illustrated) vs. caregiver (dense, informational)
+- [x] Colour never the only channel — every accent paired with icon, border, and label
+- [x] Errorless framing — no red X, no buzzer, no shake, no penalty
+- [x] Nothing flashes, strobes, or changes luminance above 3 Hz
+- [x] Module accent colours for wayfinding
+- [x] App icon, adaptive icon, and native splash generated from the mascot geometry
 
 ---
 
