@@ -264,9 +264,18 @@ class ChildActionCard extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(AppRadius.lg),
-          child: Container(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              // A short cell — a small phone, a large system text scale, or
+              // a two-up grid on a narrow screen — drops the subtitle and
+              // shrinks the icon rather than overflowing. The title and the
+              // accent are what carry the meaning; the subtitle is a nicety.
+              final tight = constraints.maxHeight.isFinite &&
+                  constraints.maxHeight < 150;
+              final glyph = tight ? 44.0 : 52.0;
+              return Container(
             constraints: const BoxConstraints(minHeight: 132),
-            padding: const EdgeInsets.all(AppSpacing.md),
+            padding: EdgeInsets.all(tight ? AppSpacing.sm : AppSpacing.md),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(AppRadius.lg),
               border: Border.all(color: accent, width: 2),
@@ -274,15 +283,20 @@ class ChildActionCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  width: 52,
-                  height: 52,
+                  width: glyph,
+                  height: glyph,
                   decoration: BoxDecoration(
                     color: accent,
                     borderRadius: BorderRadius.circular(AppRadius.sm),
                   ),
-                  child: Icon(icon, size: 30, color: palette.onAccent),
+                  child: Icon(
+                    icon,
+                    size: tight ? 26 : 30,
+                    color: palette.onAccent,
+                  ),
                 ),
                 Flexible(
                   child: Column(
@@ -300,7 +314,7 @@ class ChildActionCard extends StatelessWidget {
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
-                      if (subtitle != null)
+                      if (subtitle != null && !tight)
                         Text(
                           subtitle!,
                           maxLines: 1,
@@ -318,6 +332,8 @@ class ChildActionCard extends StatelessWidget {
                 ),
               ],
             ),
+              );
+            },
           ),
         ),
       ),

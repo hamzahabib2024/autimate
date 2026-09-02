@@ -11,8 +11,12 @@
 - `mobile/lib/l10n/` - English/Urdu ARB files and generated localization classes.
 - `mobile/lib/shared/widgets/` - the shared component library.
 - `mobile/assets/icon/` - generated launcher, adaptive, and splash art.
-- `mobile/assets/fonts/` - bundled type (see `assets/fonts/README.md`).
+- `mobile/assets/fonts/` - bundled type: Lexend and Noto Nastaliq Urdu, both SIL OFL, with licences.
+- `mobile/assets/audio/` - the three generated ambient loops.
+- `mobile/lib/core/data/firebase/` - Firestore adapters, paths, codec, and sync backend.
+- `mobile/test/goldens/` - 16 committed golden images for the design system.
 - `mobile/tool/make_icon.py` - regenerates the icon art from the mascot geometry.
+- `mobile/tool/make_ambient_audio.py` - regenerates the ambient loops.
 - `docs/diagrams/` - source architecture and product diagrams.
 - `tools/urdu_tts_probe/` - throwaway physical-device Urdu TTS verification app.
 
@@ -105,6 +109,8 @@ The project adds a dependency only when nothing already present can do the job, 
 | `crypto` | SHA-256 hashing for the caregiver PIN. Nothing in the existing set provides secure hashing. |
 | `image_picker` | Caregiver custom cards need a photo of the child's own object or person. Used only behind `ImageSourceService`, never called from a screen. |
 | `path_provider` | Custom-card images are copied into the app documents directory so they survive restarts and stay offline-first. Only the platform can report that directory. |
+| `audioplayers` | Plays the bundled calming loops. Nothing else in the set reaches the platform audio output, and the gentle-sound option was a silent no-op without it. Used only behind `AmbientSoundService`. |
+| `firebase_core`, `firebase_auth`, `cloud_firestore` | Module 11. All three sit behind the existing repository interfaces and are constructed **only** when credentials are present, so the app stays fully runnable without them. |
 
 ### Build-time only (never shipped in the app)
 
@@ -112,7 +118,27 @@ The project adds a dependency only when nothing already present can do the job, 
 |---|---|
 | `flutter_launcher_icons` | Generates the launcher and adaptive icons from one source image so the Android density buckets cannot drift apart by hand. |
 | `flutter_native_splash` | Writes the native splash so the first frame is the app's own calm ground. A white launch flash is exactly the kind of sudden luminance change this app exists to avoid. |
+| `fake_cloud_firestore` | An in-memory Firestore so the backend adapters are covered by real tests with no live project, credentials, or emulator. |
 | `flutter_lints` | Lint set. |
+
+### Audio
+
+Three ambient loops, generated rather than sourced, because the constraints
+are specific: no transients, energy below ~1 kHz, seamless loop seams, and
+fades at both file edges. Volume is bounded by `AmbientVolumePolicy` — the
+caregiver's preference is a fraction of a ceiling rather than of full
+output, so the loudest possible level is capped by construction, and sensory
+mode lowers the ceiling again on already-playing audio.
+
+### Backend
+
+Firebase sits entirely behind the existing repository interfaces. Two gates,
+deliberately distinct: `AppConfig.firebaseConfigured` says credentials are
+present; `FirebaseBootstrap` says Firebase actually initialised. Only the
+second switches the app off local repositories. Data is modelled as
+`children/{childId}` with a `caregiverIds` array — a child is shared, not
+owned — which is what makes per-child therapist assignment possible. See
+[FIREBASE-SETUP.md](FIREBASE-SETUP.md).
 
 ### Deliberately not added
 

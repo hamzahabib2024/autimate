@@ -159,6 +159,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.progressTitle)),
       floatingActionButton: FloatingActionButton.extended(
+        key: const ValueKey('observation-button'),
         onPressed: _addObservation,
         icon: const Icon(Icons.edit_note),
         label: Text(l10n.observationButton),
