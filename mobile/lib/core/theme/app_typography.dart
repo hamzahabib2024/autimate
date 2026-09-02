@@ -13,22 +13,19 @@ import 'package:flutter/material.dart';
 class AppTypography {
   const AppTypography._();
 
-  /// Latin family. `null` means the platform default.
+  /// Latin family: **Lexend** (SIL OFL 1.1), bundled in `assets/fonts/`.
   ///
-  /// The design calls for **Lexend** (SIL OFL), which is drawn to reduce
-  /// visual stress and measurably improve reading proficiency — the
-  /// strongest defensible choice for this audience. Drop the files into
-  /// `assets/fonts/`, uncomment the `fonts:` block in `pubspec.yaml`, and
-  /// set this to `'Lexend'`. See `assets/fonts/README.md`.
-  ///
-  /// It stays `null` until the binaries are present because Flutter fails
-  /// the build on a declared-but-missing font asset, and a broken build is
-  /// worse than the platform default.
-  static const String? latinFamily = null;
+  /// Chosen because it is drawn specifically to reduce visual stress and
+  /// improve reading proficiency, which is the strongest defensible choice
+  /// for this audience. Shipped as a variable font, so one file covers the
+  /// whole weight range.
+  static const String latinFamily = 'Lexend';
 
-  /// Urdu family — **Noto Nastaliq Urdu** (SIL OFL), with Noto Naskh Arabic
-  /// as the dense-UI fallback. Same activation steps as [latinFamily].
-  static const String? urduFamily = null;
+  /// Urdu family: **Noto Nastaliq Urdu** (SIL OFL 1.1), also bundled.
+  ///
+  /// Nastaliq is the script Urdu readers expect, and device coverage is not
+  /// guaranteed, so it must ship with the app rather than be assumed.
+  static const String urduFamily = 'NotoNastaliqUrdu';
 
   /// Nastaliq stacks its ligatures diagonally and needs far more vertical
   /// room than Latin at the same point size. Urdu text therefore gets a
@@ -40,7 +37,7 @@ class AppTypography {
 
   static bool isUrdu(Locale locale) => locale.languageCode == 'ur';
 
-  static String? familyFor(Locale locale) =>
+  static String familyFor(Locale locale) =>
       isUrdu(locale) ? urduFamily : latinFamily;
 
   /// The caregiver scale: Material 3 defaults, floored at 16 for body.

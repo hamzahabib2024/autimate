@@ -11,15 +11,37 @@ import 'helpers/test_app.dart';
 
 class _RecordingAmbient implements AmbientSoundService {
   bool playing = false;
+  bool sensoryMode = false;
+  AmbientTrack selected = AmbientTrack.softRain;
+  double preference = AmbientVolumePolicy.defaultPreference;
 
   @override
   bool get isPlaying => playing;
+
+  @override
+  AmbientTrack get track => selected;
+
+  @override
+  double get volumePreference => preference;
 
   @override
   Future<void> play() async => playing = true;
 
   @override
   Future<void> stop() async => playing = false;
+
+  @override
+  Future<void> selectTrack(AmbientTrack track) async => selected = track;
+
+  @override
+  Future<void> setVolumePreference(double value) async =>
+      preference = value.clamp(0.0, 1.0);
+
+  @override
+  Future<void> setSensoryMode(bool value) async => sensoryMode = value;
+
+  @override
+  Future<void> dispose() async => playing = false;
 }
 
 void main() {
