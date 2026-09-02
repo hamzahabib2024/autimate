@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 
 import '../../../core/services/app_services.dart';
 import '../../../l10n/generated/app_localizations.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/app_widgets.dart';
 import '../../ai/data/simulated_expression_service.dart';
 import '../../ai/domain/ai_contracts.dart';
@@ -237,7 +239,7 @@ class _ExpressionPracticeScreenState extends State<ExpressionPracticeScreen>
     return Scaffold(
       appBar: AppBar(title: Text(l10n.expressionTitle)),
       body: ListView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(AppSpacing.lg),
         children: [
           switch (_phase) {
             ExpressionPhase.checking => const Center(
@@ -246,6 +248,7 @@ class _ExpressionPracticeScreenState extends State<ExpressionPracticeScreen>
             ExpressionPhase.loading => Column(
               children: [
                 StatePanel(
+              accent: context.palette.emotions,
                   title: l10n.expressionTitle,
                   message: l10n.expressionHoldSmile,
                   icon: Icons.sentiment_very_satisfied_outlined,
@@ -261,6 +264,7 @@ class _ExpressionPracticeScreenState extends State<ExpressionPracticeScreen>
               ],
             ),
             ExpressionPhase.unsupported => StatePanel(
+              accent: context.palette.emotions,
               title: l10n.expressionTitle,
               message: l10n.expressionUnsupported,
               icon: Icons.videocam_off_outlined,
@@ -268,6 +272,7 @@ class _ExpressionPracticeScreenState extends State<ExpressionPracticeScreen>
             ExpressionPhase.permissionDenied => Column(
               children: [
                 StatePanel(
+              accent: context.palette.emotions,
                   key: const ValueKey('permission-denied-panel'),
                   title: l10n.expressionTitle,
                   message: l10n.expressionPermissionDenied,
@@ -284,6 +289,7 @@ class _ExpressionPracticeScreenState extends State<ExpressionPracticeScreen>
               ],
             ),
             ExpressionPhase.error => StatePanel(
+              accent: context.palette.emotions,
               title: l10n.expressionTitle,
               message: l10n.expressionCameraError,
               icon: Icons.error_outline,
@@ -291,6 +297,7 @@ class _ExpressionPracticeScreenState extends State<ExpressionPracticeScreen>
             ExpressionPhase.complete => Column(
               children: [
                 StatePanel(
+              accent: context.palette.emotions,
                   title: l10n.expressionSessionComplete(_engine.starsEarned),
                   message: l10n.expressionPrivacyNote,
                   icon: Icons.stars_outlined,
@@ -359,6 +366,7 @@ class _ExpressionPracticeScreenState extends State<ExpressionPracticeScreen>
           },
           const SizedBox(height: 24),
           StatePanel(
+              accent: context.palette.emotions,
             title: l10n.expressionPrivacyTitle,
             message: l10n.expressionPrivacyNote,
             icon: Icons.shield_outlined,

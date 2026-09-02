@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../../core/services/app_services.dart';
 import '../../../l10n/generated/app_localizations.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../shared/widgets/app_widgets.dart';
 import 'support_level_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -103,15 +106,18 @@ class SettingsScreen extends StatelessWidget {
         return Scaffold(
           appBar: AppBar(title: Text(l10n.settingsTitle)),
           body: ListView(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(AppSpacing.lg),
             children: [
+              SectionHeader(
+                title: l10n.displaySectionTitle,
+                accent: context.palette.sensory,
+              ),
               SwitchListTile(
                 title: Text(l10n.sensoryMode),
                 subtitle: Text(l10n.sensoryModeSubtitle),
                 value: appState.sensoryMode,
                 onChanged: appState.toggleSensoryMode,
               ),
-              const Divider(),
               ListTile(
                 title: Text(l10n.languageLabel),
                 subtitle: Text(isUrdu ? l10n.languageUrdu : l10n.languageEnglish),
@@ -133,7 +139,7 @@ class SettingsScreen extends StatelessWidget {
                 ),
               ),
               ListTile(
-                leading: const Icon(Icons.tune),
+                leading: Icon(Icons.tune, color: context.palette.learning),
                 title: Text(l10n.supportLevel),
                 subtitle: Text(l10n.supportLevelSubtitle),
                 onTap: () => Navigator.of(context).push(
@@ -142,7 +148,11 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              const Divider(),
+              const SizedBox(height: AppSpacing.lg),
+              SectionHeader(
+                title: l10n.parentLockTitle,
+                accent: context.palette.routine,
+              ),
               SwitchListTile(
                 key: const ValueKey('child-mode-switch'),
                 secondary: const Icon(Icons.child_friendly_outlined),
@@ -151,10 +161,10 @@ class SettingsScreen extends StatelessWidget {
                 value: appState.childMode,
                 onChanged: appState.setChildMode,
               ),
-              const Divider(),
-              Text(
-                l10n.profilesSectionTitle,
-                style: Theme.of(context).textTheme.titleMedium,
+              const SizedBox(height: AppSpacing.lg),
+              SectionHeader(
+                title: l10n.profilesSectionTitle,
+                accent: context.palette.communicate,
               ),
               RadioGroup<String>(
                 groupValue: appState.selectedChild.id,
@@ -186,7 +196,7 @@ class SettingsScreen extends StatelessWidget {
                 title: Text(l10n.addChildLabel),
                 onTap: () => _childDialog(context, l10n),
               ),
-              const Divider(),
+              const SizedBox(height: AppSpacing.lg),
               ListTile(
                 leading: const Icon(Icons.privacy_tip_outlined),
                 title: Text(l10n.privacySafety),

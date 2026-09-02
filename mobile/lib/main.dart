@@ -48,7 +48,15 @@ class AutiMateApp extends StatelessWidget {
       builder: (context, child) => MaterialApp(
         title: 'AutiMate',
         debugShowCheckedModeBanner: false,
-        theme: AppTheme.light(sensoryMode: appState.sensoryMode),
+        theme: AppTheme.light(
+          sensoryMode: appState.sensoryMode,
+          locale: appState.locale,
+        ),
+        darkTheme: AppTheme.dark(
+          sensoryMode: appState.sensoryMode,
+          locale: appState.locale,
+        ),
+        themeMode: appState.themeMode,
         locale: appState.locale,
         supportedLocales: const [Locale('en'), Locale('ur')],
         localizationsDelegates: AppLocalizations.localizationsDelegates,

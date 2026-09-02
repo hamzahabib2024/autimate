@@ -3,7 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../../core/services/app_services.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
 import '../../../l10n/generated/app_localizations.dart';
+import '../../../shared/widgets/app_widgets.dart';
 import '../../emotion_recognition/domain/emotion_activity_engine.dart';
 import '../domain/conversation_engine.dart';
 import '../domain/social_content.dart';
@@ -102,6 +105,8 @@ class _StoryReaderState extends State<_StoryReader> {
   int _questionIndex = 0;
   bool? _lastAnswerCorrect;
   bool _finished = false;
+  SupportLevel? _levelAtStart;
+  bool _dismissedLevelChange = false;
 
   bool get _isUrdu => widget.appState.locale.languageCode == 'ur';
 
@@ -152,7 +157,15 @@ class _StoryReaderState extends State<_StoryReader> {
           _questionIndex++;
           unawaited(_speakQuestionIfNeeded());
         } else {
-          if (!_finished) widget.appState.awardStars(1);
+          if (!_finished) {
+            widget.appState.recordSessionCompleted(
+              childId: widget.appState.selectedChild.id,
+              level: _levelAtStart ??
+                  widget.appState.effectiveSupportFor(
+                    widget.appState.selectedChild.id,
+                  ),
+            );
+          }
           _finished = true;
         }
       }
@@ -177,6 +190,14 @@ class _StoryReaderState extends State<_StoryReader> {
       body: AnimatedBuilder(
         animation: widget.appState,
         builder: (context, _) {
+          // Live support-level changes get a restart prompt, never a
+          // silent mid-story difficulty switch.
+          final currentLevel = widget.appState.effectiveSupportFor(
+            widget.appState.selectedChild.id,
+          );
+          _levelAtStart ??= currentLevel;
+          final levelChanged =
+              !_dismissedLevelChange && _levelAtStart != currentLevel;
           if (_finished) {
             return Center(
               child: Padding(
@@ -202,6 +223,53 @@ class _StoryReaderState extends State<_StoryReader> {
               ),
             );
           }
+          if (levelChanged) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.tune, size: 48),
+                    const SizedBox(height: 12),
+                    Text(
+                      key: const ValueKey('level-change-prompt'),
+                      l10n.levelChangedPrompt(
+                        _levelLabel(l10n, currentLevel),
+                      ),
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 16),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(minHeight: 64),
+                      child: FilledButton.icon(
+                        key: const ValueKey('level-restart'),
+                        onPressed: () {
+                          setState(() {
+                            _page = 0;
+                            _questionIndex = 0;
+                            _lastAnswerCorrect = null;
+                            _finished = false;
+                            _dismissedLevelChange = true;
+                          });
+                        },
+                        icon: const Icon(Icons.refresh),
+                        label: Text(l10n.levelRestartAction),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    TextButton(
+                      key: const ValueKey('level-continue'),
+                      onPressed: () =>
+                          setState(() => _dismissedLevelChange = true),
+                      child: Text(l10n.levelContinueAction),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
           if (_page < story.pages.length) {
             return _buildPage(context, l10n, story.pages[_page]);
           }
@@ -210,6 +278,13 @@ class _StoryReaderState extends State<_StoryReader> {
       ),
     );
   }
+
+  String _levelLabel(AppLocalizations l10n, SupportLevel level) =>
+      switch (level) {
+        SupportLevel.intermediate => l10n.intermediateSupportLevel,
+        SupportLevel.advanced => l10n.advancedSupportLevel,
+        _ => l10n.beginnerSupportLevel,
+      };
 
   Widget _buildPage(
     BuildContext context,
@@ -221,8 +296,29 @@ class _StoryReaderState extends State<_StoryReader> {
       key: const ValueKey('reader-page'),
       padding: const EdgeInsets.all(24),
       children: [
-        Semantics(header: true, child: Icon(page.icon, size: 96)),
-        const SizedBox(height: 24),
+        Semantics(
+          header: true,
+          child: Center(
+            child: Container(
+              width: 168,
+              height: 168,
+              decoration: BoxDecoration(
+                color: context.palette.accentTint(
+                  context.palette.routine,
+                  0.86,
+                ),
+                shape: BoxShape.circle,
+                border: Border.all(color: context.palette.routine, width: 2),
+              ),
+              child: Icon(
+                page.icon,
+                size: 88,
+                color: context.palette.routine,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xl),
         Text(
           _isUrdu ? page.textUr : page.textEn,
           style: Theme.of(context).textTheme.titleMedium,
@@ -336,21 +432,15 @@ class _RolePlayAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final icon = switch (mood) {
-      _AvatarMood.happy => Icons.sentiment_very_satisfied,
-      _AvatarMood.thinking => Icons.sentiment_neutral,
-      _AvatarMood.neutral => Icons.sentiment_satisfied,
+    // Reusing EmotionFace here means the role-play partner and the emotion
+    // stimulus are literally the same character, and its expression can
+    // tween between moods instead of cutting to a different glyph.
+    final emotion = switch (mood) {
+      _AvatarMood.happy => EmotionLabel.happy,
+      _AvatarMood.thinking => EmotionLabel.neutral,
+      _AvatarMood.neutral => EmotionLabel.neutral,
     };
-    return CircleAvatar(
-      radius: 28,
-      backgroundColor: switch (mood) {
-        _AvatarMood.happy => scheme.primaryContainer,
-        _AvatarMood.thinking => scheme.surfaceContainerHighest,
-        _AvatarMood.neutral => scheme.secondaryContainer,
-      },
-      child: Icon(icon, size: 34),
-    );
+    return EmotionFace(emotion: emotion, size: 60);
   }
 }
 
