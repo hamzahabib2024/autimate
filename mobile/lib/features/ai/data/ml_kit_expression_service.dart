@@ -95,6 +95,12 @@ class MlKitExpressionService implements ExpressionPracticeService {
   Future<void> _begin() async {
     try {
       final cameras = await _camerasProvider();
+      // `orElse: () => cameras.first` throws on an empty list, which is
+      // reachable if the camera set changes between isSupported() and here.
+      // Fail explicitly rather than through a StateError.
+      if (cameras.isEmpty) {
+        throw StateError('No camera available for expression practice');
+      }
       final front = cameras.firstWhere(
         (camera) => camera.lensDirection == CameraLensDirection.front,
         orElse: () => cameras.first,

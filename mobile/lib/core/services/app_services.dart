@@ -536,6 +536,9 @@ class AppState extends ChangeNotifier {
   @override
   void dispose() {
     unawaited(_connectivitySubscription?.cancel());
+    // Without this the ambient bed keeps playing and its AudioPlayer and
+    // fade timer outlive the state that owned them.
+    unawaited(ambientSoundService.dispose());
     super.dispose();
   }
 
