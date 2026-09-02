@@ -1,0 +1,4 @@
+# Dart/Flutter build artefacts outside mobile/ (mobile/ has its own .gitignore)
+.dart_tool/
+build/
+.packages
