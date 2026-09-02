@@ -1717,6 +1717,378 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Largest'**
   String get symbolSizeLargest;
+
+  /// No description provided for @literacyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading support'**
+  String get literacyTitle;
+
+  /// No description provided for @literacySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Brings the written word forward as reading grows. Move one step at a time, and step back if the board gets harder.'**
+  String get literacySubtitle;
+
+  /// No description provided for @literacyOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Symbols only'**
+  String get literacyOff;
+
+  /// No description provided for @literacyFlash.
+  ///
+  /// In en, this message translates to:
+  /// **'Show the word on tap'**
+  String get literacyFlash;
+
+  /// No description provided for @literacyEmphasis.
+  ///
+  /// In en, this message translates to:
+  /// **'Bigger words'**
+  String get literacyEmphasis;
+
+  /// No description provided for @literacyFading.
+  ///
+  /// In en, this message translates to:
+  /// **'Words lead'**
+  String get literacyFading;
+
+  /// No description provided for @literacyTextOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Words only'**
+  String get literacyTextOnly;
+
+  /// No description provided for @literacyCaution.
+  ///
+  /// In en, this message translates to:
+  /// **'Every child is different. If the board becomes harder to use, step back a level — that is not a setback.'**
+  String get literacyCaution;
+
+  /// No description provided for @literacyCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'Now: {level}'**
+  String literacyCurrent(String level);
+
+  /// No description provided for @waitingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting'**
+  String get waitingTitle;
+
+  /// No description provided for @waitingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We are waiting. Watch the ring get smaller.'**
+  String get waitingSubtitle;
+
+  /// No description provided for @waitingDone.
+  ///
+  /// In en, this message translates to:
+  /// **'The waiting is finished.'**
+  String get waitingDone;
+
+  /// No description provided for @waitingMinutesLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'left'**
+  String get waitingMinutesLeft;
+
+  /// No description provided for @waitingStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start waiting'**
+  String get waitingStart;
+
+  /// No description provided for @waitingPause.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get waitingPause;
+
+  /// No description provided for @waitingReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Start over'**
+  String get waitingReset;
+
+  /// No description provided for @waitingOneMore.
+  ///
+  /// In en, this message translates to:
+  /// **'One more minute'**
+  String get waitingOneMore;
+
+  /// No description provided for @waitingHowLong.
+  ///
+  /// In en, this message translates to:
+  /// **'How long?'**
+  String get waitingHowLong;
+
+  /// No description provided for @waitingMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 minute} other{{count} minutes}}'**
+  String waitingMinutes(int count);
+
+  /// No description provided for @waitingStyleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How the timer moves'**
+  String get waitingStyleTitle;
+
+  /// No description provided for @waitingStyleSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Some children watch a moving ring closely. Others find it easier when it changes in steps, or not at all.'**
+  String get waitingStyleSubtitle;
+
+  /// No description provided for @waitingStyleSmooth.
+  ///
+  /// In en, this message translates to:
+  /// **'Smooth'**
+  String get waitingStyleSmooth;
+
+  /// No description provided for @waitingStyleStepped.
+  ///
+  /// In en, this message translates to:
+  /// **'In steps'**
+  String get waitingStyleStepped;
+
+  /// No description provided for @waitingStyleStill.
+  ///
+  /// In en, this message translates to:
+  /// **'Numbers only'**
+  String get waitingStyleStill;
+
+  /// No description provided for @waitingTileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting'**
+  String get waitingTileTitle;
+
+  /// No description provided for @waitingTileSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A timer for hard waits'**
+  String get waitingTileSubtitle;
+
+  /// No description provided for @cardVoiceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Your voice'**
+  String get cardVoiceLabel;
+
+  /// No description provided for @cardVoiceSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Record yourself saying this word. Your own voice is often clearer and more motivating than the device voice.'**
+  String get cardVoiceSubtitle;
+
+  /// No description provided for @cardVoiceConsent.
+  ///
+  /// In en, this message translates to:
+  /// **'Record your own voice, not the child\'s. The card is something they will say, so it helps to hear an adult say it first.'**
+  String get cardVoiceConsent;
+
+  /// No description provided for @cardVoiceRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Record'**
+  String get cardVoiceRecord;
+
+  /// No description provided for @cardVoiceStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get cardVoiceStop;
+
+  /// No description provided for @cardVoicePlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get cardVoicePlay;
+
+  /// No description provided for @cardVoiceDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove recording'**
+  String get cardVoiceDelete;
+
+  /// No description provided for @cardVoiceRecording.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording…'**
+  String get cardVoiceRecording;
+
+  /// No description provided for @cardVoiceSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording saved'**
+  String get cardVoiceSaved;
+
+  /// No description provided for @cardVoiceUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This device cannot record. The card will use the device voice.'**
+  String get cardVoiceUnavailable;
+
+  /// No description provided for @cardVoiceDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Microphone permission is needed to record. You can allow it in settings.'**
+  String get cardVoiceDenied;
+
+  /// No description provided for @backupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup and transfer'**
+  String get backupTitle;
+
+  /// No description provided for @backupSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Save everything to a file, or bring it back on another device. Works with no internet and no account.'**
+  String get backupSubtitle;
+
+  /// No description provided for @backupExportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Save a backup'**
+  String get backupExportTitle;
+
+  /// No description provided for @backupExportSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Children, cards, routines, and progress. Photos and recordings stay on this device.'**
+  String get backupExportSubtitle;
+
+  /// No description provided for @backupExportAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Save and share'**
+  String get backupExportAction;
+
+  /// No description provided for @backupImportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore from a file'**
+  String get backupImportTitle;
+
+  /// No description provided for @backupImportSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a backup file you saved before.'**
+  String get backupImportSubtitle;
+
+  /// No description provided for @backupImportAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a file'**
+  String get backupImportAction;
+
+  /// No description provided for @backupExported.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Backup saved for 1 child} other{Backup saved for {count} children}}'**
+  String backupExported(int count);
+
+  /// No description provided for @backupImported.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Restored 1 child} other{Restored {count} children}}'**
+  String backupImported(int count);
+
+  /// No description provided for @backupFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'That did not work. Nothing on this device was changed.'**
+  String get backupFailed;
+
+  /// No description provided for @backupErrorNotJson.
+  ///
+  /// In en, this message translates to:
+  /// **'That file is not a backup. Look for a file ending in .json.'**
+  String get backupErrorNotJson;
+
+  /// No description provided for @backupErrorNotOurs.
+  ///
+  /// In en, this message translates to:
+  /// **'That is a file, but not an AutiMate backup.'**
+  String get backupErrorNotOurs;
+
+  /// No description provided for @backupErrorTooNew.
+  ///
+  /// In en, this message translates to:
+  /// **'That backup was made by a newer version of AutiMate. Update the app first.'**
+  String get backupErrorTooNew;
+
+  /// No description provided for @backupErrorUnreadable.
+  ///
+  /// In en, this message translates to:
+  /// **'The file could not be opened.'**
+  String get backupErrorUnreadable;
+
+  /// No description provided for @backupConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore this backup?'**
+  String get backupConfirmTitle;
+
+  /// No description provided for @backupConfirmContents.
+  ///
+  /// In en, this message translates to:
+  /// **'Children: {names}. {cards} cards, {sessions} recorded activities.'**
+  String backupConfirmContents(String names, int cards, int sessions);
+
+  /// No description provided for @backupMediaNote.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 photo or recording is not in this file and will not come back.} other{{count} photos and recordings are not in this file and will not come back.}}'**
+  String backupMediaNote(int count);
+
+  /// No description provided for @backupModeMerge.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to what is here'**
+  String get backupModeMerge;
+
+  /// No description provided for @backupModeMergeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing already on this device is removed.'**
+  String get backupModeMergeHint;
+
+  /// No description provided for @backupModeReplace.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace everything'**
+  String get backupModeReplace;
+
+  /// No description provided for @backupModeReplaceHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Removes the children and cards already on this device.'**
+  String get backupModeReplaceHint;
+
+  /// No description provided for @backupPrivacyWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'A backup file holds your child\'s name, cards, and activity history in plain text. Keep it somewhere private, and delete it when you no longer need it.'**
+  String get backupPrivacyWarning;
+
+  /// No description provided for @backupTileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup and transfer'**
+  String get backupTileTitle;
+
+  /// No description provided for @backupTileSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Save or restore everything'**
+  String get backupTileSubtitle;
 }
 
 class _AppLocalizationsDelegate

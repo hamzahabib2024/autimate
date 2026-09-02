@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../config/app_config.dart';
 import '../data/backend_contracts.dart';
+import '../data/backup/backup_service.dart';
 import '../data/firebase/firebase_bootstrap.dart';
 import '../data/firebase/firestore_child_repository.dart';
 import '../data/firebase/firestore_progress_repository.dart';
@@ -20,6 +21,7 @@ import '../../features/ai/data/simulated_expression_service.dart';
 import '../../features/ai/domain/ai_contracts.dart';
 import '../../features/authentication/data/firebase_auth_repository.dart';
 import '../../features/communication/data/image_source_service.dart';
+import '../../features/communication/data/voice_recording_service.dart';
 import '../../features/sensory_support/data/platform_ambient_sound_service.dart';
 import '../../features/communication/domain/custom_card_repository.dart';
 import '../../features/progress/domain/progress_models.dart';
@@ -178,6 +180,20 @@ final expressionPracticeServiceProvider =
 final simulatedExpressionServiceProvider =
     Provider<ExpressionPracticeService>(
   (ref) => SimulatedExpressionService(),
+);
+
+/// Records and plays caregiver voice clips for AAC cards.
+final voiceRecordingServiceProvider = Provider<VoiceRecordingService>(
+  (ref) => PlatformVoiceRecordingService(),
+);
+
+/// Assembles and applies profile backups.
+final backupServiceProvider = Provider<BackupService>(
+  (ref) => BackupService(
+    appState: ref.watch(appStateProvider),
+    customCards: ref.watch(customCardRepositoryProvider),
+    routines: ref.watch(routineRepositoryProvider),
+  ),
 );
 
 /// Connectivity boundary. A verified connectivity_plus adapter replaces

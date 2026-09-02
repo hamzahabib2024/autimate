@@ -450,5 +450,115 @@
   "symbolSizeSubtitle": "Bigger cards mean fewer on screen, which is often easier.",
   "symbolSizeComfortable": "Comfortable",
   "symbolSizeLarge": "Large",
-  "symbolSizeLargest": "Largest"
+  "symbolSizeLargest": "Largest",
+  "literacyTitle": "Reading support",
+  "literacySubtitle": "Brings the written word forward as reading grows. Move one step at a time, and step back if the board gets harder.",
+  "literacyOff": "Symbols only",
+  "literacyFlash": "Show the word on tap",
+  "literacyEmphasis": "Bigger words",
+  "literacyFading": "Words lead",
+  "literacyTextOnly": "Words only",
+  "literacyCaution": "Every child is different. If the board becomes harder to use, step back a level — that is not a setback.",
+  "literacyCurrent": "Now: {level}",
+  "@literacyCurrent": {
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "waitingTitle": "Waiting",
+  "waitingSubtitle": "We are waiting. Watch the ring get smaller.",
+  "waitingDone": "The waiting is finished.",
+  "waitingMinutesLeft": "left",
+  "waitingStart": "Start waiting",
+  "waitingPause": "Pause",
+  "waitingReset": "Start over",
+  "waitingOneMore": "One more minute",
+  "waitingHowLong": "How long?",
+  "waitingMinutes": "{count, plural, =1{1 minute} other{{count} minutes}}",
+  "@waitingMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "waitingStyleTitle": "How the timer moves",
+  "waitingStyleSubtitle": "Some children watch a moving ring closely. Others find it easier when it changes in steps, or not at all.",
+  "waitingStyleSmooth": "Smooth",
+  "waitingStyleStepped": "In steps",
+  "waitingStyleStill": "Numbers only",
+  "waitingTileTitle": "Waiting",
+  "waitingTileSubtitle": "A timer for hard waits",
+  "cardVoiceLabel": "Your voice",
+  "cardVoiceSubtitle": "Record yourself saying this word. Your own voice is often clearer and more motivating than the device voice.",
+  "cardVoiceConsent": "Record your own voice, not the child's. The card is something they will say, so it helps to hear an adult say it first.",
+  "cardVoiceRecord": "Record",
+  "cardVoiceStop": "Stop",
+  "cardVoicePlay": "Play",
+  "cardVoiceDelete": "Remove recording",
+  "cardVoiceRecording": "Recording…",
+  "cardVoiceSaved": "Recording saved",
+  "cardVoiceUnavailable": "This device cannot record. The card will use the device voice.",
+  "cardVoiceDenied": "Microphone permission is needed to record. You can allow it in settings.",
+  "backupTitle": "Backup and transfer",
+  "backupSubtitle": "Save everything to a file, or bring it back on another device. Works with no internet and no account.",
+  "backupExportTitle": "Save a backup",
+  "backupExportSubtitle": "Children, cards, routines, and progress. Photos and recordings stay on this device.",
+  "backupExportAction": "Save and share",
+  "backupImportTitle": "Restore from a file",
+  "backupImportSubtitle": "Choose a backup file you saved before.",
+  "backupImportAction": "Choose a file",
+  "backupExported": "{count, plural, =1{Backup saved for 1 child} other{Backup saved for {count} children}}",
+  "@backupExported": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupImported": "{count, plural, =1{Restored 1 child} other{Restored {count} children}}",
+  "@backupImported": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupFailed": "That did not work. Nothing on this device was changed.",
+  "backupErrorNotJson": "That file is not a backup. Look for a file ending in .json.",
+  "backupErrorNotOurs": "That is a file, but not an AutiMate backup.",
+  "backupErrorTooNew": "That backup was made by a newer version of AutiMate. Update the app first.",
+  "backupErrorUnreadable": "The file could not be opened.",
+  "backupConfirmTitle": "Restore this backup?",
+  "backupConfirmContents": "Children: {names}. {cards} cards, {sessions} recorded activities.",
+  "@backupConfirmContents": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      },
+      "cards": {
+        "type": "int"
+      },
+      "sessions": {
+        "type": "int"
+      }
+    }
+  },
+  "backupMediaNote": "{count, plural, =1{1 photo or recording is not in this file and will not come back.} other{{count} photos and recordings are not in this file and will not come back.}}",
+  "@backupMediaNote": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupModeMerge": "Add to what is here",
+  "backupModeMergeHint": "Nothing already on this device is removed.",
+  "backupModeReplace": "Replace everything",
+  "backupModeReplaceHint": "Removes the children and cards already on this device.",
+  "backupPrivacyWarning": "A backup file holds your child's name, cards, and activity history in plain text. Keep it somewhere private, and delete it when you no longer need it.",
+  "backupTileTitle": "Backup and transfer",
+  "backupTileSubtitle": "Save or restore everything"
 }

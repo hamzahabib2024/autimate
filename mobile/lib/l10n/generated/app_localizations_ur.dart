@@ -903,4 +903,243 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get symbolSizeLargest => 'سب سے بڑا';
+
+  @override
+  String get literacyTitle => 'پڑھنے کی معاونت';
+
+  @override
+  String get literacySubtitle =>
+      'پڑھائی بڑھنے کے ساتھ لکھا ہوا لفظ نمایاں کرتی ہے۔ ایک وقت میں ایک قدم بڑھائیں، اور اگر بورڈ مشکل لگے تو واپس آ جائیں۔';
+
+  @override
+  String get literacyOff => 'صرف علامتیں';
+
+  @override
+  String get literacyFlash => 'چھونے پر لفظ دکھائیں';
+
+  @override
+  String get literacyEmphasis => 'بڑے الفاظ';
+
+  @override
+  String get literacyFading => 'الفاظ نمایاں';
+
+  @override
+  String get literacyTextOnly => 'صرف الفاظ';
+
+  @override
+  String get literacyCaution =>
+      'ہر بچہ مختلف ہے۔ اگر بورڈ استعمال کرنا مشکل ہو جائے تو ایک درجہ واپس آ جائیں — یہ پیچھے ہٹنا نہیں ہے۔';
+
+  @override
+  String literacyCurrent(String level) {
+    return 'ابھی: $level';
+  }
+
+  @override
+  String get waitingTitle => 'انتظار';
+
+  @override
+  String get waitingSubtitle =>
+      'ہم انتظار کر رہے ہیں۔ دیکھیں دائرہ چھوٹا ہو رہا ہے۔';
+
+  @override
+  String get waitingDone => 'انتظار ختم ہو گیا۔';
+
+  @override
+  String get waitingMinutesLeft => 'باقی';
+
+  @override
+  String get waitingStart => 'انتظار شروع کریں';
+
+  @override
+  String get waitingPause => 'روکیں';
+
+  @override
+  String get waitingReset => 'دوبارہ شروع';
+
+  @override
+  String get waitingOneMore => 'ایک منٹ اور';
+
+  @override
+  String get waitingHowLong => 'کتنی دیر؟';
+
+  @override
+  String waitingMinutes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count منٹ',
+      one: '۱ منٹ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get waitingStyleTitle => 'ٹائمر کیسے چلے';
+
+  @override
+  String get waitingStyleSubtitle =>
+      'کچھ بچے چلتا دائرہ غور سے دیکھتے ہیں۔ کچھ کے لیے مرحلہ وار یا بغیر حرکت کے آسان ہوتا ہے۔';
+
+  @override
+  String get waitingStyleSmooth => 'ہموار';
+
+  @override
+  String get waitingStyleStepped => 'مرحلہ وار';
+
+  @override
+  String get waitingStyleStill => 'صرف اعداد';
+
+  @override
+  String get waitingTileTitle => 'انتظار';
+
+  @override
+  String get waitingTileSubtitle => 'مشکل انتظار کے لیے ٹائمر';
+
+  @override
+  String get cardVoiceLabel => 'آپ کی آواز';
+
+  @override
+  String get cardVoiceSubtitle =>
+      'یہ لفظ خود بول کر ریکارڈ کریں۔ آپ کی اپنی آواز اکثر آلے کی آواز سے زیادہ واضح اور دلچسپ ہوتی ہے۔';
+
+  @override
+  String get cardVoiceConsent =>
+      'اپنی آواز ریکارڈ کریں، بچے کی نہیں۔ کارڈ وہ بات ہے جو بچہ کہے گا، اس لیے پہلے بڑے کی آواز سننا مددگار ہے۔';
+
+  @override
+  String get cardVoiceRecord => 'ریکارڈ کریں';
+
+  @override
+  String get cardVoiceStop => 'روکیں';
+
+  @override
+  String get cardVoicePlay => 'چلائیں';
+
+  @override
+  String get cardVoiceDelete => 'ریکارڈنگ ہٹائیں';
+
+  @override
+  String get cardVoiceRecording => 'ریکارڈ ہو رہا ہے…';
+
+  @override
+  String get cardVoiceSaved => 'ریکارڈنگ محفوظ ہو گئی';
+
+  @override
+  String get cardVoiceUnavailable =>
+      'یہ آلہ ریکارڈ نہیں کر سکتا۔ کارڈ آلے کی آواز استعمال کرے گا۔';
+
+  @override
+  String get cardVoiceDenied =>
+      'ریکارڈ کرنے کے لیے مائیکروفون کی اجازت درکار ہے۔ آپ ترتیبات میں اجازت دے سکتے ہیں۔';
+
+  @override
+  String get backupTitle => 'بیک اپ اور منتقلی';
+
+  @override
+  String get backupSubtitle =>
+      'سب کچھ ایک فائل میں محفوظ کریں، یا دوسرے آلے پر واپس لائیں۔ انٹرنیٹ یا اکاؤنٹ کے بغیر کام کرتا ہے۔';
+
+  @override
+  String get backupExportTitle => 'بیک اپ محفوظ کریں';
+
+  @override
+  String get backupExportSubtitle =>
+      'بچے، کارڈ، معمولات اور پیش رفت۔ تصاویر اور ریکارڈنگ اسی آلے پر رہتی ہیں۔';
+
+  @override
+  String get backupExportAction => 'محفوظ کر کے بھیجیں';
+
+  @override
+  String get backupImportTitle => 'فائل سے بحال کریں';
+
+  @override
+  String get backupImportSubtitle =>
+      'پہلے محفوظ کی گئی بیک اپ فائل منتخب کریں۔';
+
+  @override
+  String get backupImportAction => 'فائل منتخب کریں';
+
+  @override
+  String backupExported(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count بچوں کا بیک اپ محفوظ ہو گیا',
+      one: '۱ بچے کا بیک اپ محفوظ ہو گیا',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String backupImported(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count بچے بحال ہو گئے',
+      one: '۱ بچہ بحال ہو گیا',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get backupFailed => 'یہ کام نہیں ہوا۔ اس آلے پر کچھ تبدیل نہیں ہوا۔';
+
+  @override
+  String get backupErrorNotJson =>
+      'یہ فائل بیک اپ نہیں ہے۔ .json پر ختم ہونے والی فائل تلاش کریں۔';
+
+  @override
+  String get backupErrorNotOurs =>
+      'یہ ایک فائل تو ہے، مگر AutiMate کا بیک اپ نہیں۔';
+
+  @override
+  String get backupErrorTooNew =>
+      'یہ بیک اپ AutiMate کے نئے ورژن سے بنا ہے۔ پہلے ایپ اپ ڈیٹ کریں۔';
+
+  @override
+  String get backupErrorUnreadable => 'فائل کھولی نہیں جا سکی۔';
+
+  @override
+  String get backupConfirmTitle => 'یہ بیک اپ بحال کریں؟';
+
+  @override
+  String backupConfirmContents(String names, int cards, int sessions) {
+    return 'بچے: $names۔ $cards کارڈ، $sessions محفوظ سرگرمیاں۔';
+  }
+
+  @override
+  String backupMediaNote(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count تصاویر اور ریکارڈنگ اس فائل میں نہیں ہیں اور واپس نہیں آئیں گی۔',
+      one: '۱ تصویر یا ریکارڈنگ اس فائل میں نہیں ہے اور واپس نہیں آئے گی۔',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get backupModeMerge => 'موجودہ کے ساتھ شامل کریں';
+
+  @override
+  String get backupModeMergeHint => 'اس آلے پر موجود کچھ بھی نہیں ہٹے گا۔';
+
+  @override
+  String get backupModeReplace => 'سب کچھ بدل دیں';
+
+  @override
+  String get backupModeReplaceHint =>
+      'اس آلے پر موجود بچے اور کارڈ ہٹا دیتا ہے۔';
+
+  @override
+  String get backupPrivacyWarning =>
+      'بیک اپ فائل میں آپ کے بچے کا نام، کارڈ اور سرگرمی کی تاریخ سادہ متن میں ہوتی ہے۔ اسے نجی جگہ رکھیں، اور ضرورت نہ رہنے پر حذف کر دیں۔';
+
+  @override
+  String get backupTileTitle => 'بیک اپ اور منتقلی';
+
+  @override
+  String get backupTileSubtitle => 'سب کچھ محفوظ یا بحال کریں';
 }

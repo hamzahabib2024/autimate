@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import '../../../core/theme/app_typography.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../../shared/widgets/app_widgets.dart';
 import '../data/image_source_service.dart';
+import '../data/voice_recording_service.dart';
 import '../domain/aac_catalog.dart';
 import '../domain/card_ranker.dart';
 import '../domain/custom_card_repository.dart';
@@ -28,10 +30,15 @@ class AacScreen extends StatefulWidget {
   const AacScreen({
     required this.appState,
     this.imageSource = const UnavailableImageSourceService(),
+    this.voiceRecorder = const UnavailableVoiceRecordingService(),
     super.key,
   });
 
   final AppState appState;
+
+  /// Plays caregiver recordings. Injected so tests and desktop runs never
+  /// touch the platform recorder.
+  final VoiceRecordingService voiceRecorder;
 
   /// Injected so widget tests and desktop runs never touch the platform
   /// picker.
@@ -243,6 +250,10 @@ class _AacScreenState extends State<AacScreen> {
                       key: ValueKey('aac-card-${card.id}'),
                       card: card,
                       showUrdu: _language == AppLanguage.ur,
+                      literacy: widget.appState.literacyFor(
+                        widget.appState.selectedChild.id,
+                      ),
+                      sensoryMode: widget.appState.sensoryMode,
                       imagePath: custom?.imagePath,
                       onTap: () => _addCard(card.grammar),
                       onLongPress: custom == null
@@ -402,8 +413,18 @@ class _AacScreenState extends State<AacScreen> {
       _usage.add(usage);
     });
     widget.appState.recordCardUsage(usage);
-    final tts = widget.appState.ttsService;
     final custom = _customFor(card.id);
+
+    // A caregiver recording wins over synthesis. This is the whole point of
+    // the feature: on a device with a poor or missing Urdu voice, the
+    // recording is the difference between a usable card and a silent one.
+    final clip = custom?.audioFor(_language);
+    if (clip != null && clip.isNotEmpty) {
+      unawaited(widget.voiceRecorder.play(clip));
+      return;
+    }
+
+    final tts = widget.appState.ttsService;
     final spoken = custom != null
         ? custom.speechFor(_language)
         : (_language == AppLanguage.ur ? card.labelUr : card.labelEn);

@@ -5,12 +5,19 @@ import '../../../l10n/generated/app_localizations.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/app_widgets.dart';
+import '../../../core/data/backup/backup_service.dart';
+import '../../communication/presentation/literacy_screen.dart';
+import 'backup_screen.dart';
 import 'support_level_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({required this.appState, super.key});
+  const SettingsScreen({required this.appState, this.backupService, super.key});
 
   final AppState appState;
+
+  /// Null when the composition root did not supply one — the backup row is
+  /// then hidden rather than opening a screen that cannot work.
+  final BackupService? backupService;
 
   String _levelLabel(AppLocalizations l10n, String level) => switch (level) {
     'Intermediate' => l10n.intermediateSupportLevel,
@@ -83,6 +90,17 @@ class SettingsScreen extends StatelessWidget {
                 ),
               ),
               ListTile(
+                key: const ValueKey('open-literacy'),
+                leading: Icon(
+                  Icons.menu_book_outlined,
+                  color: context.palette.communicate,
+                ),
+                title: Text(l10n.literacyTitle),
+                subtitle: Text(l10n.literacySubtitle),
+                isThreeLine: true,
+                onTap: () => LiteracyScreen.openGated(context, appState),
+              ),
+              ListTile(
                 leading: Icon(Icons.tune, color: context.palette.learning),
                 title: Text(l10n.supportLevel),
                 subtitle: Text(l10n.supportLevelSubtitle),
@@ -141,6 +159,21 @@ class SettingsScreen extends StatelessWidget {
                 onTap: () => _childDialog(context, l10n),
               ),
               const SizedBox(height: AppSpacing.lg),
+              if (backupService != null)
+                ListTile(
+                  key: const ValueKey('open-backup'),
+                  leading: Icon(
+                    Icons.backup_outlined,
+                    color: context.palette.routine,
+                  ),
+                  title: Text(l10n.backupTileTitle),
+                  subtitle: Text(l10n.backupTileSubtitle),
+                  onTap: () => BackupScreen.openGated(
+                    context,
+                    appState,
+                    backupService!,
+                  ),
+                ),
               ListTile(
                 leading: const Icon(Icons.privacy_tip_outlined),
                 title: Text(l10n.privacySafety),

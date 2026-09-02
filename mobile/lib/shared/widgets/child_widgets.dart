@@ -7,6 +7,7 @@ import '../../core/theme/app_depth.dart';
 import '../../core/theme/app_motion.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../features/communication/domain/aac_catalog.dart';
+import '../../features/communication/domain/literacy_support.dart';
 import '../../features/communication/domain/sentence_realiser.dart';
 
 /// Maps a card's word class to its Fitzgerald-key colour.
@@ -50,6 +51,8 @@ class SymbolTile extends StatefulWidget {
     required this.showUrdu,
     this.imagePath,
     this.onLongPress,
+    this.literacy = LiteracyLevel.off,
+    this.sensoryMode = false,
     super.key,
   });
 
@@ -61,12 +64,41 @@ class SymbolTile extends StatefulWidget {
   final bool showUrdu;
   final VoidCallback? onLongPress;
 
+  /// Transition-to-Literacy rung. Shifts weight from symbol to written word.
+  final LiteracyLevel literacy;
+
+  final bool sensoryMode;
+
   @override
   State<SymbolTile> createState() => _SymbolTileState();
 }
 
-class _SymbolTileState extends State<SymbolTile> {
+class _SymbolTileState extends State<SymbolTile>
+    with SingleTickerProviderStateMixin {
   bool _pressed = false;
+
+  /// Drives the word's rise on selection. Runs once per tap and settles —
+  /// it never loops, because a repeating element on the board is exactly the
+  /// ambient motion the design system rules out.
+  late final AnimationController _flash = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 900),
+  );
+
+  @override
+  void dispose() {
+    _flash.dispose();
+    super.dispose();
+  }
+
+  void _handleTap() {
+    if (widget.literacy.flashesOnSelect) {
+      _flash
+        ..reset()
+        ..forward();
+    }
+    widget.onTap();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +131,7 @@ class _SymbolTileState extends State<SymbolTile> {
           color: palette.card,
           borderRadius: BorderRadius.circular(AppRadius.lg),
           child: InkWell(
-            onTap: widget.onTap,
+            onTap: _handleTap,
             onLongPress: widget.onLongPress,
             onHighlightChanged: (value) => setState(() => _pressed = value),
             borderRadius: BorderRadius.circular(AppRadius.lg),
@@ -129,9 +161,12 @@ class _SymbolTileState extends State<SymbolTile> {
                       ),
                     ),
                   ),
-                  Expanded(
-                    flex: 7,
-                    child: Padding(
+                  if (widget.literacy.showsSymbol)
+                    Expanded(
+                      flex: 7,
+                      child: Opacity(
+                        opacity: widget.literacy.symbolOpacity,
+                        child: Padding(
                       padding: const EdgeInsets.all(AppSpacing.xs),
                       child: widget.imagePath != null
                           ? ClipRRect(
@@ -155,10 +190,11 @@ class _SymbolTileState extends State<SymbolTile> {
                                 color: accent,
                               ),
                             ),
+                        ),
+                      ),
                     ),
-                  ),
                   Expanded(
-                    flex: 4,
+                    flex: widget.literacy.showsSymbol ? 4 : 11,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: AppSpacing.xxs,
@@ -167,18 +203,16 @@ class _SymbolTileState extends State<SymbolTile> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            primary,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 17,
-                              height: 1.25,
-                              fontWeight: FontWeight.w700,
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
+                          _LiteracyWord(
+                            word: primary,
+                            level: widget.literacy,
+                            flash: _flash,
+                            sensoryMode: widget.sensoryMode,
                           ),
+                          // The second language drops away once the word is
+                          // leading: two scripts at once defeats the point of
+                          // narrowing attention onto one written form.
+                          if (widget.literacy.wordWeight < 0.8)
                           Text(
                             secondary,
                             maxLines: 1,
@@ -204,6 +238,80 @@ class _SymbolTileState extends State<SymbolTile> {
         ),
         ),
       ),
+    );
+  }
+}
+
+/// The written word on an AAC tile, weighted by the T2L level.
+///
+/// On [LiteracyLevel.flash] and [LiteracyLevel.emphasis] the word lifts,
+/// grows, and takes the accent colour briefly when the card is selected,
+/// then settles — the published T2L condition.
+///
+/// Under reduced motion the word still brightens and holds for the same
+/// beat but does not travel. The intervention is the *exposure to the
+/// written form*, and that survives without the movement, which is why this
+/// feature degrades far better than most animation does.
+class _LiteracyWord extends StatelessWidget {
+  const _LiteracyWord({
+    required this.word,
+    required this.level,
+    required this.flash,
+    required this.sensoryMode,
+  });
+
+  final String word;
+  final LiteracyLevel level;
+  final Animation<double> flash;
+  final bool sensoryMode;
+
+  @override
+  Widget build(BuildContext context) {
+    final base = TextStyle(
+      fontSize: level.labelSize,
+      height: 1.25,
+      fontWeight: FontWeight.w700,
+      color: Theme.of(context).colorScheme.onSurface,
+    );
+
+    if (!level.flashesOnSelect) {
+      return Text(
+        word,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        textAlign: TextAlign.center,
+        style: base,
+      );
+    }
+
+    final reduced = AppMotion.reduced(context, sensoryMode: sensoryMode);
+    return AnimatedBuilder(
+      animation: flash,
+      builder: (context, _) {
+        // Rise over the first third, hold, then settle back.
+        final t = flash.value;
+        final lift = t < 0.35
+            ? Curves.easeOutCubic.transform(t / 0.35)
+            : t > 0.75
+            ? 1 - Curves.easeInCubic.transform((t - 0.75) / 0.25)
+            : 1.0;
+        final accent = context.palette.communicate;
+        return Transform.translate(
+          offset: reduced ? Offset.zero : Offset(0, -10 * lift),
+          child: Transform.scale(
+            scale: reduced ? 1.0 : 1 + 0.18 * lift,
+            child: Text(
+              word,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: base.copyWith(
+                color: Color.lerp(base.color, accent, lift * 0.9),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

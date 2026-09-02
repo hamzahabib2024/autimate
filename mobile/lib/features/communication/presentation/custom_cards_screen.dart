@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -9,8 +10,10 @@ import '../../../l10n/generated/app_localizations.dart';
 import '../../../shared/widgets/app_widgets.dart';
 import '../../settings/presentation/parent_gate_screen.dart';
 import '../data/image_source_service.dart';
+import '../data/voice_recording_service.dart';
 import '../domain/aac_catalog.dart';
 import '../domain/custom_card_repository.dart';
+import '../domain/sentence_realiser.dart';
 
 /// Caregiver surface for building this child's own vocabulary cards.
 ///
@@ -20,18 +23,22 @@ class CustomCardsScreen extends StatefulWidget {
   const CustomCardsScreen({
     required this.appState,
     required this.imageSource,
+    this.voiceRecorder = const UnavailableVoiceRecordingService(),
     super.key,
   });
 
   final AppState appState;
   final ImageSourceService imageSource;
+  final VoiceRecordingService voiceRecorder;
 
   /// Opens the editor behind the parent lock.
   static Future<void> openGated(
     BuildContext context,
     AppState appState,
-    ImageSourceService imageSource,
-  ) async {
+    ImageSourceService imageSource, {
+    VoiceRecordingService voiceRecorder =
+        const UnavailableVoiceRecordingService(),
+  }) async {
     if (appState.childMode) {
       final unlocked = await Navigator.of(context).push<bool>(
         MaterialPageRoute(
@@ -46,6 +53,7 @@ class CustomCardsScreen extends StatefulWidget {
         builder: (_) => CustomCardsScreen(
           appState: appState,
           imageSource: imageSource,
+          voiceRecorder: voiceRecorder,
         ),
       ),
     );
@@ -85,8 +93,13 @@ class _CustomCardsScreenState extends State<CustomCardsScreen> {
     );
     if (confirmed != true) return;
     final path = card.imagePath;
+    final clips = card.audioPaths;
     await widget.appState.deleteCustomCard(card.id);
     if (path != null) await widget.imageSource.deleteStored(path);
+    // Orphaned audio would sit in app storage forever otherwise.
+    for (final clip in clips) {
+      await widget.voiceRecorder.delete(clip);
+    }
   }
 
   @override
@@ -177,6 +190,7 @@ class _CustomCardsScreenState extends State<CustomCardsScreen> {
         builder: (_) => _CardEditor(
           appState: widget.appState,
           imageSource: widget.imageSource,
+          voiceRecorder: widget.voiceRecorder,
           existing: existing,
         ),
       ),
@@ -188,11 +202,13 @@ class _CardEditor extends StatefulWidget {
   const _CardEditor({
     required this.appState,
     required this.imageSource,
+    required this.voiceRecorder,
     this.existing,
   });
 
   final AppState appState;
   final ImageSourceService imageSource;
+  final VoiceRecordingService voiceRecorder;
   final CustomCard? existing;
 
   @override
@@ -212,10 +228,84 @@ class _CardEditorState extends State<_CardEditor> {
   late AacCategory _category =
       widget.existing?.category ?? AacCategory.objects;
   late String? _imagePath = widget.existing?.imagePath;
+  late String? _audioEn = widget.existing?.audioPathEn;
+  late String? _audioUr = widget.existing?.audioPathUr;
   bool _busy = false;
+  bool _canRecord = false;
+  bool _permissionDenied = false;
+
+  /// Which language is being recorded right now, or null when idle.
+  AppLanguage? _recordingFor;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkRecording();
+  }
+
+  Future<void> _checkRecording() async {
+    final supported = await widget.voiceRecorder.isSupported();
+    if (!mounted) return;
+    setState(() => _canRecord = supported);
+  }
+
+  Future<void> _toggleRecording(AppLanguage language) async {
+    if (_recordingFor == language) {
+      final path = await widget.voiceRecorder.stop();
+      if (!mounted) return;
+      setState(() {
+        _recordingFor = null;
+        if (path != null) {
+          // Replacing a take removes the old file rather than orphaning it.
+          final previous = language == AppLanguage.ur ? _audioUr : _audioEn;
+          if (previous != null && previous != path) {
+            unawaited(widget.voiceRecorder.delete(previous));
+          }
+          if (language == AppLanguage.ur) {
+            _audioUr = path;
+          } else {
+            _audioEn = path;
+          }
+        }
+      });
+      return;
+    }
+    if (!await widget.voiceRecorder.hasPermission()) {
+      final granted = await widget.voiceRecorder.requestPermission();
+      if (!mounted) return;
+      if (!granted) {
+        setState(() => _permissionDenied = true);
+        return;
+      }
+    }
+    final started = await widget.voiceRecorder.start();
+    if (!mounted) return;
+    setState(() {
+      _permissionDenied = !started;
+      _recordingFor = started ? language : null;
+    });
+  }
+
+  Future<void> _removeClip(AppLanguage language) async {
+    final path = language == AppLanguage.ur ? _audioUr : _audioEn;
+    if (path == null) return;
+    await widget.voiceRecorder.delete(path);
+    if (!mounted) return;
+    setState(() {
+      if (language == AppLanguage.ur) {
+        _audioUr = null;
+      } else {
+        _audioEn = null;
+      }
+    });
+  }
 
   @override
   void dispose() {
+    // A take still running when the editor closes is abandoned, not saved:
+    // the caregiver never confirmed it.
+    if (_recordingFor != null) unawaited(widget.voiceRecorder.cancel());
+    unawaited(widget.voiceRecorder.stopPlayback());
     _en.dispose();
     _ur.dispose();
     _spokenEn.dispose();
@@ -248,6 +338,8 @@ class _CardEditorState extends State<_CardEditor> {
       iconCodePoint: existing?.iconCodePoint,
       spokenEn: _spokenEn.text.trim(),
       spokenUr: _spokenUr.text.trim(),
+      audioPathEn: _audioEn,
+      audioPathUr: _audioUr,
     );
     await widget.appState.saveCustomCard(card);
     if (!mounted) return;
@@ -363,6 +455,77 @@ class _CardEditorState extends State<_CardEditor> {
           ),
           const SizedBox(height: AppSpacing.xl),
           SectionHeader(
+            title: l10n.cardVoiceLabel,
+            accent: palette.communicate,
+          ),
+          Text(
+            l10n.cardVoiceSubtitle,
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          // Consent stated in the UI, not buried in a policy: the caregiver
+          // records themselves, never the child.
+          Card(
+            color: palette.accentTint(palette.attention, 0.88),
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.sm),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(Icons.info_outline, size: 18, color: palette.attention),
+                  const SizedBox(width: AppSpacing.xs),
+                  Expanded(
+                    child: Text(
+                      l10n.cardVoiceConsent,
+                      key: const ValueKey('voice-consent'),
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          if (!_canRecord)
+            Text(
+              l10n.cardVoiceUnavailable,
+              key: const ValueKey('voice-unavailable'),
+              style: Theme.of(context).textTheme.bodySmall,
+            )
+          else ...[
+            if (_permissionDenied)
+              Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                child: Text(
+                  l10n.cardVoiceDenied,
+                  key: const ValueKey('voice-denied'),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: palette.attention,
+                  ),
+                ),
+              ),
+            _VoiceRow(
+              language: AppLanguage.en,
+              label: l10n.cardLabelEnglish,
+              path: _audioEn,
+              recording: _recordingFor == AppLanguage.en,
+              onToggle: () => _toggleRecording(AppLanguage.en),
+              onPlay: () => widget.voiceRecorder.play(_audioEn!),
+              onRemove: () => _removeClip(AppLanguage.en),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            _VoiceRow(
+              language: AppLanguage.ur,
+              label: l10n.cardLabelUrdu,
+              path: _audioUr,
+              recording: _recordingFor == AppLanguage.ur,
+              onToggle: () => _toggleRecording(AppLanguage.ur),
+              onPlay: () => widget.voiceRecorder.play(_audioUr!),
+              onRemove: () => _removeClip(AppLanguage.ur),
+            ),
+          ],
+          const SizedBox(height: AppSpacing.xl),
+          SectionHeader(
             title: l10n.cardCategoryLabel,
             accent: palette.communicate,
           ),
@@ -387,6 +550,83 @@ class _CardEditorState extends State<_CardEditor> {
             label: Text(l10n.save),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// One language's record / play / remove controls.
+class _VoiceRow extends StatelessWidget {
+  const _VoiceRow({
+    required this.language,
+    required this.label,
+    required this.path,
+    required this.recording,
+    required this.onToggle,
+    required this.onPlay,
+    required this.onRemove,
+  });
+
+  final AppLanguage language;
+  final String label;
+  final String? path;
+  final bool recording;
+  final VoidCallback onToggle;
+  final VoidCallback onPlay;
+  final VoidCallback onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final palette = context.palette;
+    final has = path != null && path!.isNotEmpty;
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.sm),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(label, style: Theme.of(context).textTheme.titleSmall),
+                  Text(
+                    recording
+                        ? l10n.cardVoiceRecording
+                        : has
+                        ? l10n.cardVoiceSaved
+                        : '—',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: recording ? palette.attention : null,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (has && !recording)
+              IconButton(
+                key: ValueKey('voice-play-${language.name}'),
+                tooltip: l10n.cardVoicePlay,
+                onPressed: onPlay,
+                icon: const Icon(Icons.play_arrow),
+              ),
+            if (has && !recording)
+              IconButton(
+                key: ValueKey('voice-remove-${language.name}'),
+                tooltip: l10n.cardVoiceDelete,
+                onPressed: onRemove,
+                icon: const Icon(Icons.delete_outline),
+              ),
+            FilledButton.tonalIcon(
+              key: ValueKey('voice-record-${language.name}'),
+              onPressed: onToggle,
+              icon: Icon(recording ? Icons.stop : Icons.mic),
+              label: Text(
+                recording ? l10n.cardVoiceStop : l10n.cardVoiceRecord,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

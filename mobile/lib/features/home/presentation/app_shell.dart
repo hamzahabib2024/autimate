@@ -7,6 +7,9 @@ import '../../../core/theme/app_typography.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../../shared/widgets/app_widgets.dart';
 import '../../authentication/presentation/auth_screen.dart';
+import '../../../core/data/backup/backup_service.dart';
+import '../../communication/data/image_source_service.dart';
+import '../../communication/data/voice_recording_service.dart';
 import '../../communication/presentation/aac_screen.dart';
 import '../../emotion_recognition/presentation/emotion_screen.dart';
 import '../../gamification/presentation/gamification_screen.dart';
@@ -19,9 +22,21 @@ import '../../settings/presentation/settings_screen.dart';
 import '../../social_communication/presentation/social_stories_screen.dart';
 
 class AppShell extends StatefulWidget {
-  const AppShell({required this.appState, super.key});
+  const AppShell({
+    required this.appState,
+    this.backupService,
+    this.imageSource = const UnavailableImageSourceService(),
+    this.voiceRecorder = const UnavailableVoiceRecordingService(),
+    super.key,
+  });
 
   final AppState appState;
+
+  /// Platform services, injected at the composition root so tests and
+  /// desktop runs get inert implementations.
+  final BackupService? backupService;
+  final ImageSourceService imageSource;
+  final VoiceRecordingService voiceRecorder;
 
   @override
   State<AppShell> createState() => _AppShellState();
@@ -45,7 +60,10 @@ class _AppShellState extends State<AppShell> {
     if (!mounted) return;
     await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => SettingsScreen(appState: widget.appState),
+        builder: (_) => SettingsScreen(
+          appState: widget.appState,
+          backupService: widget.backupService,
+        ),
       ),
     );
   }
@@ -71,7 +89,11 @@ class _AppShellState extends State<AppShell> {
   Widget _buildShell(BuildContext context, AppLocalizations l10n) {
     final pages = [
       _home(context, l10n),
-      AacScreen(appState: widget.appState),
+      AacScreen(
+        appState: widget.appState,
+        imageSource: widget.imageSource,
+        voiceRecorder: widget.voiceRecorder,
+      ),
       RoutinesScreen(appState: widget.appState),
       DashboardScreen(appState: widget.appState),
     ];

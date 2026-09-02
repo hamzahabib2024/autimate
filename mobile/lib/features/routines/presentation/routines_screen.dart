@@ -11,6 +11,7 @@ import '../../../shared/widgets/app_widgets.dart';
 import '../../../core/services/tts_service.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../domain/routine_models.dart';
+import 'waiting_screen.dart';
 import '../domain/routine_repository.dart';
 import 'routine_editor_screen.dart';
 
@@ -191,6 +192,16 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
       appBar: AppBar(
         title: Text(l10n.routineTitle),
         actions: [
+          IconButton(
+            key: const ValueKey('open-waiting'),
+            icon: const Icon(Icons.hourglass_top_outlined),
+            tooltip: l10n.waitingTitle,
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => WaitingScreen(appState: widget.appState),
+              ),
+            ),
+          ),
           IconButton(
             key: const ValueKey('routine-edit'),
             icon: const Icon(Icons.edit_outlined),

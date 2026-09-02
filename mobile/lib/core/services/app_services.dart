@@ -9,6 +9,7 @@ import 'tts_service.dart';
 import '../data/local_store.dart';
 import '../../features/communication/domain/card_ranker.dart';
 import '../../features/communication/domain/custom_card_repository.dart';
+import '../../features/communication/domain/literacy_support.dart';
 import '../../features/communication/domain/symbol_scale.dart';
 import '../../features/ai/domain/ai_contracts.dart';
 import '../../features/gamification/domain/reward_policy.dart';
@@ -290,6 +291,28 @@ class AppState extends ChangeNotifier {
     return child;
   }
 
+  /// Adds a profile that already has an id — used by backup import, where
+  /// the id must survive so the imported cards and history still point at
+  /// the right child.
+  void addChildProfile(ChildProfile child) {
+    if (_children.any((existing) => existing.id == child.id)) return;
+    _children = [..._children, child];
+    unawaited(persistSettings());
+    notifyListeners();
+  }
+
+  /// Replaces every profile. Only used by a destructive restore, which the
+  /// UI confirms separately.
+  void replaceChildren(List<ChildProfile> children) {
+    if (children.isEmpty) return;
+    _children = List.unmodifiable(children);
+    if (!_children.any((child) => child.id == _selectedChildId)) {
+      _selectedChildId = _children.first.id;
+    }
+    unawaited(persistSettings());
+    notifyListeners();
+  }
+
   /// Edits an existing profile in place; unknown ids are ignored so stale
   /// dialogs cannot resurrect deleted children.
   void updateChild({
@@ -394,6 +417,24 @@ class AppState extends ChangeNotifier {
     if (ambientVolume != null) {
       await ambientSoundService.setVolumePreference(ambientVolume);
     }
+    final literacyRaw = await store.read(_keyLiteracy);
+    if (literacyRaw != null && literacyRaw.isNotEmpty) {
+      final decoded = jsonDecode(literacyRaw);
+      if (decoded is Map) {
+        _literacy
+          ..clear()
+          ..addAll(
+            decoded.map(
+              (childId, value) => MapEntry(
+                childId as String,
+                LiteracyPreference.fromJson(
+                  (value as Map).cast<String, dynamic>(),
+                ),
+              ),
+            ),
+          );
+      }
+    }
     final symbolScale = await store.read(_keySymbolScale);
     if (symbolScale != null) {
       _symbolScale = SymbolScale.values.firstWhere(
@@ -483,6 +524,12 @@ class AppState extends ChangeNotifier {
     await store.write(_keySensoryMode, '$_sensoryMode');
     await store.write(_keyThemeMode, _themeMode.name);
     await store.write(_keySymbolScale, _symbolScale.name);
+    await store.write(
+      _keyLiteracy,
+      jsonEncode(
+        _literacy.map((childId, pref) => MapEntry(childId, pref.toJson())),
+      ),
+    );
     await store.write(_keyAmbientTrack, ambientSoundService.track.name);
     await store.write(
       _keyAmbientVolume,
@@ -521,6 +568,7 @@ class AppState extends ChangeNotifier {
   static const String _keySensoryMode = 'autimate.settings.sensoryMode';
   static const String _keyThemeMode = 'autimate.settings.themeMode';
   static const String _keySymbolScale = 'autimate.aac.symbolScale';
+  static const String _keyLiteracy = 'autimate.aac.literacy.v1';
   static const String _keyAmbientTrack = 'autimate.sensory.ambientTrack';
   static const String _keyAmbientVolume = 'autimate.sensory.ambientVolume';
   static const String _keyStars = 'autimate.settings.stars';
@@ -556,6 +604,22 @@ class AppState extends ChangeNotifier {
     // Sensory mode lowers the ambient ceiling too, and must take effect on
     // a bed that is already playing rather than only on the next start.
     unawaited(ambientSoundService.setSensoryMode(value));
+    unawaited(persistSettings());
+    notifyListeners();
+  }
+
+  /// Transition-to-Literacy rung per child.
+  ///
+  /// Per child rather than per device: this is a ladder a child climbs over
+  /// months as their reading develops, not a display preference. Two
+  /// children sharing a tablet will be at different rungs.
+  final Map<String, LiteracyPreference> _literacy = {};
+
+  LiteracyLevel literacyFor(String childId) =>
+      _literacy[childId]?.level ?? LiteracyLevel.off;
+
+  void setLiteracyLevel(String childId, LiteracyLevel level) {
+    _literacy[childId] = LiteracyPreference(level: level);
     unawaited(persistSettings());
     notifyListeners();
   }
