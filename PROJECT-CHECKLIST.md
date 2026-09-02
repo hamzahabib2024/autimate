@@ -8,7 +8,7 @@ Status legend:
 - `[ ]` open
 - `⛔ BLOCKED:` prefix = cannot proceed until the stated external dependency exists (device, SDK, credentials)
 
-Current verified state: `flutter analyze` PASS · `flutter test` PASS (135 tests) · branch `AI`
+Current verified state: `flutter analyze` PASS · `flutter test` PASS (146 tests) · branch `AI`
 
 ---
 
@@ -160,8 +160,8 @@ Current verified state: `flutter analyze` PASS · `flutter test` PASS (135 tests
 - [x] Support-level picker UI in Settings wired to the engine (tile is currently a placeholder) — done
 - [x] Parent lock toggle UI persisting the chosen level — done
 - [x] Audio assistance dimension (spoken question at beginner level) — done
-- [ ] Reward-frequency dimension per level
-- [ ] Level changes reflected live in running sessions (restart prompt)
+- [x] Reward-frequency dimension per level (star every 1/2/3 sessions by level, per-child persisted ledger; picker shows cadence copy) — done
+- [x] Level changes reflected live in running sessions (restart prompt in emotion, learning-path, and story flows; restart or keep-going) — done
 
 ## Module 9 — Gamification
 
