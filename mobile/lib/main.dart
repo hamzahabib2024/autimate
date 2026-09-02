@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'core/config/app_config.dart';
+import 'core/data/firebase/firebase_bootstrap.dart';
 import 'core/providers/app_providers.dart';
 import 'core/services/app_services.dart';
 import 'core/services/tts_service.dart';
@@ -20,13 +24,32 @@ Future<void> main() async {
   final ttsService = QueuedTtsService();
   await ttsService.initialise();
 
+  // Firebase is attempted only when credentials were injected at build
+  // time, and a failure here is not fatal: the app falls back to local
+  // repositories so a misconfigured backend can never cost a child the app.
+  final config = AppConfig.fromEnvironment();
+  final firebaseReady = await FirebaseBootstrap.ensureInitialised(config);
+
   final container = ProviderContainer(
-    overrides: [keyValueStoreProvider.overrideWithValue(keyValueStore)],
+    overrides: [
+      keyValueStoreProvider.overrideWithValue(keyValueStore),
+      firebaseReadyProvider.overrideWithValue(firebaseReady),
+    ],
   );
 
   final appState = container.read(appStateProvider);
   await appState.loadPersistedSettings();
   appState.startListeningToConnectivity();
+
+  // Replay anything queued while offline, then again on every reconnect.
+  final syncBackend = container.read(syncBackendProvider);
+  if (syncBackend != null) {
+    final queue = container.read(offlineSyncQueueProvider);
+    unawaited(syncBackend.drain(queue));
+    appState.addListener(() {
+      if (!appState.offline) unawaited(syncBackend.drain(queue));
+    });
+  }
 
   runApp(
     UncontrolledProviderScope(

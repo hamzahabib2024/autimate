@@ -872,4 +872,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get lockedLabel => 'Keep going';
+
+  @override
+  String get ambientTrackLabel => 'Sound';
+
+  @override
+  String get ambientTrackSoftRain => 'Soft rain';
+
+  @override
+  String get ambientTrackSlowOcean => 'Slow waves';
+
+  @override
+  String get ambientTrackWarmHum => 'Warm hum';
+
+  @override
+  String get ambientVolumeLabel => 'How loud';
+
+  @override
+  String get ambientVolumeHint =>
+      'The app keeps a quiet upper limit, even at maximum.';
 }

@@ -354,5 +354,11 @@
   "starEarned": "آپ نے ستارہ حاصل کیا",
   "nextMilestone": "اگلا سنگِ میل",
   "earnedLabel": "حاصل شدہ",
-  "lockedLabel": "کوشش جاری رکھیں"
+  "lockedLabel": "کوشش جاری رکھیں",
+  "ambientTrackLabel": "آواز",
+  "ambientTrackSoftRain": "ہلکی بارش",
+  "ambientTrackSlowOcean": "آہستہ لہریں",
+  "ambientTrackWarmHum": "نرم گنگناہٹ",
+  "ambientVolumeLabel": "کتنی اونچی",
+  "ambientVolumeHint": "ایپ زیادہ سے زیادہ پر بھی آواز کو ہلکا رکھتی ہے۔"
 }

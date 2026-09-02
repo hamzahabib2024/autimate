@@ -23,16 +23,6 @@ class MockChildRepository implements ChildRepository {
   Future<ChildProfile> saveChild(ChildProfile child) async => child;
 }
 
-class FirestoreChildRepository implements ChildRepository {
-  @override
-  Future<List<ChildProfile>> getChildren() async {
-    // TODO: BACKEND INTEGRATION - query children owned by the authenticated user.
-    return const [];
-  }
-
-  @override
-  Future<ChildProfile> saveChild(ChildProfile child) async {
-    // TODO: BACKEND INTEGRATION - write through Firestore Security Rules.
-    return child;
-  }
-}
+/// The real Firestore implementation lives in
+/// `firebase/firestore_child_repository.dart`. The empty stub that used to
+/// sit here has been removed so there is only one class with that name.

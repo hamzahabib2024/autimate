@@ -868,4 +868,23 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get lockedLabel => 'کوشش جاری رکھیں';
+
+  @override
+  String get ambientTrackLabel => 'آواز';
+
+  @override
+  String get ambientTrackSoftRain => 'ہلکی بارش';
+
+  @override
+  String get ambientTrackSlowOcean => 'آہستہ لہریں';
+
+  @override
+  String get ambientTrackWarmHum => 'نرم گنگناہٹ';
+
+  @override
+  String get ambientVolumeLabel => 'کتنی اونچی';
+
+  @override
+  String get ambientVolumeHint =>
+      'ایپ زیادہ سے زیادہ پر بھی آواز کو ہلکا رکھتی ہے۔';
 }
