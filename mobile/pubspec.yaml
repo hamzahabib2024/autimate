@@ -45,6 +45,18 @@ dependencies:
   firebase_core: ^3.8.1
   flutter_riverpod: ^2.6.1
   flutter_tts: ^4.2.5
+  # Justification (Module 3 expression practice): streams camera frames for
+  # on-device face analysis. Frames stay in memory and are never written or
+  # uploaded. Used only behind `ExpressionPracticeService`.
+  camera: ^0.11.0+2
+  # Justification: on-device face detection. Runs entirely locally — no
+  # network call, no image leaves the device — which is what makes the
+  # camera feature acceptable at all for this audience.
+  google_mlkit_face_detection: ^0.13.1
+  # Justification: the camera permission flow needs the real OS answer,
+  # including the permanently-denied case that must send a caregiver to
+  # settings rather than re-prompting forever.
+  permission_handler: ^11.3.1
   # Justification: caregiver custom AAC cards need a photo of the child's
   # own object/person. Nothing else in the dependency set can reach the
   # gallery or camera. Used only behind `ImageSourceService`.

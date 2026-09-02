@@ -13,10 +13,14 @@ import '../data/offline_sync_queue.dart';
 import '../services/app_services.dart';
 import '../services/connectivity_service.dart';
 import '../services/tts_service.dart';
+import '../../features/ai/data/ml_kit_expression_service.dart';
+import '../../features/ai/data/platform_camera_permissions.dart';
+import '../../features/ai/data/rule_based_ai_engine.dart';
+import '../../features/ai/data/simulated_expression_service.dart';
+import '../../features/ai/domain/ai_contracts.dart';
 import '../../features/authentication/data/firebase_auth_repository.dart';
 import '../../features/communication/data/image_source_service.dart';
 import '../../features/sensory_support/data/platform_ambient_sound_service.dart';
-import '../../features/sensory_support/domain/ambient_sound.dart';
 import '../../features/communication/domain/custom_card_repository.dart';
 import '../../features/progress/domain/progress_models.dart';
 import '../../features/routines/domain/routine_repository.dart';
@@ -148,6 +152,32 @@ final imageSourceServiceProvider = Provider<ImageSourceService>(
 /// audio output exists, so the toggle stays honest either way.
 final ambientSoundServiceProvider = Provider<AmbientSoundService>(
   (ref) => PlatformAmbientSoundService(),
+);
+
+/// On-device expression classifier. Rule-based and explainable — see
+/// `expression_classifier.dart` for why it is not a trained model.
+final aiEngineProvider = Provider<AiEngine>((ref) => RuleBasedAiEngine());
+
+/// Real OS camera permission, including the permanently-denied case that
+/// must route to settings rather than re-prompt.
+final cameraPermissionServiceProvider = Provider<CameraPermissionService>(
+  (ref) => const PlatformCameraPermissionService(),
+);
+
+/// Expression practice source.
+///
+/// The ML Kit adapter is the real one; `SimulatedExpressionService` stays as
+/// the fallback so the flow is demonstrable on a machine with no camera and
+/// so a camera failure never leaves the screen dead. Which one is live is
+/// decided at runtime by [MlKitExpressionService.isSupported].
+final expressionPracticeServiceProvider =
+    Provider<ExpressionPracticeService>((ref) => MlKitExpressionService());
+
+/// The offline stand-in, provided separately so a caller can fall back to
+/// it explicitly rather than by catching an error.
+final simulatedExpressionServiceProvider =
+    Provider<ExpressionPracticeService>(
+  (ref) => SimulatedExpressionService(),
 );
 
 /// Connectivity boundary. A verified connectivity_plus adapter replaces
