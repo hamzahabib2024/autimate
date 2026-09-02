@@ -360,5 +360,10 @@
   "ambientTrackSlowOcean": "آہستہ لہریں",
   "ambientTrackWarmHum": "نرم گنگناہٹ",
   "ambientVolumeLabel": "کتنی اونچی",
-  "ambientVolumeHint": "ایپ زیادہ سے زیادہ پر بھی آواز کو ہلکا رکھتی ہے۔"
+  "ambientVolumeHint": "ایپ زیادہ سے زیادہ پر بھی آواز کو ہلکا رکھتی ہے۔",
+  "symbolSizeLabel": "کارڈ کا سائز",
+  "symbolSizeSubtitle": "بڑے کارڈ کم تعداد میں نظر آتے ہیں، جو اکثر آسان ہوتا ہے۔",
+  "symbolSizeComfortable": "آرام دہ",
+  "symbolSizeLarge": "بڑا",
+  "symbolSizeLargest": "سب سے بڑا"
 }

@@ -225,10 +225,10 @@ class _AacScreenState extends State<AacScreen> {
                 GridView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate:
-                      const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 184,
-                    mainAxisExtent: 190,
+                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent:
+                        widget.appState.symbolScale.maxExtent,
+                    mainAxisExtent: widget.appState.symbolScale.mainExtent,
                     crossAxisSpacing: AppSpacing.sm,
                     mainAxisSpacing: AppSpacing.sm,
                   ),
@@ -236,7 +236,10 @@ class _AacScreenState extends State<AacScreen> {
                   itemBuilder: (context, index) {
                     final card = visibleDeck[index];
                     final custom = _customFor(card.id);
-                    return SymbolTile(
+                    return Entrance(
+                      index: index,
+                      sensoryMode: widget.appState.sensoryMode,
+                      child: SymbolTile(
                       key: ValueKey('aac-card-${card.id}'),
                       card: card,
                       showUrdu: _language == AppLanguage.ur,
@@ -249,6 +252,7 @@ class _AacScreenState extends State<AacScreen> {
                                 widget.appState,
                                 widget.imageSource,
                               ),
+                    ),
                     );
                   },
                 ),

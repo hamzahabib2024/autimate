@@ -887,4 +887,20 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get ambientVolumeHint =>
       'ایپ زیادہ سے زیادہ پر بھی آواز کو ہلکا رکھتی ہے۔';
+
+  @override
+  String get symbolSizeLabel => 'کارڈ کا سائز';
+
+  @override
+  String get symbolSizeSubtitle =>
+      'بڑے کارڈ کم تعداد میں نظر آتے ہیں، جو اکثر آسان ہوتا ہے۔';
+
+  @override
+  String get symbolSizeComfortable => 'آرام دہ';
+
+  @override
+  String get symbolSizeLarge => 'بڑا';
+
+  @override
+  String get symbolSizeLargest => 'سب سے بڑا';
 }

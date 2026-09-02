@@ -9,6 +9,7 @@ import 'tts_service.dart';
 import '../data/local_store.dart';
 import '../../features/communication/domain/card_ranker.dart';
 import '../../features/communication/domain/custom_card_repository.dart';
+import '../../features/communication/domain/symbol_scale.dart';
 import '../../features/ai/domain/ai_contracts.dart';
 import '../../features/gamification/domain/reward_policy.dart';
 import '../../features/emotion_recognition/domain/emotion_activity_engine.dart';
@@ -393,6 +394,13 @@ class AppState extends ChangeNotifier {
     if (ambientVolume != null) {
       await ambientSoundService.setVolumePreference(ambientVolume);
     }
+    final symbolScale = await store.read(_keySymbolScale);
+    if (symbolScale != null) {
+      _symbolScale = SymbolScale.values.firstWhere(
+        (value) => value.name == symbolScale,
+        orElse: () => SymbolScale.comfortable,
+      );
+    }
     final themeMode = await store.read(_keyThemeMode);
     if (themeMode != null) {
       _themeMode = ThemeMode.values.firstWhere(
@@ -474,6 +482,7 @@ class AppState extends ChangeNotifier {
     await store.write(_keyLanguage, _locale.languageCode);
     await store.write(_keySensoryMode, '$_sensoryMode');
     await store.write(_keyThemeMode, _themeMode.name);
+    await store.write(_keySymbolScale, _symbolScale.name);
     await store.write(_keyAmbientTrack, ambientSoundService.track.name);
     await store.write(
       _keyAmbientVolume,
@@ -511,6 +520,7 @@ class AppState extends ChangeNotifier {
   static const String _keyLanguage = 'autimate.settings.language';
   static const String _keySensoryMode = 'autimate.settings.sensoryMode';
   static const String _keyThemeMode = 'autimate.settings.themeMode';
+  static const String _keySymbolScale = 'autimate.aac.symbolScale';
   static const String _keyAmbientTrack = 'autimate.sensory.ambientTrack';
   static const String _keyAmbientVolume = 'autimate.sensory.ambientVolume';
   static const String _keyStars = 'autimate.settings.stars';
@@ -543,6 +553,19 @@ class AppState extends ChangeNotifier {
     // Sensory mode lowers the ambient ceiling too, and must take effect on
     // a bed that is already playing rather than only on the next start.
     unawaited(ambientSoundService.setSensoryMode(value));
+    unawaited(persistSettings());
+    notifyListeners();
+  }
+
+  /// How large the AAC symbols are drawn. Persisted per device rather than
+  /// per child: it usually tracks the device and who is holding it.
+  SymbolScale _symbolScale = SymbolScale.comfortable;
+
+  SymbolScale get symbolScale => _symbolScale;
+
+  void setSymbolScale(SymbolScale scale) {
+    if (scale == _symbolScale) return;
+    _symbolScale = scale;
     unawaited(persistSettings());
     notifyListeners();
   }

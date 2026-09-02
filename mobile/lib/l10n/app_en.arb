@@ -445,5 +445,10 @@
   "ambientTrackSlowOcean": "Slow waves",
   "ambientTrackWarmHum": "Warm hum",
   "ambientVolumeLabel": "How loud",
-  "ambientVolumeHint": "The app keeps a quiet upper limit, even at maximum."
+  "ambientVolumeHint": "The app keeps a quiet upper limit, even at maximum.",
+  "symbolSizeLabel": "Card size",
+  "symbolSizeSubtitle": "Bigger cards mean fewer on screen, which is often easier.",
+  "symbolSizeComfortable": "Comfortable",
+  "symbolSizeLarge": "Large",
+  "symbolSizeLargest": "Largest"
 }

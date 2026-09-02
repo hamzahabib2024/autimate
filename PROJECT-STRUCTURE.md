@@ -38,6 +38,7 @@ The theme is a token system in `lib/core/theme/`, not a single file. Screens con
 | `app_typography.dart` | Two type scales (child and caregiver) plus the Urdu metrics, and the `ChildTextScale` wrapper. |
 | `app_spacing.dart` | `AppSpacing`, `AppRadius`, `AppTouch`, `AppElevation`. |
 | `app_motion.dart` | Durations, curves, and `AppMotion.resolve` — the single gate every animation passes through. |
+| `app_depth.dart` | Layered soft shadows, the barely-there sheen, and the focal halo. |
 | `app_theme.dart` | Assembles `ThemeData` for `light()` and `dark()`, each in normal and sensory mode. |
 
 ### Two UI tiers
@@ -61,6 +62,36 @@ The size difference is itself a signal: a caregiver glancing at the device can t
 - **No flashing, strobing, or luminance change above 3 Hz** anywhere, ever.
 - **Errorless framing.** A wrong answer gets a calm redirect, never a red X, a buzzer, or a penalty. Red is reserved for caregiver-facing danger.
 - **Every semantic colour pair is contrast-tested.** `theme_contrast_test.dart` covers the Material scheme; `design_system_test.dart` covers every accent and tint across light/dark × normal/sensory at 4.5:1.
+
+### Depth, motion, and the intro
+
+The research on this audience is consistent — calm palettes, muted colour,
+stable layouts, clutter-free surfaces — which rules out the usual routes to
+"eye-catching": saturated gradients, heavy shadows, glass blur, neon glow.
+Every one of them raises visual load.
+
+Depth is therefore built the way print does it: **many very soft layers
+rather than one hard one**, with light falling consistently from above. A
+resting card carries a tight contact shadow plus a wide ambient one, each
+under 6% alpha; colour-coded surfaces borrow their accent's hue for the
+shadow, because a neutral grey shadow under a coloured card reads as dirty.
+The `sheen` gradient varies lightness by under 5% — it exists only to stop a
+large flat fill looking dead, and sensory mode removes it entirely.
+
+Motion follows the accessibility guidance for vestibular sensitivity:
+
+- **Entry travel is 10 dp**, not the 40–60 a marketing site would use.
+  Movement large enough to notice as movement is large enough to disorient.
+- **Stagger is capped**, so a long list never becomes a wave rolling down
+  the screen.
+- **Page transitions fade through** with a 2% scale rather than sliding the
+  viewport, which the guidance specifically warns against.
+- **`Entrance` uses an `Interval` on one controller**, never a delayed
+  start — a stranded timer outliving a widget is what a fast scroll causes.
+- The **intro animation** runs 1.9 s, keeps all movement inside the middle
+  third of the screen, is skippable by a tap anywhere, and ends itself. Under
+  reduced motion it collapses to a single fade with a beat of stillness,
+  because an instant cut is its own kind of jolt.
 
 ### Artwork is drawn in code
 

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_depth.dart';
 import '../../core/theme/app_motion.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../features/communication/domain/aac_catalog.dart';
@@ -71,6 +72,7 @@ class _SymbolTileState extends State<SymbolTile> {
   Widget build(BuildContext context) {
     final palette = context.palette;
     final accent = wordClassColor(context, widget.card);
+    final sensory = Theme.of(context).cardTheme.elevation == 0;
     final grammar = widget.card.grammar;
     final primary = widget.showUrdu ? grammar.labelUr : grammar.labelEn;
     final secondary = widget.showUrdu ? grammar.labelEn : grammar.labelUr;
@@ -82,7 +84,18 @@ class _SymbolTileState extends State<SymbolTile> {
         scale: _pressed ? 0.96 : 1.0,
         duration: AppMotion.fast,
         curve: AppMotion.curve,
-        child: Material(
+        child: AnimatedContainer(
+          duration: AppMotion.fast,
+          curve: AppMotion.curve,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(AppRadius.lg),
+            // The tile borrows its accent's hue for the shadow: a neutral
+            // grey shadow under a colour-coded card reads as dirty.
+            boxShadow: _pressed
+                ? AppDepth.tinted(accent, sensoryMode: sensory)
+                : AppDepth.card(context, sensoryMode: sensory),
+          ),
+          child: Material(
           color: palette.card,
           borderRadius: BorderRadius.circular(AppRadius.lg),
           child: InkWell(
@@ -94,6 +107,11 @@ class _SymbolTileState extends State<SymbolTile> {
               duration: AppMotion.fast,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(AppRadius.lg),
+                gradient: AppDepth.sheen(
+                  palette.card,
+                  sensoryMode: sensory,
+                  strength: 0.7,
+                ),
                 border: Border.all(
                   color: accent,
                   width: _pressed ? 4 : 2,
@@ -183,6 +201,7 @@ class _SymbolTileState extends State<SymbolTile> {
               ),
             ),
           ),
+        ),
         ),
       ),
     );
@@ -278,6 +297,10 @@ class ChildActionCard extends StatelessWidget {
             padding: EdgeInsets.all(tight ? AppSpacing.sm : AppSpacing.md),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(AppRadius.lg),
+              gradient: AppDepth.sheen(
+                palette.accentTint(accent, 0.86),
+                sensoryMode: Theme.of(context).cardTheme.elevation == 0,
+              ),
               border: Border.all(color: accent, width: 2),
             ),
             child: Column(
@@ -376,7 +399,25 @@ class RewardStar extends StatelessWidget {
           child: child,
         ),
       ),
-      child: Icon(Icons.star_rounded, size: size, color: tint),
+      child: SizedBox(
+        width: size * 1.6,
+        height: size * 1.6,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            // A still halo, never a pulse: a repeating brightness change is
+            // exactly the pattern this app exists to avoid.
+            DecoratedBox(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: AppDepth.halo(tint),
+              ),
+              child: SizedBox(width: size * 1.6, height: size * 1.6),
+            ),
+            Icon(Icons.star_rounded, size: size, color: tint),
+          ],
+        ),
+      ),
     );
   }
 }
