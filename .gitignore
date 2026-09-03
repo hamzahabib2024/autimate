@@ -2,3 +2,30 @@
 .dart_tool/
 build/
 .packages
+
+# Coverage output
+coverage/
+
+# Local environment files. The tracked template is .env.example; a real one
+# must never be committed.
+.env
+.env.local
+*.env.local
+
+# Documents.
+#
+# Every Markdown file is ignored except README.md, which stays as the entry
+# point at any level (mobile/, tools/, assets/fonts/ all keep theirs).
+# Office and PDF documents are ignored outright — they are large binaries
+# that git cannot diff, and they belong in shared storage rather than here.
+*.md
+!README.md
+!FIREBASE-SETUP.md
+
+*.pdf
+*.docx
+*.doc
+*.pptx
+*.ppt
+*.xlsx
+*.xls
