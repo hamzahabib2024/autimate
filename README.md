@@ -1,7 +1,12 @@
 # AutiMate
 
-> **New to this repository?** Start with [HANDOVER.md](HANDOVER.md) — it has the
-> five-minute run, what is done, and what is written but unverified.
+> **New to this repository?** Run the app (below), then read
+> [FIREBASE-SETUP.md](FIREBASE-SETUP.md) if you are wiring up the backend.
+>
+> The wider project documents — handover notes, module checklist, security
+> and coverage reviews, architecture notes, and the demo scripts — are kept
+> **outside this repository** and shared separately. Ask the project owner
+> for them; `HANDOVER.md` is the one to start with.
 
 AutiMate is an offline-first Flutter support tool for autistic children and their caregivers. It supports communication, emotion learning, predictable routines, sensory regulation, and explainable progress tracking. It is not a diagnostic, screening, or treatment application.
 
@@ -30,8 +35,8 @@ caregiver flows work offline:
 - **Ambient sound** — three generated calming loops with a volume ceiling
   that sensory mode lowers further; nothing autoplays, everything fades.
 - **Design system** — colour, typography, spacing, and motion tokens with a
-  deliberate child/caregiver two-tier split. See the design-system section of
-  [PROJECT-STRUCTURE.md](PROJECT-STRUCTURE.md).
+  deliberate child/caregiver two-tier split, documented in the architecture
+  notes held with the project documents.
 
 Verified: `flutter analyze` clean, **405 tests passing**, 78.6% line coverage.8% line coverage.
 
@@ -41,10 +46,15 @@ the sync drain — and needs only credentials to switch on. See
 fully offline against local repositories, which is the default and the
 demo mode.
 
-Remaining work and its blockers are tracked honestly in
-[PROJECT-CHECKLIST-V2.md](PROJECT-CHECKLIST-V2.md), with a coverage gap
-review in [COVERAGE-REVIEW.md](COVERAGE-REVIEW.md) and a self-review in
-[SECURITY-PRIVACY-REVIEW.md](SECURITY-PRIVACY-REVIEW.md).
+Remaining work, its blockers, the coverage gap review, and the security and
+privacy self-review are tracked in the project documents held outside this
+repository.
+
+**Three things are written but have never run**, and should not be reported
+as working: the Firestore security rules (never executed — the adapter tests
+use an in-memory Firestore that does not evaluate rules), the ML Kit camera
+adapter (never run against a real camera), and the native side of the
+home-screen widget (never compiled). Each needs a device or the Android SDK.
 
 ## Run the app
 
@@ -79,7 +89,20 @@ anyone intending it is the point of the file.
 
 ## Architecture
 
-The app uses feature-based Flutter organization with presentation, state, domain contracts, and data adapters kept separate. See [PROJECT-STRUCTURE.md](PROJECT-STRUCTURE.md) (including the design system and the dependency justification list), [FIREBASE-SETUP.md](FIREBASE-SETUP.md), [AI-INTEGRATION.md](AI-INTEGRATION.md), and [DEVELOPMENT-ROADMAP.md](DEVELOPMENT-ROADMAP.md). [DEMO-SCRIPT.md](DEMO-SCRIPT.md) walks the app against objectives O1–O8; [DEMO-VIDEO-SCRIPT.md](DEMO-VIDEO-SCRIPT.md) is the three-minute recorded cut.
+The app uses feature-based Flutter organization with presentation, state,
+domain contracts, and data adapters kept separate:
+
+```
+mobile/lib/core/theme/       design tokens — colour, type, spacing, motion, depth
+mobile/lib/core/data/        local stores, offline queue, Firebase adapters, backup
+mobile/lib/features/<name>/  domain / data / presentation per feature
+mobile/lib/shared/widgets/   the component library
+mobile/test/                 405 tests, 16 committed goldens
+```
+
+[FIREBASE-SETUP.md](FIREBASE-SETUP.md) covers the backend. The architecture
+notes, AI-integration notes, roadmap, and demo scripts live with the project
+documents outside this repository.
 
 ## Configuration
 
