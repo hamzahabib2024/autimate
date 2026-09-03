@@ -2089,6 +2089,354 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save or restore everything'**
   String get backupTileSubtitle;
+
+  /// No description provided for @predictionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Word suggestions'**
+  String get predictionLabel;
+
+  /// No description provided for @predictionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Offers a few likely next words above the board. Helps a child who is reading; can be a distraction for one who is not.'**
+  String get predictionSubtitle;
+
+  /// No description provided for @predictionSuggestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Next word'**
+  String get predictionSuggestions;
+
+  /// No description provided for @phraseBankTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved phrases'**
+  String get phraseBankTitle;
+
+  /// No description provided for @phraseBankSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Whole sentences for one tap. Tapping loads the cards into the strip so the sentence is still built from its parts.'**
+  String get phraseBankSubtitle;
+
+  /// No description provided for @phraseBankEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved phrases yet. Build a sentence, then save it.'**
+  String get phraseBankEmpty;
+
+  /// No description provided for @phraseBankSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save this sentence'**
+  String get phraseBankSave;
+
+  /// No description provided for @phraseBankDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove phrase'**
+  String get phraseBankDelete;
+
+  /// No description provided for @phraseBankSpeakNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Speak straight away'**
+  String get phraseBankSpeakNow;
+
+  /// No description provided for @phraseBankSpeakNowHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Skips building the sentence. Use it only where speed really matters.'**
+  String get phraseBankSpeakNowHint;
+
+  /// No description provided for @phraseBankUrgent.
+  ///
+  /// In en, this message translates to:
+  /// **'Needed in a hurry'**
+  String get phraseBankUrgent;
+
+  /// No description provided for @phraseBankUrgentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Sorts first, and can appear on the home screen.'**
+  String get phraseBankUrgentHint;
+
+  /// No description provided for @phraseBankFull.
+  ///
+  /// In en, this message translates to:
+  /// **'The phrase list is full. Remove one to add another.'**
+  String get phraseBankFull;
+
+  /// No description provided for @phraseBankCaution.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved phrases are a shortcut, not a replacement. Building sentences is the skill, so keep this list short.'**
+  String get phraseBankCaution;
+
+  /// No description provided for @gridShapeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Board layout'**
+  String get gridShapeLabel;
+
+  /// No description provided for @gridShapeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fewer cards on screen means bigger targets and less to scan.'**
+  String get gridShapeSubtitle;
+
+  /// No description provided for @gridShapeFlowing.
+  ///
+  /// In en, this message translates to:
+  /// **'Fit as many as possible'**
+  String get gridShapeFlowing;
+
+  /// No description provided for @gridShapeTwoByTwo.
+  ///
+  /// In en, this message translates to:
+  /// **'4 cards'**
+  String get gridShapeTwoByTwo;
+
+  /// No description provided for @gridShapeThreeByTwo.
+  ///
+  /// In en, this message translates to:
+  /// **'6 cards'**
+  String get gridShapeThreeByTwo;
+
+  /// No description provided for @gridShapeThreeByThree.
+  ///
+  /// In en, this message translates to:
+  /// **'9 cards'**
+  String get gridShapeThreeByThree;
+
+  /// No description provided for @gridShapeFourByThree.
+  ///
+  /// In en, this message translates to:
+  /// **'12 cards'**
+  String get gridShapeFourByThree;
+
+  /// No description provided for @gridShapeFiveByFour.
+  ///
+  /// In en, this message translates to:
+  /// **'20 cards'**
+  String get gridShapeFiveByFour;
+
+  /// No description provided for @gridShapeSixByEight.
+  ///
+  /// In en, this message translates to:
+  /// **'48 cards'**
+  String get gridShapeSixByEight;
+
+  /// No description provided for @gridShapeNote.
+  ///
+  /// In en, this message translates to:
+  /// **'A fixed layout is groundwork for keeping every word in one place. The category filter still moves cards, so that is not fully true yet.'**
+  String get gridShapeNote;
+
+  /// No description provided for @gridPageOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Page {page} of {total}'**
+  String gridPageOf(int page, int total);
+
+  /// No description provided for @printBoardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Print the board'**
+  String get printBoardTitle;
+
+  /// No description provided for @printBoardSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A paper copy with the same layout and colours. Useful when the device is flat, at school, or being charged.'**
+  String get printBoardSubtitle;
+
+  /// No description provided for @printBoardAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Make a PDF'**
+  String get printBoardAction;
+
+  /// No description provided for @printBoardWorking.
+  ///
+  /// In en, this message translates to:
+  /// **'Building the PDF…'**
+  String get printBoardWorking;
+
+  /// No description provided for @printBoardFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The PDF could not be made.'**
+  String get printBoardFailed;
+
+  /// No description provided for @breathingPatternLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathing pattern'**
+  String get breathingPatternLabel;
+
+  /// No description provided for @breathingPatternGentle.
+  ///
+  /// In en, this message translates to:
+  /// **'Gentle'**
+  String get breathingPatternGentle;
+
+  /// No description provided for @breathingPatternBox.
+  ///
+  /// In en, this message translates to:
+  /// **'Box (4-4-4-4)'**
+  String get breathingPatternBox;
+
+  /// No description provided for @breathingPatternFourSevenEight.
+  ///
+  /// In en, this message translates to:
+  /// **'4-7-8'**
+  String get breathingPatternFourSevenEight;
+
+  /// No description provided for @breathingPatternNote.
+  ///
+  /// In en, this message translates to:
+  /// **'A longer breath out than in is the part that calms. These are calming exercises, not treatment.'**
+  String get breathingPatternNote;
+
+  /// No description provided for @breathPhaseInhale.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathe in'**
+  String get breathPhaseInhale;
+
+  /// No description provided for @breathPhaseHoldIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold'**
+  String get breathPhaseHoldIn;
+
+  /// No description provided for @breathPhaseExhale.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathe out'**
+  String get breathPhaseExhale;
+
+  /// No description provided for @breathPhaseHoldOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Rest'**
+  String get breathPhaseHoldOut;
+
+  /// No description provided for @intensityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How strong is it?'**
+  String get intensityTitle;
+
+  /// No description provided for @intensitySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose how big the feeling is right now.'**
+  String get intensitySubtitle;
+
+  /// No description provided for @intensityALittle.
+  ///
+  /// In en, this message translates to:
+  /// **'A little'**
+  String get intensityALittle;
+
+  /// No description provided for @intensitySomeWhat.
+  ///
+  /// In en, this message translates to:
+  /// **'A bit'**
+  String get intensitySomeWhat;
+
+  /// No description provided for @intensityQuite.
+  ///
+  /// In en, this message translates to:
+  /// **'Quite a lot'**
+  String get intensityQuite;
+
+  /// No description provided for @intensityVery.
+  ///
+  /// In en, this message translates to:
+  /// **'A lot'**
+  String get intensityVery;
+
+  /// No description provided for @intensityTooMuch.
+  ///
+  /// In en, this message translates to:
+  /// **'Too much'**
+  String get intensityTooMuch;
+
+  /// No description provided for @intensitySupportBreathing.
+  ///
+  /// In en, this message translates to:
+  /// **'Would some slow breathing help?'**
+  String get intensitySupportBreathing;
+
+  /// No description provided for @intensitySupportTellSomeone.
+  ///
+  /// In en, this message translates to:
+  /// **'Would you like to tell someone?'**
+  String get intensitySupportTellSomeone;
+
+  /// No description provided for @intensityNotNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get intensityNotNow;
+
+  /// No description provided for @intensityCaution.
+  ///
+  /// In en, this message translates to:
+  /// **'This is what the child said, not a measurement. It is not added up or tracked over time.'**
+  String get intensityCaution;
+
+  /// No description provided for @achievementsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How far you have come'**
+  String get achievementsTitle;
+
+  /// No description provided for @achievementsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Firsts and milestones, taken from what was actually recorded.'**
+  String get achievementsSubtitle;
+
+  /// No description provided for @achievementsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Milestones will appear here after a few activities.'**
+  String get achievementsEmpty;
+
+  /// No description provided for @achievementFirstSession.
+  ///
+  /// In en, this message translates to:
+  /// **'First activity together'**
+  String get achievementFirstSession;
+
+  /// No description provided for @achievementFirstActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'First {type} activity'**
+  String achievementFirstActivity(String type);
+
+  /// No description provided for @achievementBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Milestone reached'**
+  String get achievementBadge;
+
+  /// No description provided for @achievementStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Best run: {days} days'**
+  String achievementStreak(int days);
+
+  /// No description provided for @achievementSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} activities completed'**
+  String achievementSessions(int count);
 }
 
 class _AppLocalizationsDelegate

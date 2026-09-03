@@ -16,7 +16,11 @@ import '../data/voice_recording_service.dart';
 import '../domain/aac_catalog.dart';
 import '../domain/card_ranker.dart';
 import '../domain/custom_card_repository.dart';
+import '../domain/phrase_bank.dart';
 import '../domain/sentence_realiser.dart';
+import '../domain/symbol_scale.dart';
+import '../domain/word_prediction.dart';
+import 'board_options_screen.dart';
 import 'custom_cards_screen.dart';
 
 /// The communication board — the app's flagship surface.
@@ -54,6 +58,12 @@ class _AacScreenState extends State<AacScreen> {
   final List<CardUsageEvent> _durableUsage = [];
   final SentenceRealiser _realiser = RuleBasedSentenceRealiser();
   final CardRanker _ranker = RecencyWeightedCardRanker();
+  final WordPredictor _predictor = const WordPredictor();
+
+  /// Current page when a fixed grid shape is in use. A fixed board cannot
+  /// scroll without breaking the "same word, same place" promise, so it
+  /// paginates instead.
+  int _page = 0;
 
   AacCategory? _category;
   String? _durableChildId;
@@ -72,6 +82,7 @@ class _AacScreenState extends State<AacScreen> {
     super.initState();
     _loadDurableUsage();
     widget.appState.loadCustomCards();
+    widget.appState.loadPhrases();
   }
 
   /// Restores the frequent-cards ranking across restarts and reloads it
@@ -139,10 +150,32 @@ class _AacScreenState extends State<AacScreen> {
       ),
     ];
 
+    // A fixed shape paginates rather than scrolls: scrolling a fixed board
+    // would move every word off its position, which is the one thing the
+    // shape exists to prevent.
+    final shape = widget.appState.gridShape;
+    final pageCount = shape.isFixed
+        ? (visibleDeck.length / shape.capacity).ceil().clamp(1, 999)
+        : 1;
+    final safePage = shape.isFixed ? _page.clamp(0, pageCount - 1) : 0;
+    final pageDeck = shape.isFixed
+        ? visibleDeck
+              .skip(safePage * shape.capacity)
+              .take(shape.capacity)
+              .toList()
+        : visibleDeck;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.communicateTitle),
         actions: [
+          IconButton(
+            key: const ValueKey('open-board-options'),
+            tooltip: l10n.gridShapeLabel,
+            onPressed: () =>
+                BoardOptionsScreen.openGated(context, widget.appState),
+            icon: const Icon(Icons.tune),
+          ),
           IconButton(
             key: const ValueKey('open-custom-cards'),
             tooltip: l10n.customCardsTitle,
@@ -163,6 +196,8 @@ class _AacScreenState extends State<AacScreen> {
       body: Column(
         children: [
           _sentenceStrip(context, l10n),
+          if (widget.appState.wordPredictionEnabled)
+            _predictionRow(context, l10n, deck),
           Expanded(
             child: ListView(
               padding: const EdgeInsets.fromLTRB(
@@ -200,6 +235,34 @@ class _AacScreenState extends State<AacScreen> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
+                if (widget.appState.savedPhrases.isNotEmpty) ...[
+                  SectionHeader(
+                    title: l10n.phraseBankTitle,
+                    accent: palette.communicate,
+                  ),
+                  Wrap(
+                    spacing: AppSpacing.xs,
+                    runSpacing: AppSpacing.xs,
+                    children: [
+                      for (final phrase in widget.appState.savedPhrases)
+                        ActionChip(
+                          key: ValueKey('phrase-${phrase.id}'),
+                          avatar: Icon(
+                            phrase.urgent
+                                ? Icons.priority_high
+                                : Icons.chat_bubble_outline,
+                            size: 18,
+                            color: phrase.urgent
+                                ? palette.attention
+                                : palette.communicate,
+                          ),
+                          label: Text(phrase.labelFor(_language)),
+                          onPressed: () => _applyPhrase(phrase),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
                 SectionHeader(
                   title: l10n.coreWords,
                   accent: palette.communicate,
@@ -229,44 +292,9 @@ class _AacScreenState extends State<AacScreen> {
                   ),
                 ),
                 const SizedBox(height: AppSpacing.md),
-                GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent:
-                        widget.appState.symbolScale.maxExtent,
-                    mainAxisExtent: widget.appState.symbolScale.mainExtent,
-                    crossAxisSpacing: AppSpacing.sm,
-                    mainAxisSpacing: AppSpacing.sm,
-                  ),
-                  itemCount: visibleDeck.length,
-                  itemBuilder: (context, index) {
-                    final card = visibleDeck[index];
-                    final custom = _customFor(card.id);
-                    return Entrance(
-                      index: index,
-                      sensoryMode: widget.appState.sensoryMode,
-                      child: SymbolTile(
-                      key: ValueKey('aac-card-${card.id}'),
-                      card: card,
-                      showUrdu: _language == AppLanguage.ur,
-                      literacy: widget.appState.literacyFor(
-                        widget.appState.selectedChild.id,
-                      ),
-                      sensoryMode: widget.appState.sensoryMode,
-                      imagePath: custom?.imagePath,
-                      onTap: () => _addCard(card.grammar),
-                      onLongPress: custom == null
-                          ? null
-                          : () => CustomCardsScreen.openGated(
-                                context,
-                                widget.appState,
-                                widget.imageSource,
-                              ),
-                    ),
-                    );
-                  },
-                ),
+                _grid(context, pageDeck, shape),
+                if (shape.isFixed && pageCount > 1)
+                  _pager(context, l10n, pageCount),
               ],
             ),
           ),
@@ -338,6 +366,12 @@ class _AacScreenState extends State<AacScreen> {
                     ),
                   ),
                   if (_strip.isNotEmpty) ...[
+                    IconButton(
+                      key: const ValueKey('aac-save-phrase'),
+                      tooltip: l10n.phraseBankSave,
+                      onPressed: _saveCurrentPhrase,
+                      icon: const Icon(Icons.bookmark_add_outlined),
+                    ),
                     IconButton(
                       tooltip: l10n.removeLastWordTooltip,
                       onPressed: _removeLastCard,
@@ -433,6 +467,38 @@ class _AacScreenState extends State<AacScreen> {
     }
   }
 
+  /// Loads a saved phrase into the strip.
+  ///
+  /// The cards go in rather than the text being spoken outright, so the
+  /// child still sees the sentence assembled from its parts. Speaking
+  /// straight away is opt-in per phrase, for cases where speed matters.
+  void _applyPhrase(SavedPhrase phrase) {
+    final byId = {for (final card in _fullDeck) card.id: card};
+    setState(() {
+      _strip
+        ..clear()
+        ..addAll([
+          for (final id in phrase.cardIds)
+            if (byId[id] != null) byId[id]!.grammar,
+        ]);
+    });
+    if (phrase.speakImmediately) _speakSentence();
+  }
+
+  Future<void> _saveCurrentPhrase() async {
+    if (_strip.isEmpty) return;
+    const speaker = SpeakerProfile(gender: UrduGender.masculine);
+    await widget.appState.savePhrase(
+      SavedPhrase(
+        id: 'phrase-${DateTime.now().microsecondsSinceEpoch}',
+        childId: widget.appState.selectedChild.id,
+        cardIds: [for (final card in _strip) card.id],
+        labelEn: _realiser.realise(_strip, speaker, AppLanguage.en).text,
+        labelUr: _realiser.realise(_strip, speaker, AppLanguage.ur).text,
+      ),
+    );
+  }
+
   void _removeLastCard() {
     setState(() {
       if (_strip.isNotEmpty) _strip.removeLast();
@@ -460,6 +526,138 @@ class _AacScreenState extends State<AacScreen> {
       final card = _strip.removeAt(oldIndex);
       _strip.insert(target, card);
     });
+  }
+
+
+  /// The card grid, in whichever shape the caregiver chose.
+  Widget _grid(BuildContext context, List<AacCard> deck, GridShape shape) {
+    Widget tile(AacCard card, int index) {
+      final custom = _customFor(card.id);
+      return Entrance(
+        index: index,
+        sensoryMode: widget.appState.sensoryMode,
+        child: SymbolTile(
+          key: ValueKey('aac-card-${card.id}'),
+          card: card,
+          showUrdu: _language == AppLanguage.ur,
+          literacy: widget.appState.literacyFor(
+            widget.appState.selectedChild.id,
+          ),
+          sensoryMode: widget.appState.sensoryMode,
+          imagePath: custom?.imagePath,
+          onTap: () => _addCard(card.grammar),
+          onLongPress: custom == null
+              ? null
+              : () => CustomCardsScreen.openGated(
+                    context,
+                    widget.appState,
+                    widget.imageSource,
+                  ),
+        ),
+      );
+    }
+
+    if (shape.isFixed) {
+      return GridView.count(
+        key: ValueKey('aac-grid-${shape.name}'),
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        crossAxisCount: shape.columns,
+        childAspectRatio: shape.childAspectRatio,
+        crossAxisSpacing: AppSpacing.sm,
+        mainAxisSpacing: AppSpacing.sm,
+        children: [
+          for (var i = 0; i < deck.length; i++) tile(deck[i], i),
+        ],
+      );
+    }
+
+    return GridView.builder(
+      key: const ValueKey('aac-grid-flowing'),
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: widget.appState.symbolScale.maxExtent,
+        mainAxisExtent: widget.appState.symbolScale.mainExtent,
+        crossAxisSpacing: AppSpacing.sm,
+        mainAxisSpacing: AppSpacing.sm,
+      ),
+      itemCount: deck.length,
+      itemBuilder: (context, index) => tile(deck[index], index),
+    );
+  }
+
+  /// Page controls for a fixed board.
+  Widget _pager(BuildContext context, AppLocalizations l10n, int pageCount) {
+    final page = _page.clamp(0, pageCount - 1);
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.sm),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(
+            key: const ValueKey('aac-page-back'),
+            onPressed: page == 0 ? null : () => setState(() => _page = page - 1),
+            icon: const Icon(Icons.chevron_left),
+          ),
+          Text(l10n.gridPageOf(page + 1, pageCount)),
+          IconButton(
+            key: const ValueKey('aac-page-next'),
+            onPressed: page >= pageCount - 1
+                ? null
+                : () => setState(() => _page = page + 1),
+            icon: const Icon(Icons.chevron_right),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Suggested next words.
+  ///
+  /// Fixed height whether or not there are suggestions, so the grid beneath
+  /// never shifts. A board that moves under a child's hand is worse than no
+  /// suggestions at all.
+  Widget _predictionRow(
+    BuildContext context,
+    AppLocalizations l10n,
+    List<AacCard> deck,
+  ) {
+    final suggestions = _predictor.suggest(
+      strip: _strip,
+      deck: deck,
+      history: [..._durableUsage, ..._usage],
+    );
+    return SizedBox(
+      height: 56,
+      child: ListView(
+        key: const ValueKey('aac-predictions'),
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+        children: [
+          for (final card in suggestions)
+            Padding(
+              padding: const EdgeInsetsDirectional.only(end: AppSpacing.xs),
+              child: Center(
+                child: ActionChip(
+                  key: ValueKey('aac-predict-${card.id}'),
+                  avatar: Icon(
+                    card.icon,
+                    size: 18,
+                    color: wordClassColor(context, card),
+                  ),
+                  label: Text(
+                    _language == AppLanguage.ur
+                        ? card.grammar.labelUr
+                        : card.grammar.labelEn,
+                  ),
+                  onPressed: () => _addCard(card.grammar),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 
   void _speakSentence() {

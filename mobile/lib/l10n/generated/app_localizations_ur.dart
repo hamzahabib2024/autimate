@@ -1142,4 +1142,199 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get backupTileSubtitle => 'سب کچھ محفوظ یا بحال کریں';
+
+  @override
+  String get predictionLabel => 'الفاظ کی تجاویز';
+
+  @override
+  String get predictionSubtitle =>
+      'بورڈ کے اوپر چند ممکنہ اگلے الفاظ دکھاتی ہے۔ پڑھنے والے بچے کے لیے مددگار، نہ پڑھنے والے کے لیے توجہ ہٹانے والی ہو سکتی ہے۔';
+
+  @override
+  String get predictionSuggestions => 'اگلا لفظ';
+
+  @override
+  String get phraseBankTitle => 'محفوظ جملے';
+
+  @override
+  String get phraseBankSubtitle =>
+      'پورے جملے ایک چھونے پر۔ چھونے سے کارڈ پٹی میں آ جاتے ہیں تاکہ جملہ اپنے حصوں سے ہی بنے۔';
+
+  @override
+  String get phraseBankEmpty =>
+      'ابھی کوئی محفوظ جملہ نہیں۔ جملہ بنائیں، پھر محفوظ کریں۔';
+
+  @override
+  String get phraseBankSave => 'یہ جملہ محفوظ کریں';
+
+  @override
+  String get phraseBankDelete => 'جملہ ہٹائیں';
+
+  @override
+  String get phraseBankSpeakNow => 'فوراً بولیں';
+
+  @override
+  String get phraseBankSpeakNowHint =>
+      'جملہ بنانے کا مرحلہ چھوڑ دیتا ہے۔ صرف وہاں استعمال کریں جہاں رفتار واقعی اہم ہو۔';
+
+  @override
+  String get phraseBankUrgent => 'جلدی میں درکار';
+
+  @override
+  String get phraseBankUrgentHint =>
+      'پہلے آتا ہے، اور ہوم اسکرین پر آ سکتا ہے۔';
+
+  @override
+  String get phraseBankFull =>
+      'جملوں کی فہرست بھری ہوئی ہے۔ ایک ہٹا کر دوسرا شامل کریں۔';
+
+  @override
+  String get phraseBankCaution =>
+      'محفوظ جملے شارٹ کٹ ہیں، متبادل نہیں۔ جملہ بنانا ہی اصل مہارت ہے، اس لیے یہ فہرست مختصر رکھیں۔';
+
+  @override
+  String get gridShapeLabel => 'بورڈ کی ترتیب';
+
+  @override
+  String get gridShapeSubtitle =>
+      'اسکرین پر کم کارڈ کا مطلب بڑے نشانے اور کم دیکھنا۔';
+
+  @override
+  String get gridShapeFlowing => 'جتنے سما سکیں';
+
+  @override
+  String get gridShapeTwoByTwo => '۴ کارڈ';
+
+  @override
+  String get gridShapeThreeByTwo => '۶ کارڈ';
+
+  @override
+  String get gridShapeThreeByThree => '۹ کارڈ';
+
+  @override
+  String get gridShapeFourByThree => '۱۲ کارڈ';
+
+  @override
+  String get gridShapeFiveByFour => '۲۰ کارڈ';
+
+  @override
+  String get gridShapeSixByEight => '۴۸ کارڈ';
+
+  @override
+  String get gridShapeNote =>
+      'مقررہ ترتیب ہر لفظ کو ایک ہی جگہ رکھنے کی بنیاد ہے۔ زمرہ فلٹر ابھی کارڈ ہلاتا ہے، اس لیے یہ پوری طرح درست نہیں۔';
+
+  @override
+  String gridPageOf(int page, int total) {
+    return 'صفحہ $page از $total';
+  }
+
+  @override
+  String get printBoardTitle => 'بورڈ پرنٹ کریں';
+
+  @override
+  String get printBoardSubtitle =>
+      'وہی ترتیب اور رنگ کاغذ پر۔ جب آلہ بند ہو، اسکول میں ہو، یا چارج ہو رہا ہو تو کام آتا ہے۔';
+
+  @override
+  String get printBoardAction => 'PDF بنائیں';
+
+  @override
+  String get printBoardWorking => 'PDF بن رہا ہے…';
+
+  @override
+  String get printBoardFailed => 'PDF نہیں بن سکا۔';
+
+  @override
+  String get breathingPatternLabel => 'سانس کا انداز';
+
+  @override
+  String get breathingPatternGentle => 'نرم';
+
+  @override
+  String get breathingPatternBox => 'مربع (۴-۴-۴-۴)';
+
+  @override
+  String get breathingPatternFourSevenEight => '۴-۷-۸';
+
+  @override
+  String get breathingPatternNote =>
+      'سانس اندر لینے سے زیادہ لمبا باہر چھوڑنا ہی سکون دیتا ہے۔ یہ سکون کی مشقیں ہیں، علاج نہیں۔';
+
+  @override
+  String get breathPhaseInhale => 'سانس اندر';
+
+  @override
+  String get breathPhaseHoldIn => 'روکیں';
+
+  @override
+  String get breathPhaseExhale => 'سانس باہر';
+
+  @override
+  String get breathPhaseHoldOut => 'آرام';
+
+  @override
+  String get intensityTitle => 'یہ کتنا شدید ہے؟';
+
+  @override
+  String get intensitySubtitle => 'منتخب کریں کہ ابھی احساس کتنا بڑا ہے۔';
+
+  @override
+  String get intensityALittle => 'تھوڑا';
+
+  @override
+  String get intensitySomeWhat => 'کچھ';
+
+  @override
+  String get intensityQuite => 'کافی';
+
+  @override
+  String get intensityVery => 'بہت';
+
+  @override
+  String get intensityTooMuch => 'بہت زیادہ';
+
+  @override
+  String get intensitySupportBreathing => 'کیا آہستہ سانس لینا مدد دے گا؟';
+
+  @override
+  String get intensitySupportTellSomeone => 'کیا آپ کسی کو بتانا چاہیں گے؟';
+
+  @override
+  String get intensityNotNow => 'ابھی نہیں';
+
+  @override
+  String get intensityCaution =>
+      'یہ بچے کی اپنی بات ہے، کوئی پیمائش نہیں۔ اسے جمع یا وقت کے ساتھ ٹریک نہیں کیا جاتا۔';
+
+  @override
+  String get achievementsTitle => 'آپ کہاں تک پہنچے';
+
+  @override
+  String get achievementsSubtitle =>
+      'پہلی بار اور سنگِ میل، اسی سے جو واقعی ریکارڈ ہوا۔';
+
+  @override
+  String get achievementsEmpty => 'چند سرگرمیوں کے بعد سنگِ میل یہاں آئیں گے۔';
+
+  @override
+  String get achievementFirstSession => 'پہلی مشترکہ سرگرمی';
+
+  @override
+  String achievementFirstActivity(String type) {
+    return 'پہلی $type سرگرمی';
+  }
+
+  @override
+  String get achievementBadge => 'سنگِ میل حاصل';
+
+  @override
+  String achievementStreak(int days) {
+    return 'بہترین سلسلہ: $days دن';
+  }
+
+  @override
+  String achievementSessions(int count) {
+    return '$count سرگرمیاں مکمل';
+  }
 }

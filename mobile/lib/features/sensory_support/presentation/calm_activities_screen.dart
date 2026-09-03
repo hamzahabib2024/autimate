@@ -8,6 +8,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../domain/ambient_sound.dart';
+import '../domain/breathing_pattern.dart';
 
 /// Guided breathing: a slow pace circle expanding on the inhale, holding,
 /// then contracting on the exhale. No haptics anywhere. Sensory mode slows
@@ -31,10 +32,16 @@ class _BreathingScreenState extends State<BreathingScreen>
 
   static const double _minScale = 0.6;
 
-  Duration get _cycleDuration =>
-      widget.appState.sensoryMode
-          ? const Duration(seconds: 16)
-          : const Duration(seconds: 12);
+  /// The chosen rhythm, slowed in sensory mode.
+  ///
+  /// Scaling rather than swapping matters: the inhale-to-exhale ratio *is*
+  /// the pattern, and a calmer version that flattened it would be a
+  /// different exercise wearing the same name.
+  BreathingPattern get _pattern => widget.appState.sensoryMode
+      ? widget.appState.breathingPattern.scaled(1.35)
+      : widget.appState.breathingPattern;
+
+  Duration get _cycleDuration => _pattern.cycle;
 
   @override
   void initState() {
@@ -66,20 +73,72 @@ class _BreathingScreenState extends State<BreathingScreen>
     double value,
     AppLocalizations l10n,
   ) {
-    if (value < 1 / 3) {
-      final t = Curves.easeInOut.transform(value * 3);
-      return (
-        label: l10n.breatheIn,
-        scale: _minScale + (1 - _minScale) * t,
-      );
-    }
-    if (value < 2 / 3) {
-      return (label: l10n.breatheHold, scale: 1.0);
-    }
-    final t = Curves.easeInOut.transform((value - 2 / 3) * 3);
+    final pattern = _pattern;
+    final phase = pattern.phaseAt(
+      Duration(
+        milliseconds: (value * pattern.cycle.inMilliseconds).round(),
+      ),
+    );
+    final eased = phase.isHold
+        // A held phase keeps the circle still. A circle that drifts during
+        // a hold teaches the wrong timing.
+        ? phase.openness
+        : Curves.easeInOut.transform(phase.openness.clamp(0.0, 1.0));
     return (
-      label: l10n.breatheOut,
-      scale: 1.0 - (1 - _minScale) * t,
+      label: switch (phase.id) {
+        'inhale' => l10n.breathPhaseInhale,
+        'holdIn' => l10n.breathPhaseHoldIn,
+        'exhale' => l10n.breathPhaseExhale,
+        _ => l10n.breathPhaseHoldOut,
+      },
+      scale: _minScale + (1 - _minScale) * eased,
+    );
+  }
+
+  static String patternLabel(AppLocalizations l10n, BreathingPattern pattern) =>
+      switch (pattern.id) {
+        'box' => l10n.breathingPatternBox,
+        'fourSevenEight' => l10n.breathingPatternFourSevenEight,
+        _ => l10n.breathingPatternGentle,
+      };
+
+  /// Pattern picker. Changing rhythm mid-session restarts the count, since
+  /// a cycle half-finished in one pattern is not a cycle in another.
+  Widget _patternPicker(BuildContext context, AppLocalizations l10n) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          l10n.breathingPatternLabel,
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
+        const SizedBox(height: 6),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (final pattern in BreathingPattern.all)
+              ChoiceChip(
+                key: ValueKey('breathing-pattern-${pattern.id}'),
+                label: Text(patternLabel(l10n, pattern)),
+                selected: widget.appState.breathingPattern.id == pattern.id,
+                onSelected: (_) {
+                  widget.appState.setBreathingPattern(pattern);
+                  setState(() {
+                    _elapsed = Duration.zero;
+                    _cyclesCompleted = 0;
+                  });
+                },
+              ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        Text(
+          l10n.breathingPatternNote,
+          key: const ValueKey('breathing-note'),
+          style: Theme.of(context).textTheme.labelSmall,
+        ),
+      ],
     );
   }
 
@@ -154,6 +213,10 @@ class _BreathingScreenState extends State<BreathingScreen>
                   },
                 ),
               ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 8, 24, 0),
+              child: _patternPicker(context, l10n),
             ),
             Padding(
               padding: const EdgeInsets.all(24),

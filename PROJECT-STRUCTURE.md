@@ -143,6 +143,8 @@ The project adds a dependency only when nothing already present can do the job, 
 | `record` | Captures a caregiver's own voice for an AAC card. A real voice beats synthesis and sidesteps poor Urdu TTS on low-end devices — which is a live risk for the intended users. Only behind `VoiceRecordingService`. |
 | `file_picker` | Opens the document picker so a caregiver can import a backup. Losing a device otherwise means a child losing their vocabulary. |
 | `share_plus` | Hands the exported backup to whatever the caregiver already uses — email, Drive, a cable — rather than inventing a transfer mechanism to maintain. |
+| `pdf`, `printing` | Builds the paper fallback for the AAC board. A device dies; a laminated sheet does not, and teachers ask for this constantly. |
+| `home_widget` | The only route to an Android app widget from Flutter. Speed matters when a request is urgent and the app is three taps away. |
 | `audioplayers` | Plays the bundled calming loops, and caregiver recordings. Nothing else in the set reaches the platform audio output, and the gentle-sound option was a silent no-op without it. Used only behind `AmbientSoundService`. |
 | `firebase_core`, `firebase_auth`, `cloud_firestore` | Module 11. All three sit behind the existing repository interfaces and are constructed **only** when credentials are present, so the app stays fully runnable without them. |
 
@@ -204,6 +206,57 @@ not be a route around the parent lock — and references media by path rather
 than embedding it, reporting the count up front so cards do not silently come
 back without their photos. Import defaults to merge; replace is confirmed
 separately.
+
+### Word prediction and the phrase bank
+
+Both carry a real AAC objection, and both are shaped around it rather than
+past it.
+
+**Prediction** helps a reader and hurts a symbol-only user, who is the
+primary audience — a shifting row of suggestions is a moving target that
+breaks motor memory. So it is off by default, and the row is fixed-height so
+the grid beneath it never moves. Ordering is grammar first, frequency second:
+a word that *fits* beats a word that is merely common, because offering
+"I feel milk" would teach the wrong thing.
+
+**A phrase bank can discourage generative language** — if "I want juice" is
+one button, the child never builds it, and building it is the skill. Three
+answers: a phrase stores its component card ids and *loads them into the
+strip* rather than speaking a canned line; speaking immediately is opt-in per
+phrase and off by default; and the bank is capped at twelve and never
+auto-populated, so it cannot silently grow into a second, worse board.
+
+### Grid shapes
+
+`GridShape` answers "how many cards at once", which is a different question
+from `SymbolScale`'s "how big is a symbol". A fixed shape paginates rather
+than scrolls, because scrolling a fixed board moves every word off its
+position. The caregiver screen states the honest caveat: a fixed layout is
+*groundwork* for motor planning, and the category filter still re-flows the
+grid, so the benefit is not yet real.
+
+### Emotion intensity
+
+A five-point self-report, modelled on the Feelings Scale. It is deliberately
+**never aggregated** — no average, no trend, no weekly intensity chart, since
+those are what turn a communication aid into a record of a child's emotional
+state. Only the top two levels offer support, a strong *pleasant* feeling is
+never regulated down, and sadness is offered a person rather than a
+technique. Every suggestion can be declined; one that cannot is an
+instruction.
+
+### Breathing patterns
+
+Three rhythms rather than one. The inhale-to-exhale ratio is what a pattern
+*is*, so sensory mode scales the whole pattern rather than substituting a
+flatter one. Held phases keep the circle still, because a circle that drifts
+during a hold teaches the wrong timing.
+
+### Achievements timeline
+
+Firsts and milestones only, never per-day counts: a log of every session is
+not a story, and the story is what helps on a bad week. `longestStreak`
+reports the best run ever, not only the live one.
 
 ### Deliberately not added
 

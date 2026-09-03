@@ -57,6 +57,14 @@ dependencies:
   # including the permanently-denied case that must send a caregiver to
   # settings rather than re-prompting forever.
   permission_handler: ^11.3.1
+  # Justification (printable board): builds the paper fallback for the AAC
+  # grid. A device dies; a laminated board does not. Teachers ask for this.
+  pdf: ^3.11.1
+  printing: ^5.13.4
+  # Justification (home-screen widget): the only route to an Android app
+  # widget from Flutter. Speed matters when a request is urgent and the app
+  # is three taps away.
+  home_widget: ^0.7.0
   # Justification (2.4 backup/restore): picking a backup file to import.
   # Nothing else can open the platform document picker, and a child losing
   # their vocabulary to a lost device is the case this exists for.

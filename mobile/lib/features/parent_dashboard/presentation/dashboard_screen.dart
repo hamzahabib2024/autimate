@@ -8,6 +8,7 @@ import '../../../l10n/generated/app_localizations.dart';
 import '../../progress/domain/progress_models.dart';
 import '../domain/emotion_trend.dart';
 import '../domain/weekly_progress_aggregator.dart';
+import 'achievements_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({required this.appState, super.key});
@@ -111,7 +112,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _buildBody(BuildContext context, AppLocalizations l10n) {
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.progressTitle)),
+      appBar: AppBar(
+        title: Text(l10n.progressTitle),
+        actions: [
+          IconButton(
+            key: const ValueKey('open-achievements'),
+            tooltip: l10n.achievementsTitle,
+            icon: const Icon(Icons.timeline_outlined),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) =>
+                    AchievementsScreen(appState: widget.appState),
+              ),
+            ),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton.extended(
         key: const ValueKey('observation-button'),
         onPressed: _addObservation,

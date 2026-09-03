@@ -1146,4 +1146,200 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backupTileSubtitle => 'Save or restore everything';
+
+  @override
+  String get predictionLabel => 'Word suggestions';
+
+  @override
+  String get predictionSubtitle =>
+      'Offers a few likely next words above the board. Helps a child who is reading; can be a distraction for one who is not.';
+
+  @override
+  String get predictionSuggestions => 'Next word';
+
+  @override
+  String get phraseBankTitle => 'Saved phrases';
+
+  @override
+  String get phraseBankSubtitle =>
+      'Whole sentences for one tap. Tapping loads the cards into the strip so the sentence is still built from its parts.';
+
+  @override
+  String get phraseBankEmpty =>
+      'No saved phrases yet. Build a sentence, then save it.';
+
+  @override
+  String get phraseBankSave => 'Save this sentence';
+
+  @override
+  String get phraseBankDelete => 'Remove phrase';
+
+  @override
+  String get phraseBankSpeakNow => 'Speak straight away';
+
+  @override
+  String get phraseBankSpeakNowHint =>
+      'Skips building the sentence. Use it only where speed really matters.';
+
+  @override
+  String get phraseBankUrgent => 'Needed in a hurry';
+
+  @override
+  String get phraseBankUrgentHint =>
+      'Sorts first, and can appear on the home screen.';
+
+  @override
+  String get phraseBankFull =>
+      'The phrase list is full. Remove one to add another.';
+
+  @override
+  String get phraseBankCaution =>
+      'Saved phrases are a shortcut, not a replacement. Building sentences is the skill, so keep this list short.';
+
+  @override
+  String get gridShapeLabel => 'Board layout';
+
+  @override
+  String get gridShapeSubtitle =>
+      'Fewer cards on screen means bigger targets and less to scan.';
+
+  @override
+  String get gridShapeFlowing => 'Fit as many as possible';
+
+  @override
+  String get gridShapeTwoByTwo => '4 cards';
+
+  @override
+  String get gridShapeThreeByTwo => '6 cards';
+
+  @override
+  String get gridShapeThreeByThree => '9 cards';
+
+  @override
+  String get gridShapeFourByThree => '12 cards';
+
+  @override
+  String get gridShapeFiveByFour => '20 cards';
+
+  @override
+  String get gridShapeSixByEight => '48 cards';
+
+  @override
+  String get gridShapeNote =>
+      'A fixed layout is groundwork for keeping every word in one place. The category filter still moves cards, so that is not fully true yet.';
+
+  @override
+  String gridPageOf(int page, int total) {
+    return 'Page $page of $total';
+  }
+
+  @override
+  String get printBoardTitle => 'Print the board';
+
+  @override
+  String get printBoardSubtitle =>
+      'A paper copy with the same layout and colours. Useful when the device is flat, at school, or being charged.';
+
+  @override
+  String get printBoardAction => 'Make a PDF';
+
+  @override
+  String get printBoardWorking => 'Building the PDF…';
+
+  @override
+  String get printBoardFailed => 'The PDF could not be made.';
+
+  @override
+  String get breathingPatternLabel => 'Breathing pattern';
+
+  @override
+  String get breathingPatternGentle => 'Gentle';
+
+  @override
+  String get breathingPatternBox => 'Box (4-4-4-4)';
+
+  @override
+  String get breathingPatternFourSevenEight => '4-7-8';
+
+  @override
+  String get breathingPatternNote =>
+      'A longer breath out than in is the part that calms. These are calming exercises, not treatment.';
+
+  @override
+  String get breathPhaseInhale => 'Breathe in';
+
+  @override
+  String get breathPhaseHoldIn => 'Hold';
+
+  @override
+  String get breathPhaseExhale => 'Breathe out';
+
+  @override
+  String get breathPhaseHoldOut => 'Rest';
+
+  @override
+  String get intensityTitle => 'How strong is it?';
+
+  @override
+  String get intensitySubtitle => 'Choose how big the feeling is right now.';
+
+  @override
+  String get intensityALittle => 'A little';
+
+  @override
+  String get intensitySomeWhat => 'A bit';
+
+  @override
+  String get intensityQuite => 'Quite a lot';
+
+  @override
+  String get intensityVery => 'A lot';
+
+  @override
+  String get intensityTooMuch => 'Too much';
+
+  @override
+  String get intensitySupportBreathing => 'Would some slow breathing help?';
+
+  @override
+  String get intensitySupportTellSomeone => 'Would you like to tell someone?';
+
+  @override
+  String get intensityNotNow => 'Not now';
+
+  @override
+  String get intensityCaution =>
+      'This is what the child said, not a measurement. It is not added up or tracked over time.';
+
+  @override
+  String get achievementsTitle => 'How far you have come';
+
+  @override
+  String get achievementsSubtitle =>
+      'Firsts and milestones, taken from what was actually recorded.';
+
+  @override
+  String get achievementsEmpty =>
+      'Milestones will appear here after a few activities.';
+
+  @override
+  String get achievementFirstSession => 'First activity together';
+
+  @override
+  String achievementFirstActivity(String type) {
+    return 'First $type activity';
+  }
+
+  @override
+  String get achievementBadge => 'Milestone reached';
+
+  @override
+  String achievementStreak(int days) {
+    return 'Best run: $days days';
+  }
+
+  @override
+  String achievementSessions(int count) {
+    return '$count activities completed';
+  }
 }

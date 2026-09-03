@@ -21,7 +21,9 @@ import '../../features/ai/data/simulated_expression_service.dart';
 import '../../features/ai/domain/ai_contracts.dart';
 import '../../features/authentication/data/firebase_auth_repository.dart';
 import '../../features/communication/data/image_source_service.dart';
+import '../../features/communication/data/quick_phrase_widget_service.dart';
 import '../../features/communication/data/voice_recording_service.dart';
+import '../../features/communication/domain/phrase_bank.dart';
 import '../../features/sensory_support/data/platform_ambient_sound_service.dart';
 import '../../features/communication/domain/custom_card_repository.dart';
 import '../../features/progress/domain/progress_models.dart';
@@ -196,6 +198,18 @@ final backupServiceProvider = Provider<BackupService>(
   ),
 );
 
+/// Saved whole sentences, per child.
+final phraseBankRepositoryProvider = Provider<PhraseBankRepository>(
+  (ref) => LocalPhraseBankRepository(ref.watch(keyValueStoreProvider)),
+);
+
+/// Publishes urgent phrases to the home-screen widget. The native side is
+/// written but has never run on a device.
+final quickPhraseWidgetServiceProvider =
+    Provider<QuickPhraseWidgetService>(
+  (ref) => const QuickPhraseWidgetService(),
+);
+
 /// Connectivity boundary. A verified connectivity_plus adapter replaces
 /// the static implementation on device.
 final connectivityServiceProvider = Provider<ConnectivityService>(
@@ -210,6 +224,7 @@ final appStateProvider = ChangeNotifierProvider<AppState>((ref) {
     progressRepository: ref.watch(progressRepositoryProvider),
     routineRepository: ref.watch(routineRepositoryProvider),
     customCardRepository: ref.watch(customCardRepositoryProvider),
+    phraseBankRepository: ref.watch(phraseBankRepositoryProvider),
     ambientSoundService: ref.watch(ambientSoundServiceProvider),
     settingsStore: ref.watch(keyValueStoreProvider),
     connectivityService: ref.watch(connectivityServiceProvider),
