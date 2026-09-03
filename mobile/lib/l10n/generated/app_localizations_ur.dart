@@ -903,4 +903,463 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get symbolSizeLargest => 'سب سے بڑا';
+
+  @override
+  String get literacyTitle => 'پڑھنے کی معاونت';
+
+  @override
+  String get literacySubtitle =>
+      'پڑھائی بڑھنے کے ساتھ لکھا ہوا لفظ نمایاں کرتی ہے۔ ایک وقت میں ایک قدم بڑھائیں، اور اگر بورڈ مشکل لگے تو واپس آ جائیں۔';
+
+  @override
+  String get literacyOff => 'صرف علامتیں';
+
+  @override
+  String get literacyFlash => 'چھونے پر لفظ دکھائیں';
+
+  @override
+  String get literacyEmphasis => 'بڑے الفاظ';
+
+  @override
+  String get literacyFading => 'الفاظ نمایاں';
+
+  @override
+  String get literacyTextOnly => 'صرف الفاظ';
+
+  @override
+  String get literacyCaution =>
+      'ہر بچہ مختلف ہے۔ اگر بورڈ استعمال کرنا مشکل ہو جائے تو ایک درجہ واپس آ جائیں — یہ پیچھے ہٹنا نہیں ہے۔';
+
+  @override
+  String literacyCurrent(String level) {
+    return 'ابھی: $level';
+  }
+
+  @override
+  String get waitingTitle => 'انتظار';
+
+  @override
+  String get waitingSubtitle =>
+      'ہم انتظار کر رہے ہیں۔ دیکھیں دائرہ چھوٹا ہو رہا ہے۔';
+
+  @override
+  String get waitingDone => 'انتظار ختم ہو گیا۔';
+
+  @override
+  String get waitingMinutesLeft => 'باقی';
+
+  @override
+  String get waitingStart => 'انتظار شروع کریں';
+
+  @override
+  String get waitingPause => 'روکیں';
+
+  @override
+  String get waitingReset => 'دوبارہ شروع';
+
+  @override
+  String get waitingOneMore => 'ایک منٹ اور';
+
+  @override
+  String get waitingHowLong => 'کتنی دیر؟';
+
+  @override
+  String waitingMinutes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count منٹ',
+      one: '۱ منٹ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get waitingStyleTitle => 'ٹائمر کیسے چلے';
+
+  @override
+  String get waitingStyleSubtitle =>
+      'کچھ بچے چلتا دائرہ غور سے دیکھتے ہیں۔ کچھ کے لیے مرحلہ وار یا بغیر حرکت کے آسان ہوتا ہے۔';
+
+  @override
+  String get waitingStyleSmooth => 'ہموار';
+
+  @override
+  String get waitingStyleStepped => 'مرحلہ وار';
+
+  @override
+  String get waitingStyleStill => 'صرف اعداد';
+
+  @override
+  String get waitingTileTitle => 'انتظار';
+
+  @override
+  String get waitingTileSubtitle => 'مشکل انتظار کے لیے ٹائمر';
+
+  @override
+  String get cardVoiceLabel => 'آپ کی آواز';
+
+  @override
+  String get cardVoiceSubtitle =>
+      'یہ لفظ خود بول کر ریکارڈ کریں۔ آپ کی اپنی آواز اکثر آلے کی آواز سے زیادہ واضح اور دلچسپ ہوتی ہے۔';
+
+  @override
+  String get cardVoiceConsent =>
+      'اپنی آواز ریکارڈ کریں، بچے کی نہیں۔ کارڈ وہ بات ہے جو بچہ کہے گا، اس لیے پہلے بڑے کی آواز سننا مددگار ہے۔';
+
+  @override
+  String get cardVoiceRecord => 'ریکارڈ کریں';
+
+  @override
+  String get cardVoiceStop => 'روکیں';
+
+  @override
+  String get cardVoicePlay => 'چلائیں';
+
+  @override
+  String get cardVoiceDelete => 'ریکارڈنگ ہٹائیں';
+
+  @override
+  String get cardVoiceRecording => 'ریکارڈ ہو رہا ہے…';
+
+  @override
+  String get cardVoiceSaved => 'ریکارڈنگ محفوظ ہو گئی';
+
+  @override
+  String get cardVoiceUnavailable =>
+      'یہ آلہ ریکارڈ نہیں کر سکتا۔ کارڈ آلے کی آواز استعمال کرے گا۔';
+
+  @override
+  String get cardVoiceDenied =>
+      'ریکارڈ کرنے کے لیے مائیکروفون کی اجازت درکار ہے۔ آپ ترتیبات میں اجازت دے سکتے ہیں۔';
+
+  @override
+  String get backupTitle => 'بیک اپ اور منتقلی';
+
+  @override
+  String get backupSubtitle =>
+      'سب کچھ ایک فائل میں محفوظ کریں، یا دوسرے آلے پر واپس لائیں۔ انٹرنیٹ یا اکاؤنٹ کے بغیر کام کرتا ہے۔';
+
+  @override
+  String get backupExportTitle => 'بیک اپ محفوظ کریں';
+
+  @override
+  String get backupExportSubtitle =>
+      'بچے، کارڈ، معمولات اور پیش رفت۔ تصاویر اور ریکارڈنگ اسی آلے پر رہتی ہیں۔';
+
+  @override
+  String get backupExportAction => 'محفوظ کر کے بھیجیں';
+
+  @override
+  String get backupImportTitle => 'فائل سے بحال کریں';
+
+  @override
+  String get backupImportSubtitle =>
+      'پہلے محفوظ کی گئی بیک اپ فائل منتخب کریں۔';
+
+  @override
+  String get backupImportAction => 'فائل منتخب کریں';
+
+  @override
+  String backupExported(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count بچوں کا بیک اپ محفوظ ہو گیا',
+      one: '۱ بچے کا بیک اپ محفوظ ہو گیا',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String backupImported(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count بچے بحال ہو گئے',
+      one: '۱ بچہ بحال ہو گیا',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get backupFailed => 'یہ کام نہیں ہوا۔ اس آلے پر کچھ تبدیل نہیں ہوا۔';
+
+  @override
+  String get backupErrorNotJson =>
+      'یہ فائل بیک اپ نہیں ہے۔ .json پر ختم ہونے والی فائل تلاش کریں۔';
+
+  @override
+  String get backupErrorNotOurs =>
+      'یہ ایک فائل تو ہے، مگر AutiMate کا بیک اپ نہیں۔';
+
+  @override
+  String get backupErrorTooNew =>
+      'یہ بیک اپ AutiMate کے نئے ورژن سے بنا ہے۔ پہلے ایپ اپ ڈیٹ کریں۔';
+
+  @override
+  String get backupErrorUnreadable => 'فائل کھولی نہیں جا سکی۔';
+
+  @override
+  String get backupConfirmTitle => 'یہ بیک اپ بحال کریں؟';
+
+  @override
+  String backupConfirmContents(String names, int cards, int sessions) {
+    return 'بچے: $names۔ $cards کارڈ، $sessions محفوظ سرگرمیاں۔';
+  }
+
+  @override
+  String backupMediaNote(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count تصاویر اور ریکارڈنگ اس فائل میں نہیں ہیں اور واپس نہیں آئیں گی۔',
+      one: '۱ تصویر یا ریکارڈنگ اس فائل میں نہیں ہے اور واپس نہیں آئے گی۔',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get backupModeMerge => 'موجودہ کے ساتھ شامل کریں';
+
+  @override
+  String get backupModeMergeHint => 'اس آلے پر موجود کچھ بھی نہیں ہٹے گا۔';
+
+  @override
+  String get backupModeReplace => 'سب کچھ بدل دیں';
+
+  @override
+  String get backupModeReplaceHint =>
+      'اس آلے پر موجود بچے اور کارڈ ہٹا دیتا ہے۔';
+
+  @override
+  String get backupPrivacyWarning =>
+      'بیک اپ فائل میں آپ کے بچے کا نام، کارڈ اور سرگرمی کی تاریخ سادہ متن میں ہوتی ہے۔ اسے نجی جگہ رکھیں، اور ضرورت نہ رہنے پر حذف کر دیں۔';
+
+  @override
+  String get backupTileTitle => 'بیک اپ اور منتقلی';
+
+  @override
+  String get backupTileSubtitle => 'سب کچھ محفوظ یا بحال کریں';
+
+  @override
+  String get predictionLabel => 'الفاظ کی تجاویز';
+
+  @override
+  String get predictionSubtitle =>
+      'بورڈ کے اوپر چند ممکنہ اگلے الفاظ دکھاتی ہے۔ پڑھنے والے بچے کے لیے مددگار، نہ پڑھنے والے کے لیے توجہ ہٹانے والی ہو سکتی ہے۔';
+
+  @override
+  String get predictionSuggestions => 'اگلا لفظ';
+
+  @override
+  String get phraseBankTitle => 'محفوظ جملے';
+
+  @override
+  String get phraseBankSubtitle =>
+      'پورے جملے ایک چھونے پر۔ چھونے سے کارڈ پٹی میں آ جاتے ہیں تاکہ جملہ اپنے حصوں سے ہی بنے۔';
+
+  @override
+  String get phraseBankEmpty =>
+      'ابھی کوئی محفوظ جملہ نہیں۔ جملہ بنائیں، پھر محفوظ کریں۔';
+
+  @override
+  String get phraseBankSave => 'یہ جملہ محفوظ کریں';
+
+  @override
+  String get phraseBankDelete => 'جملہ ہٹائیں';
+
+  @override
+  String get phraseBankSpeakNow => 'فوراً بولیں';
+
+  @override
+  String get phraseBankSpeakNowHint =>
+      'جملہ بنانے کا مرحلہ چھوڑ دیتا ہے۔ صرف وہاں استعمال کریں جہاں رفتار واقعی اہم ہو۔';
+
+  @override
+  String get phraseBankUrgent => 'جلدی میں درکار';
+
+  @override
+  String get phraseBankUrgentHint =>
+      'پہلے آتا ہے، اور ہوم اسکرین پر آ سکتا ہے۔';
+
+  @override
+  String get phraseBankFull =>
+      'جملوں کی فہرست بھری ہوئی ہے۔ ایک ہٹا کر دوسرا شامل کریں۔';
+
+  @override
+  String get phraseBankCaution =>
+      'محفوظ جملے شارٹ کٹ ہیں، متبادل نہیں۔ جملہ بنانا ہی اصل مہارت ہے، اس لیے یہ فہرست مختصر رکھیں۔';
+
+  @override
+  String get gridShapeLabel => 'بورڈ کی ترتیب';
+
+  @override
+  String get gridShapeSubtitle =>
+      'اسکرین پر کم کارڈ کا مطلب بڑے نشانے اور کم دیکھنا۔';
+
+  @override
+  String get gridShapeFlowing => 'جتنے سما سکیں';
+
+  @override
+  String get gridShapeTwoByTwo => '۴ کارڈ';
+
+  @override
+  String get gridShapeThreeByTwo => '۶ کارڈ';
+
+  @override
+  String get gridShapeThreeByThree => '۹ کارڈ';
+
+  @override
+  String get gridShapeFourByThree => '۱۲ کارڈ';
+
+  @override
+  String get gridShapeFiveByFour => '۲۰ کارڈ';
+
+  @override
+  String get gridShapeSixByEight => '۴۸ کارڈ';
+
+  @override
+  String get gridShapeNote =>
+      'مقررہ ترتیب ہر لفظ کو ایک ہی جگہ رکھنے کی بنیاد ہے۔ زمرہ فلٹر ابھی کارڈ ہلاتا ہے، اس لیے یہ پوری طرح درست نہیں۔';
+
+  @override
+  String gridPageOf(int page, int total) {
+    return 'صفحہ $page از $total';
+  }
+
+  @override
+  String get printBoardTitle => 'بورڈ پرنٹ کریں';
+
+  @override
+  String get printBoardSubtitle =>
+      'وہی ترتیب اور رنگ کاغذ پر۔ جب آلہ بند ہو، اسکول میں ہو، یا چارج ہو رہا ہو تو کام آتا ہے۔';
+
+  @override
+  String get printBoardAction => 'PDF بنائیں';
+
+  @override
+  String get printBoardWorking => 'PDF بن رہا ہے…';
+
+  @override
+  String get printBoardFailed => 'PDF نہیں بن سکا۔';
+
+  @override
+  String get breathingPatternLabel => 'سانس کا انداز';
+
+  @override
+  String get breathingPatternGentle => 'نرم';
+
+  @override
+  String get breathingPatternBox => 'مربع (۴-۴-۴-۴)';
+
+  @override
+  String get breathingPatternFourSevenEight => '۴-۷-۸';
+
+  @override
+  String get breathingPatternNote =>
+      'سانس اندر لینے سے زیادہ لمبا باہر چھوڑنا ہی سکون دیتا ہے۔ یہ سکون کی مشقیں ہیں، علاج نہیں۔';
+
+  @override
+  String get breathPhaseInhale => 'سانس اندر';
+
+  @override
+  String get breathPhaseHoldIn => 'روکیں';
+
+  @override
+  String get breathPhaseExhale => 'سانس باہر';
+
+  @override
+  String get breathPhaseHoldOut => 'آرام';
+
+  @override
+  String get intensityTitle => 'یہ کتنا شدید ہے؟';
+
+  @override
+  String get intensitySubtitle => 'منتخب کریں کہ ابھی احساس کتنا بڑا ہے۔';
+
+  @override
+  String get intensityALittle => 'تھوڑا';
+
+  @override
+  String get intensitySomeWhat => 'کچھ';
+
+  @override
+  String get intensityQuite => 'کافی';
+
+  @override
+  String get intensityVery => 'بہت';
+
+  @override
+  String get intensityTooMuch => 'بہت زیادہ';
+
+  @override
+  String get intensitySupportBreathing => 'کیا آہستہ سانس لینا مدد دے گا؟';
+
+  @override
+  String get intensitySupportTellSomeone => 'کیا آپ کسی کو بتانا چاہیں گے؟';
+
+  @override
+  String get intensityNotNow => 'ابھی نہیں';
+
+  @override
+  String get intensityCaution =>
+      'یہ بچے کی اپنی بات ہے، کوئی پیمائش نہیں۔ اسے جمع یا وقت کے ساتھ ٹریک نہیں کیا جاتا۔';
+
+  @override
+  String get achievementsTitle => 'آپ کہاں تک پہنچے';
+
+  @override
+  String get achievementsSubtitle =>
+      'پہلی بار اور سنگِ میل، اسی سے جو واقعی ریکارڈ ہوا۔';
+
+  @override
+  String get achievementsEmpty => 'چند سرگرمیوں کے بعد سنگِ میل یہاں آئیں گے۔';
+
+  @override
+  String get achievementFirstSession => 'پہلی مشترکہ سرگرمی';
+
+  @override
+  String achievementFirstActivity(String type) {
+    return 'پہلی $type سرگرمی';
+  }
+
+  @override
+  String get achievementBadge => 'سنگِ میل حاصل';
+
+  @override
+  String achievementStreak(int days) {
+    return 'بہترین سلسلہ: $days دن';
+  }
+
+  @override
+  String achievementSessions(int count) {
+    return '$count سرگرمیاں مکمل';
+  }
+
+  @override
+  String get legendTitle => 'رنگوں کا مطلب';
+
+  @override
+  String get legendCarrier => 'شروعاتی';
+
+  @override
+  String get legendPeople => 'لوگ';
+
+  @override
+  String get legendVerb => 'کام کے الفاظ';
+
+  @override
+  String get legendDescriptor => 'وضاحت کے الفاظ';
+
+  @override
+  String get legendNoun => 'چیزیں';
+
+  @override
+  String get legendNeed => 'ضروریات';
+
+  @override
+  String get legendHint =>
+      'رنگ الفاظ کو جملے میں ان کے کام کے مطابق گروپ کرتے ہیں۔';
 }

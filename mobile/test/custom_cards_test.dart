@@ -50,10 +50,23 @@ CustomCard _card({
   imagePath: imagePath,
 );
 
-/// Scrolls the custom-card editor form to reveal its lower controls.
+/// Scrolls the custom-card editor until the save button exists.
+///
+/// A fixed drag distance was brittle — the form grows as the feature does,
+/// and the voice-recording section pushed the button past it. Dragging until
+/// the widget is actually built survives the next section too.
 Future<void> _scrollEditorToBottom(WidgetTester tester) async {
-  await tester.drag(find.byType(ListView).last, const Offset(0, -600));
-  await tester.pumpAndSettle();
+  final save = find.byKey(const ValueKey('save-custom-card'));
+  for (var attempt = 0; attempt < 12; attempt++) {
+    if (save.evaluate().isNotEmpty) {
+      await tester.ensureVisible(save);
+      await tester.pumpAndSettle();
+      return;
+    }
+    await tester.drag(find.byType(ListView).first, const Offset(0, -300));
+    await tester.pumpAndSettle();
+  }
+  fail('save-custom-card never came into view');
 }
 
 void main() {

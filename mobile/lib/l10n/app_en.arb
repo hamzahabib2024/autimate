@@ -450,5 +450,212 @@
   "symbolSizeSubtitle": "Bigger cards mean fewer on screen, which is often easier.",
   "symbolSizeComfortable": "Comfortable",
   "symbolSizeLarge": "Large",
-  "symbolSizeLargest": "Largest"
+  "symbolSizeLargest": "Largest",
+  "literacyTitle": "Reading support",
+  "literacySubtitle": "Brings the written word forward as reading grows. Move one step at a time, and step back if the board gets harder.",
+  "literacyOff": "Symbols only",
+  "literacyFlash": "Show the word on tap",
+  "literacyEmphasis": "Bigger words",
+  "literacyFading": "Words lead",
+  "literacyTextOnly": "Words only",
+  "literacyCaution": "Every child is different. If the board becomes harder to use, step back a level — that is not a setback.",
+  "literacyCurrent": "Now: {level}",
+  "@literacyCurrent": {
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "waitingTitle": "Waiting",
+  "waitingSubtitle": "We are waiting. Watch the ring get smaller.",
+  "waitingDone": "The waiting is finished.",
+  "waitingMinutesLeft": "left",
+  "waitingStart": "Start waiting",
+  "waitingPause": "Pause",
+  "waitingReset": "Start over",
+  "waitingOneMore": "One more minute",
+  "waitingHowLong": "How long?",
+  "waitingMinutes": "{count, plural, =1{1 minute} other{{count} minutes}}",
+  "@waitingMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "waitingStyleTitle": "How the timer moves",
+  "waitingStyleSubtitle": "Some children watch a moving ring closely. Others find it easier when it changes in steps, or not at all.",
+  "waitingStyleSmooth": "Smooth",
+  "waitingStyleStepped": "In steps",
+  "waitingStyleStill": "Numbers only",
+  "waitingTileTitle": "Waiting",
+  "waitingTileSubtitle": "A timer for hard waits",
+  "cardVoiceLabel": "Your voice",
+  "cardVoiceSubtitle": "Record yourself saying this word. Your own voice is often clearer and more motivating than the device voice.",
+  "cardVoiceConsent": "Record your own voice, not the child's. The card is something they will say, so it helps to hear an adult say it first.",
+  "cardVoiceRecord": "Record",
+  "cardVoiceStop": "Stop",
+  "cardVoicePlay": "Play",
+  "cardVoiceDelete": "Remove recording",
+  "cardVoiceRecording": "Recording…",
+  "cardVoiceSaved": "Recording saved",
+  "cardVoiceUnavailable": "This device cannot record. The card will use the device voice.",
+  "cardVoiceDenied": "Microphone permission is needed to record. You can allow it in settings.",
+  "backupTitle": "Backup and transfer",
+  "backupSubtitle": "Save everything to a file, or bring it back on another device. Works with no internet and no account.",
+  "backupExportTitle": "Save a backup",
+  "backupExportSubtitle": "Children, cards, routines, and progress. Photos and recordings stay on this device.",
+  "backupExportAction": "Save and share",
+  "backupImportTitle": "Restore from a file",
+  "backupImportSubtitle": "Choose a backup file you saved before.",
+  "backupImportAction": "Choose a file",
+  "backupExported": "{count, plural, =1{Backup saved for 1 child} other{Backup saved for {count} children}}",
+  "@backupExported": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupImported": "{count, plural, =1{Restored 1 child} other{Restored {count} children}}",
+  "@backupImported": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupFailed": "That did not work. Nothing on this device was changed.",
+  "backupErrorNotJson": "That file is not a backup. Look for a file ending in .json.",
+  "backupErrorNotOurs": "That is a file, but not an AutiMate backup.",
+  "backupErrorTooNew": "That backup was made by a newer version of AutiMate. Update the app first.",
+  "backupErrorUnreadable": "The file could not be opened.",
+  "backupConfirmTitle": "Restore this backup?",
+  "backupConfirmContents": "Children: {names}. {cards} cards, {sessions} recorded activities.",
+  "@backupConfirmContents": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      },
+      "cards": {
+        "type": "int"
+      },
+      "sessions": {
+        "type": "int"
+      }
+    }
+  },
+  "backupMediaNote": "{count, plural, =1{1 photo or recording is not in this file and will not come back.} other{{count} photos and recordings are not in this file and will not come back.}}",
+  "@backupMediaNote": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupModeMerge": "Add to what is here",
+  "backupModeMergeHint": "Nothing already on this device is removed.",
+  "backupModeReplace": "Replace everything",
+  "backupModeReplaceHint": "Removes the children and cards already on this device.",
+  "backupPrivacyWarning": "A backup file holds your child's name, cards, and activity history in plain text. Keep it somewhere private, and delete it when you no longer need it.",
+  "backupTileTitle": "Backup and transfer",
+  "backupTileSubtitle": "Save or restore everything",
+  "predictionLabel": "Word suggestions",
+  "predictionSubtitle": "Offers a few likely next words above the board. Helps a child who is reading; can be a distraction for one who is not.",
+  "predictionSuggestions": "Next word",
+  "phraseBankTitle": "Saved phrases",
+  "phraseBankSubtitle": "Whole sentences for one tap. Tapping loads the cards into the strip so the sentence is still built from its parts.",
+  "phraseBankEmpty": "No saved phrases yet. Build a sentence, then save it.",
+  "phraseBankSave": "Save this sentence",
+  "phraseBankDelete": "Remove phrase",
+  "phraseBankSpeakNow": "Speak straight away",
+  "phraseBankSpeakNowHint": "Skips building the sentence. Use it only where speed really matters.",
+  "phraseBankUrgent": "Needed in a hurry",
+  "phraseBankUrgentHint": "Sorts first, and can appear on the home screen.",
+  "phraseBankFull": "The phrase list is full. Remove one to add another.",
+  "phraseBankCaution": "Saved phrases are a shortcut, not a replacement. Building sentences is the skill, so keep this list short.",
+  "gridShapeLabel": "Board layout",
+  "gridShapeSubtitle": "Fewer cards on screen means bigger targets and less to scan.",
+  "gridShapeFlowing": "Fit as many as possible",
+  "gridShapeTwoByTwo": "4 cards",
+  "gridShapeThreeByTwo": "6 cards",
+  "gridShapeThreeByThree": "9 cards",
+  "gridShapeFourByThree": "12 cards",
+  "gridShapeFiveByFour": "20 cards",
+  "gridShapeSixByEight": "48 cards",
+  "gridShapeNote": "A fixed layout is groundwork for keeping every word in one place. The category filter still moves cards, so that is not fully true yet.",
+  "gridPageOf": "Page {page} of {total}",
+  "@gridPageOf": {
+    "placeholders": {
+      "page": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "printBoardTitle": "Print the board",
+  "printBoardSubtitle": "A paper copy with the same layout and colours. Useful when the device is flat, at school, or being charged.",
+  "printBoardAction": "Make a PDF",
+  "printBoardWorking": "Building the PDF…",
+  "printBoardFailed": "The PDF could not be made.",
+  "breathingPatternLabel": "Breathing pattern",
+  "breathingPatternGentle": "Gentle",
+  "breathingPatternBox": "Box (4-4-4-4)",
+  "breathingPatternFourSevenEight": "4-7-8",
+  "breathingPatternNote": "A longer breath out than in is the part that calms. These are calming exercises, not treatment.",
+  "breathPhaseInhale": "Breathe in",
+  "breathPhaseHoldIn": "Hold",
+  "breathPhaseExhale": "Breathe out",
+  "breathPhaseHoldOut": "Rest",
+  "intensityTitle": "How strong is it?",
+  "intensitySubtitle": "Choose how big the feeling is right now.",
+  "intensityALittle": "A little",
+  "intensitySomeWhat": "A bit",
+  "intensityQuite": "Quite a lot",
+  "intensityVery": "A lot",
+  "intensityTooMuch": "Too much",
+  "intensitySupportBreathing": "Would some slow breathing help?",
+  "intensitySupportTellSomeone": "Would you like to tell someone?",
+  "intensityNotNow": "Not now",
+  "intensityCaution": "This is what the child said, not a measurement. It is not added up or tracked over time.",
+  "achievementsTitle": "How far you have come",
+  "achievementsSubtitle": "Firsts and milestones, taken from what was actually recorded.",
+  "achievementsEmpty": "Milestones will appear here after a few activities.",
+  "achievementFirstSession": "First activity together",
+  "achievementFirstActivity": "First {type} activity",
+  "@achievementFirstActivity": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "achievementBadge": "Milestone reached",
+  "achievementStreak": "Best run: {days} days",
+  "@achievementStreak": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "achievementSessions": "{count} activities completed",
+  "@achievementSessions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "legendTitle": "What the colours mean",
+  "legendCarrier": "Starters",
+  "legendPeople": "People",
+  "legendVerb": "Doing words",
+  "legendDescriptor": "Describing words",
+  "legendNoun": "Things",
+  "legendNeed": "Needs",
+  "legendHint": "Colours group words by the job they do in a sentence."
 }

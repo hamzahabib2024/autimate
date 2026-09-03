@@ -9,7 +9,10 @@ import 'core/data/firebase/firebase_bootstrap.dart';
 import 'core/providers/app_providers.dart';
 import 'core/services/app_services.dart';
 import 'core/services/tts_service.dart';
+import 'core/data/backup/backup_service.dart';
 import 'core/data/local_store.dart';
+import 'features/communication/data/image_source_service.dart';
+import 'features/communication/data/voice_recording_service.dart';
 import 'core/theme/app_theme.dart';
 import 'features/home/presentation/app_shell.dart';
 import 'features/onboarding/presentation/onboarding_screen.dart';
@@ -55,15 +58,33 @@ Future<void> main() async {
   runApp(
     UncontrolledProviderScope(
       container: container,
-      child: AutiMateApp(appState: appState),
+      child: AutiMateApp(
+        appState: appState,
+        backupService: container.read(backupServiceProvider),
+        imageSource: container.read(imageSourceServiceProvider),
+        voiceRecorder: container.read(voiceRecordingServiceProvider),
+      ),
     ),
   );
 }
 
 class AutiMateApp extends StatefulWidget {
-  const AutiMateApp({required this.appState, super.key});
+  const AutiMateApp({
+    required this.appState,
+    this.backupService,
+    this.imageSource = const UnavailableImageSourceService(),
+    this.voiceRecorder = const UnavailableVoiceRecordingService(),
+    super.key,
+  });
 
   final AppState appState;
+
+  /// Platform services, supplied by the composition root. They default to
+  /// inert implementations so a widget test can build the whole app without
+  /// a filesystem, a microphone, or a document picker.
+  final BackupService? backupService;
+  final ImageSourceService imageSource;
+  final VoiceRecordingService voiceRecorder;
 
   @override
   State<AutiMateApp> createState() => _AutiMateAppState();
@@ -100,7 +121,12 @@ class _AutiMateAppState extends State<AutiMateApp> {
                 onComplete: () => setState(() => _introDone = true),
               )
             : appState.onboarded
-            ? AppShell(appState: appState)
+            ? AppShell(
+                appState: appState,
+                backupService: widget.backupService,
+                imageSource: widget.imageSource,
+                voiceRecorder: widget.voiceRecorder,
+              )
             : OnboardingScreen(appState: appState),
       ),
     );

@@ -25,6 +25,8 @@ class CustomCard {
     this.iconCodePoint,
     this.spokenEn,
     this.spokenUr,
+    this.audioPathEn,
+    this.audioPathUr,
     this.pos = PartOfSpeech.noun,
   });
 
@@ -43,6 +45,25 @@ class CustomCard {
   /// Optional spoken form, used instead of the label when speaking.
   final String? spokenEn;
   final String? spokenUr;
+
+  /// Recorded caregiver voice, per language. When present it is played
+  /// instead of synthesising — a real voice beats TTS, and on a device with
+  /// a poor Urdu voice it is the difference between usable and not.
+  final String? audioPathEn;
+  final String? audioPathUr;
+
+  /// The clip for [language], or null to fall back to TTS.
+  String? audioFor(AppLanguage language) =>
+      language == AppLanguage.ur ? audioPathUr : audioPathEn;
+
+  bool get hasRecordedAudio =>
+      (audioPathEn?.isNotEmpty ?? false) || (audioPathUr?.isNotEmpty ?? false);
+
+  /// Every stored clip, for cleanup when the card is deleted.
+  List<String> get audioPaths => [
+    if (audioPathEn?.isNotEmpty ?? false) audioPathEn!,
+    if (audioPathUr?.isNotEmpty ?? false) audioPathUr!,
+  ];
 
   final PartOfSpeech pos;
 
@@ -86,6 +107,8 @@ class CustomCard {
     int? iconCodePoint,
     String? spokenEn,
     String? spokenUr,
+    String? audioPathEn,
+    String? audioPathUr,
   }) => CustomCard(
     id: id,
     childId: childId,
@@ -96,6 +119,8 @@ class CustomCard {
     iconCodePoint: iconCodePoint ?? this.iconCodePoint,
     spokenEn: spokenEn ?? this.spokenEn,
     spokenUr: spokenUr ?? this.spokenUr,
+    audioPathEn: audioPathEn ?? this.audioPathEn,
+    audioPathUr: audioPathUr ?? this.audioPathUr,
     pos: pos,
   );
 
@@ -109,6 +134,8 @@ class CustomCard {
     'iconCodePoint': iconCodePoint,
     'spokenEn': spokenEn,
     'spokenUr': spokenUr,
+    'audioPathEn': audioPathEn,
+    'audioPathUr': audioPathUr,
     'pos': pos.name,
   };
 
@@ -125,6 +152,8 @@ class CustomCard {
     iconCodePoint: json['iconCodePoint'] as int?,
     spokenEn: json['spokenEn'] as String?,
     spokenUr: json['spokenUr'] as String?,
+    audioPathEn: json['audioPathEn'] as String?,
+    audioPathUr: json['audioPathUr'] as String?,
     pos: PartOfSpeech.values.firstWhere(
       (value) => value.name == json['pos'],
       orElse: () => PartOfSpeech.noun,

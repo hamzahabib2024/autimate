@@ -1,5 +1,8 @@
 # AutiMate
 
+> **New to this repository?** Start with [HANDOVER.md](HANDOVER.md) — it has the
+> five-minute run, what is done, and what is written but unverified.
+
 AutiMate is an offline-first Flutter support tool for autistic children and their caregivers. It supports communication, emotion learning, predictable routines, sensory regulation, and explainable progress tracking. It is not a diagnostic, screening, or treatment application.
 
 ## Current status
@@ -30,7 +33,7 @@ caregiver flows work offline:
   deliberate child/caregiver two-tier split. See the design-system section of
   [PROJECT-STRUCTURE.md](PROJECT-STRUCTURE.md).
 
-Verified: `flutter analyze` clean, **245 tests passing**, 82.8% line coverage.
+Verified: `flutter analyze` clean, **405 tests passing**, 78.6% line coverage.8% line coverage.
 
 The **Firebase backend is built and tested** — auth, Firestore adapters, and
 the sync drain — and needs only credentials to switch on. See

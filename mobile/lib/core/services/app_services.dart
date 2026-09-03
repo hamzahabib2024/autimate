@@ -9,6 +9,9 @@ import 'tts_service.dart';
 import '../data/local_store.dart';
 import '../../features/communication/domain/card_ranker.dart';
 import '../../features/communication/domain/custom_card_repository.dart';
+import '../../features/communication/domain/literacy_support.dart';
+import '../../features/communication/domain/phrase_bank.dart';
+import '../../features/sensory_support/domain/breathing_pattern.dart';
 import '../../features/communication/domain/symbol_scale.dart';
 import '../../features/ai/domain/ai_contracts.dart';
 import '../../features/gamification/domain/reward_policy.dart';
@@ -106,6 +109,7 @@ class AppState extends ChangeNotifier {
     RoutineRepository? routineRepository,
     InterestRepository? interestRepository,
     CustomCardRepository? customCardRepository,
+    PhraseBankRepository? phraseBankRepository,
     AmbientSoundService? ambientSoundService,
     KeyValueStore? settingsStore,
     ConnectivityService? connectivityService,
@@ -123,6 +127,8 @@ class AppState extends ChangeNotifier {
             interestRepository ?? _NoopInterestRepository(),
         customCardRepository =
             customCardRepository ?? InMemoryCustomCardRepository(),
+        phraseBankRepository =
+            phraseBankRepository ?? InMemoryPhraseBankRepository(),
         ambientSoundService =
             ambientSoundService ?? SilentAmbientSoundService(),
         _settings = settingsStore,
@@ -141,6 +147,9 @@ class AppState extends ChangeNotifier {
 
   /// Caregiver-authored AAC cards, stored locally per child.
   final CustomCardRepository customCardRepository;
+
+  /// Saved whole sentences, per child.
+  final PhraseBankRepository phraseBankRepository;
 
   /// Gentle-sound boundary for the calm screen; silent by default until an
   /// OS-audio adapter is composed in on a real device.
@@ -290,6 +299,28 @@ class AppState extends ChangeNotifier {
     return child;
   }
 
+  /// Adds a profile that already has an id — used by backup import, where
+  /// the id must survive so the imported cards and history still point at
+  /// the right child.
+  void addChildProfile(ChildProfile child) {
+    if (_children.any((existing) => existing.id == child.id)) return;
+    _children = [..._children, child];
+    unawaited(persistSettings());
+    notifyListeners();
+  }
+
+  /// Replaces every profile. Only used by a destructive restore, which the
+  /// UI confirms separately.
+  void replaceChildren(List<ChildProfile> children) {
+    if (children.isEmpty) return;
+    _children = List.unmodifiable(children);
+    if (!_children.any((child) => child.id == _selectedChildId)) {
+      _selectedChildId = _children.first.id;
+    }
+    unawaited(persistSettings());
+    notifyListeners();
+  }
+
   /// Edits an existing profile in place; unknown ids are ignored so stale
   /// dialogs cannot resurrect deleted children.
   void updateChild({
@@ -394,6 +425,35 @@ class AppState extends ChangeNotifier {
     if (ambientVolume != null) {
       await ambientSoundService.setVolumePreference(ambientVolume);
     }
+    final literacyRaw = await store.read(_keyLiteracy);
+    if (literacyRaw != null && literacyRaw.isNotEmpty) {
+      final decoded = jsonDecode(literacyRaw);
+      if (decoded is Map) {
+        _literacy
+          ..clear()
+          ..addAll(
+            decoded.map(
+              (childId, value) => MapEntry(
+                childId as String,
+                LiteracyPreference.fromJson(
+                  (value as Map).cast<String, dynamic>(),
+                ),
+              ),
+            ),
+          );
+      }
+    }
+    final prediction = await store.read(_keyWordPrediction);
+    if (prediction != null) _wordPrediction = prediction == 'true';
+    final gridShape = await store.read(_keyGridShape);
+    if (gridShape != null) {
+      _gridShape = GridShape.values.firstWhere(
+        (value) => value.name == gridShape,
+        orElse: () => GridShape.flowing,
+      );
+    }
+    final breathing = await store.read(_keyBreathingPattern);
+    if (breathing != null) _breathingPatternId = breathing;
     final symbolScale = await store.read(_keySymbolScale);
     if (symbolScale != null) {
       _symbolScale = SymbolScale.values.firstWhere(
@@ -483,6 +543,15 @@ class AppState extends ChangeNotifier {
     await store.write(_keySensoryMode, '$_sensoryMode');
     await store.write(_keyThemeMode, _themeMode.name);
     await store.write(_keySymbolScale, _symbolScale.name);
+    await store.write(_keyWordPrediction, '$_wordPrediction');
+    await store.write(_keyGridShape, _gridShape.name);
+    await store.write(_keyBreathingPattern, _breathingPatternId);
+    await store.write(
+      _keyLiteracy,
+      jsonEncode(
+        _literacy.map((childId, pref) => MapEntry(childId, pref.toJson())),
+      ),
+    );
     await store.write(_keyAmbientTrack, ambientSoundService.track.name);
     await store.write(
       _keyAmbientVolume,
@@ -521,6 +590,10 @@ class AppState extends ChangeNotifier {
   static const String _keySensoryMode = 'autimate.settings.sensoryMode';
   static const String _keyThemeMode = 'autimate.settings.themeMode';
   static const String _keySymbolScale = 'autimate.aac.symbolScale';
+  static const String _keyLiteracy = 'autimate.aac.literacy.v1';
+  static const String _keyWordPrediction = 'autimate.aac.prediction';
+  static const String _keyGridShape = 'autimate.aac.gridShape';
+  static const String _keyBreathingPattern = 'autimate.calm.breathing';
   static const String _keyAmbientTrack = 'autimate.sensory.ambientTrack';
   static const String _keyAmbientVolume = 'autimate.sensory.ambientVolume';
   static const String _keyStars = 'autimate.settings.stars';
@@ -558,6 +631,86 @@ class AppState extends ChangeNotifier {
     unawaited(ambientSoundService.setSensoryMode(value));
     unawaited(persistSettings());
     notifyListeners();
+  }
+
+  /// Transition-to-Literacy rung per child.
+  ///
+  /// Per child rather than per device: this is a ladder a child climbs over
+  /// months as their reading develops, not a display preference. Two
+  /// children sharing a tablet will be at different rungs.
+  final Map<String, LiteracyPreference> _literacy = {};
+
+  LiteracyLevel literacyFor(String childId) =>
+      _literacy[childId]?.level ?? LiteracyLevel.off;
+
+  void setLiteracyLevel(String childId, LiteracyLevel level) {
+    _literacy[childId] = LiteracyPreference(level: level);
+    unawaited(persistSettings());
+    notifyListeners();
+  }
+
+  // --- Tier-3 preferences -------------------------------------------------
+
+  /// Word prediction. Off by default: it helps a reader and distracts a
+  /// symbol-only user, who is the primary audience here.
+  bool _wordPrediction = false;
+  bool get wordPredictionEnabled => _wordPrediction;
+
+  void setWordPrediction(bool value) {
+    if (value == _wordPrediction) return;
+    _wordPrediction = value;
+    unawaited(persistSettings());
+    notifyListeners();
+  }
+
+  /// Board layout. Flowing is the default, matching the current behaviour.
+  GridShape _gridShape = GridShape.flowing;
+  GridShape get gridShape => _gridShape;
+
+  void setGridShape(GridShape shape) {
+    if (shape == _gridShape) return;
+    _gridShape = shape;
+    unawaited(persistSettings());
+    notifyListeners();
+  }
+
+  /// Guided breathing rhythm.
+  String _breathingPatternId = BreathingPattern.gentle.id;
+  BreathingPattern get breathingPattern =>
+      BreathingPattern.byId(_breathingPatternId);
+
+  void setBreathingPattern(BreathingPattern pattern) {
+    if (pattern.id == _breathingPatternId) return;
+    _breathingPatternId = pattern.id;
+    unawaited(persistSettings());
+    notifyListeners();
+  }
+
+  // --- Saved phrases ------------------------------------------------------
+
+  List<SavedPhrase> _phrases = const [];
+  String? _phrasesChildId;
+
+  List<SavedPhrase> get savedPhrases => _phrases;
+
+  Future<void> loadPhrases({bool force = false}) async {
+    final childId = selectedChild.id;
+    if (!force && _phrasesChildId == childId) return;
+    _phrasesChildId = childId;
+    final loaded = await phraseBankRepository.phrasesFor(childId);
+    if (_phrasesChildId != childId) return;
+    _phrases = loaded;
+    notifyListeners();
+  }
+
+  Future<void> savePhrase(SavedPhrase phrase) async {
+    await phraseBankRepository.save(phrase);
+    await loadPhrases(force: true);
+  }
+
+  Future<void> deletePhrase(String phraseId) async {
+    await phraseBankRepository.delete(phraseId);
+    await loadPhrases(force: true);
   }
 
   /// How large the AAC symbols are drawn. Persisted per device rather than

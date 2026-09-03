@@ -2,6 +2,10 @@
     <!-- Expression practice only. Frames are analysed on device and
          discarded; nothing is recorded or uploaded. -->
     <uses-permission android:name="android.permission.CAMERA" />
+    <!-- Caregiver voice recording for AAC cards. The caregiver records
+         themselves, never the child; clips stay in app-private storage. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-feature android:name="android.hardware.microphone" android:required="false" />
     <!-- required="false" keeps the app installable on a device with no
          camera: every other feature works without one. -->
     <uses-feature android:name="android.hardware.camera" android:required="false" />
@@ -38,6 +42,19 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+        <!-- Quick-phrase home-screen widget. Carries phrase labels only:
+             a widget is visible to anyone holding the device. -->
+        <receiver
+            android:name=".QuickPhraseWidgetProvider"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/quick_phrase_widget_info" />
+        </receiver>
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

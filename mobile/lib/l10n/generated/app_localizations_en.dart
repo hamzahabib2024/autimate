@@ -907,4 +907,464 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get symbolSizeLargest => 'Largest';
+
+  @override
+  String get literacyTitle => 'Reading support';
+
+  @override
+  String get literacySubtitle =>
+      'Brings the written word forward as reading grows. Move one step at a time, and step back if the board gets harder.';
+
+  @override
+  String get literacyOff => 'Symbols only';
+
+  @override
+  String get literacyFlash => 'Show the word on tap';
+
+  @override
+  String get literacyEmphasis => 'Bigger words';
+
+  @override
+  String get literacyFading => 'Words lead';
+
+  @override
+  String get literacyTextOnly => 'Words only';
+
+  @override
+  String get literacyCaution =>
+      'Every child is different. If the board becomes harder to use, step back a level — that is not a setback.';
+
+  @override
+  String literacyCurrent(String level) {
+    return 'Now: $level';
+  }
+
+  @override
+  String get waitingTitle => 'Waiting';
+
+  @override
+  String get waitingSubtitle => 'We are waiting. Watch the ring get smaller.';
+
+  @override
+  String get waitingDone => 'The waiting is finished.';
+
+  @override
+  String get waitingMinutesLeft => 'left';
+
+  @override
+  String get waitingStart => 'Start waiting';
+
+  @override
+  String get waitingPause => 'Pause';
+
+  @override
+  String get waitingReset => 'Start over';
+
+  @override
+  String get waitingOneMore => 'One more minute';
+
+  @override
+  String get waitingHowLong => 'How long?';
+
+  @override
+  String waitingMinutes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count minutes',
+      one: '1 minute',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get waitingStyleTitle => 'How the timer moves';
+
+  @override
+  String get waitingStyleSubtitle =>
+      'Some children watch a moving ring closely. Others find it easier when it changes in steps, or not at all.';
+
+  @override
+  String get waitingStyleSmooth => 'Smooth';
+
+  @override
+  String get waitingStyleStepped => 'In steps';
+
+  @override
+  String get waitingStyleStill => 'Numbers only';
+
+  @override
+  String get waitingTileTitle => 'Waiting';
+
+  @override
+  String get waitingTileSubtitle => 'A timer for hard waits';
+
+  @override
+  String get cardVoiceLabel => 'Your voice';
+
+  @override
+  String get cardVoiceSubtitle =>
+      'Record yourself saying this word. Your own voice is often clearer and more motivating than the device voice.';
+
+  @override
+  String get cardVoiceConsent =>
+      'Record your own voice, not the child\'s. The card is something they will say, so it helps to hear an adult say it first.';
+
+  @override
+  String get cardVoiceRecord => 'Record';
+
+  @override
+  String get cardVoiceStop => 'Stop';
+
+  @override
+  String get cardVoicePlay => 'Play';
+
+  @override
+  String get cardVoiceDelete => 'Remove recording';
+
+  @override
+  String get cardVoiceRecording => 'Recording…';
+
+  @override
+  String get cardVoiceSaved => 'Recording saved';
+
+  @override
+  String get cardVoiceUnavailable =>
+      'This device cannot record. The card will use the device voice.';
+
+  @override
+  String get cardVoiceDenied =>
+      'Microphone permission is needed to record. You can allow it in settings.';
+
+  @override
+  String get backupTitle => 'Backup and transfer';
+
+  @override
+  String get backupSubtitle =>
+      'Save everything to a file, or bring it back on another device. Works with no internet and no account.';
+
+  @override
+  String get backupExportTitle => 'Save a backup';
+
+  @override
+  String get backupExportSubtitle =>
+      'Children, cards, routines, and progress. Photos and recordings stay on this device.';
+
+  @override
+  String get backupExportAction => 'Save and share';
+
+  @override
+  String get backupImportTitle => 'Restore from a file';
+
+  @override
+  String get backupImportSubtitle => 'Choose a backup file you saved before.';
+
+  @override
+  String get backupImportAction => 'Choose a file';
+
+  @override
+  String backupExported(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Backup saved for $count children',
+      one: 'Backup saved for 1 child',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String backupImported(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Restored $count children',
+      one: 'Restored 1 child',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get backupFailed =>
+      'That did not work. Nothing on this device was changed.';
+
+  @override
+  String get backupErrorNotJson =>
+      'That file is not a backup. Look for a file ending in .json.';
+
+  @override
+  String get backupErrorNotOurs =>
+      'That is a file, but not an AutiMate backup.';
+
+  @override
+  String get backupErrorTooNew =>
+      'That backup was made by a newer version of AutiMate. Update the app first.';
+
+  @override
+  String get backupErrorUnreadable => 'The file could not be opened.';
+
+  @override
+  String get backupConfirmTitle => 'Restore this backup?';
+
+  @override
+  String backupConfirmContents(String names, int cards, int sessions) {
+    return 'Children: $names. $cards cards, $sessions recorded activities.';
+  }
+
+  @override
+  String backupMediaNote(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count photos and recordings are not in this file and will not come back.',
+      one: '1 photo or recording is not in this file and will not come back.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get backupModeMerge => 'Add to what is here';
+
+  @override
+  String get backupModeMergeHint =>
+      'Nothing already on this device is removed.';
+
+  @override
+  String get backupModeReplace => 'Replace everything';
+
+  @override
+  String get backupModeReplaceHint =>
+      'Removes the children and cards already on this device.';
+
+  @override
+  String get backupPrivacyWarning =>
+      'A backup file holds your child\'s name, cards, and activity history in plain text. Keep it somewhere private, and delete it when you no longer need it.';
+
+  @override
+  String get backupTileTitle => 'Backup and transfer';
+
+  @override
+  String get backupTileSubtitle => 'Save or restore everything';
+
+  @override
+  String get predictionLabel => 'Word suggestions';
+
+  @override
+  String get predictionSubtitle =>
+      'Offers a few likely next words above the board. Helps a child who is reading; can be a distraction for one who is not.';
+
+  @override
+  String get predictionSuggestions => 'Next word';
+
+  @override
+  String get phraseBankTitle => 'Saved phrases';
+
+  @override
+  String get phraseBankSubtitle =>
+      'Whole sentences for one tap. Tapping loads the cards into the strip so the sentence is still built from its parts.';
+
+  @override
+  String get phraseBankEmpty =>
+      'No saved phrases yet. Build a sentence, then save it.';
+
+  @override
+  String get phraseBankSave => 'Save this sentence';
+
+  @override
+  String get phraseBankDelete => 'Remove phrase';
+
+  @override
+  String get phraseBankSpeakNow => 'Speak straight away';
+
+  @override
+  String get phraseBankSpeakNowHint =>
+      'Skips building the sentence. Use it only where speed really matters.';
+
+  @override
+  String get phraseBankUrgent => 'Needed in a hurry';
+
+  @override
+  String get phraseBankUrgentHint =>
+      'Sorts first, and can appear on the home screen.';
+
+  @override
+  String get phraseBankFull =>
+      'The phrase list is full. Remove one to add another.';
+
+  @override
+  String get phraseBankCaution =>
+      'Saved phrases are a shortcut, not a replacement. Building sentences is the skill, so keep this list short.';
+
+  @override
+  String get gridShapeLabel => 'Board layout';
+
+  @override
+  String get gridShapeSubtitle =>
+      'Fewer cards on screen means bigger targets and less to scan.';
+
+  @override
+  String get gridShapeFlowing => 'Fit as many as possible';
+
+  @override
+  String get gridShapeTwoByTwo => '4 cards';
+
+  @override
+  String get gridShapeThreeByTwo => '6 cards';
+
+  @override
+  String get gridShapeThreeByThree => '9 cards';
+
+  @override
+  String get gridShapeFourByThree => '12 cards';
+
+  @override
+  String get gridShapeFiveByFour => '20 cards';
+
+  @override
+  String get gridShapeSixByEight => '48 cards';
+
+  @override
+  String get gridShapeNote =>
+      'A fixed layout is groundwork for keeping every word in one place. The category filter still moves cards, so that is not fully true yet.';
+
+  @override
+  String gridPageOf(int page, int total) {
+    return 'Page $page of $total';
+  }
+
+  @override
+  String get printBoardTitle => 'Print the board';
+
+  @override
+  String get printBoardSubtitle =>
+      'A paper copy with the same layout and colours. Useful when the device is flat, at school, or being charged.';
+
+  @override
+  String get printBoardAction => 'Make a PDF';
+
+  @override
+  String get printBoardWorking => 'Building the PDF…';
+
+  @override
+  String get printBoardFailed => 'The PDF could not be made.';
+
+  @override
+  String get breathingPatternLabel => 'Breathing pattern';
+
+  @override
+  String get breathingPatternGentle => 'Gentle';
+
+  @override
+  String get breathingPatternBox => 'Box (4-4-4-4)';
+
+  @override
+  String get breathingPatternFourSevenEight => '4-7-8';
+
+  @override
+  String get breathingPatternNote =>
+      'A longer breath out than in is the part that calms. These are calming exercises, not treatment.';
+
+  @override
+  String get breathPhaseInhale => 'Breathe in';
+
+  @override
+  String get breathPhaseHoldIn => 'Hold';
+
+  @override
+  String get breathPhaseExhale => 'Breathe out';
+
+  @override
+  String get breathPhaseHoldOut => 'Rest';
+
+  @override
+  String get intensityTitle => 'How strong is it?';
+
+  @override
+  String get intensitySubtitle => 'Choose how big the feeling is right now.';
+
+  @override
+  String get intensityALittle => 'A little';
+
+  @override
+  String get intensitySomeWhat => 'A bit';
+
+  @override
+  String get intensityQuite => 'Quite a lot';
+
+  @override
+  String get intensityVery => 'A lot';
+
+  @override
+  String get intensityTooMuch => 'Too much';
+
+  @override
+  String get intensitySupportBreathing => 'Would some slow breathing help?';
+
+  @override
+  String get intensitySupportTellSomeone => 'Would you like to tell someone?';
+
+  @override
+  String get intensityNotNow => 'Not now';
+
+  @override
+  String get intensityCaution =>
+      'This is what the child said, not a measurement. It is not added up or tracked over time.';
+
+  @override
+  String get achievementsTitle => 'How far you have come';
+
+  @override
+  String get achievementsSubtitle =>
+      'Firsts and milestones, taken from what was actually recorded.';
+
+  @override
+  String get achievementsEmpty =>
+      'Milestones will appear here after a few activities.';
+
+  @override
+  String get achievementFirstSession => 'First activity together';
+
+  @override
+  String achievementFirstActivity(String type) {
+    return 'First $type activity';
+  }
+
+  @override
+  String get achievementBadge => 'Milestone reached';
+
+  @override
+  String achievementStreak(int days) {
+    return 'Best run: $days days';
+  }
+
+  @override
+  String achievementSessions(int count) {
+    return '$count activities completed';
+  }
+
+  @override
+  String get legendTitle => 'What the colours mean';
+
+  @override
+  String get legendCarrier => 'Starters';
+
+  @override
+  String get legendPeople => 'People';
+
+  @override
+  String get legendVerb => 'Doing words';
+
+  @override
+  String get legendDescriptor => 'Describing words';
+
+  @override
+  String get legendNoun => 'Things';
+
+  @override
+  String get legendNeed => 'Needs';
+
+  @override
+  String get legendHint =>
+      'Colours group words by the job they do in a sentence.';
 }
