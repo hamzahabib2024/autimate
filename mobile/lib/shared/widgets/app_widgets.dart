@@ -9,6 +9,7 @@ export 'child_widgets.dart';
 export 'entrance.dart';
 export 'emotion_face.dart';
 export 'mascot.dart';
+export 'word_class_legend.dart';
 
 /// A navigational tile on a caregiver surface, or — with [accent] set — a
 /// child-tier module tile.

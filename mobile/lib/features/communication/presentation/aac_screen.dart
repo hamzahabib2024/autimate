@@ -545,6 +545,8 @@ class _AacScreenState extends State<AacScreen> {
           ),
           sensoryMode: widget.appState.sensoryMode,
           imagePath: custom?.imagePath,
+          isCustom: custom != null,
+          hasRecordedVoice: custom?.hasRecordedAudio ?? false,
           onTap: () => _addCard(card.grammar),
           onLongPress: custom == null
               ? null

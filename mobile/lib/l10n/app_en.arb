@@ -649,5 +649,13 @@
         "type": "int"
       }
     }
-  }
+  },
+  "legendTitle": "What the colours mean",
+  "legendCarrier": "Starters",
+  "legendPeople": "People",
+  "legendVerb": "Doing words",
+  "legendDescriptor": "Describing words",
+  "legendNoun": "Things",
+  "legendNeed": "Needs",
+  "legendHint": "Colours group words by the job they do in a sentence."
 }

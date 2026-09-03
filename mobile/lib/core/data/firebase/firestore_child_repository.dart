@@ -4,8 +4,8 @@ import '../../services/app_services.dart';
 import '../backend_contracts.dart';
 import 'firestore_paths.dart';
 
-/// Firestore-backed [ChildRepository], replacing the earlier stub that
-/// returned an empty list behind a `TODO`.
+/// Firestore-backed [ChildRepository], replacing an earlier stub that
+/// returned an empty list.
 ///
 /// A child is *shared*, not owned: `children/{childId}` carries a
 /// `caregiverIds` array naming everyone allowed to see it. That is what

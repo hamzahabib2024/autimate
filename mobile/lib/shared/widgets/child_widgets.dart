@@ -53,6 +53,8 @@ class SymbolTile extends StatefulWidget {
     this.onLongPress,
     this.literacy = LiteracyLevel.off,
     this.sensoryMode = false,
+    this.isCustom = false,
+    this.hasRecordedVoice = false,
     super.key,
   });
 
@@ -68,6 +70,14 @@ class SymbolTile extends StatefulWidget {
   final LiteracyLevel literacy;
 
   final bool sensoryMode;
+
+  /// Marks a caregiver-made card. Long-press opens the editor, and an
+  /// affordance nobody can see is an affordance nobody uses.
+  final bool isCustom;
+
+  /// Marks a card that speaks in a caregiver's recorded voice rather than
+  /// synthesis, so it is obvious which cards still need recording.
+  final bool hasRecordedVoice;
 
   @override
   State<SymbolTile> createState() => _SymbolTileState();
@@ -104,10 +114,12 @@ class _SymbolTileState extends State<SymbolTile>
   Widget build(BuildContext context) {
     final palette = context.palette;
     final accent = wordClassColor(context, widget.card);
-    final sensory = Theme.of(context).cardTheme.elevation == 0;
+    final sensory =
+        widget.sensoryMode || Theme.of(context).cardTheme.elevation == 0;
     final grammar = widget.card.grammar;
     final primary = widget.showUrdu ? grammar.labelUr : grammar.labelEn;
     final secondary = widget.showUrdu ? grammar.labelEn : grammar.labelUr;
+    final radius = BorderRadius.circular(AppRadius.lg);
 
     return Semantics(
       button: true,
@@ -120,7 +132,7 @@ class _SymbolTileState extends State<SymbolTile>
           duration: AppMotion.fast,
           curve: AppMotion.curve,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppRadius.lg),
+            borderRadius: radius,
             // The tile borrows its accent's hue for the shadow: a neutral
             // grey shadow under a colour-coded card reads as dirty.
             boxShadow: _pressed
@@ -128,118 +140,209 @@ class _SymbolTileState extends State<SymbolTile>
                 : AppDepth.card(context, sensoryMode: sensory),
           ),
           child: Material(
-          color: palette.card,
-          borderRadius: BorderRadius.circular(AppRadius.lg),
-          child: InkWell(
-            onTap: _handleTap,
-            onLongPress: widget.onLongPress,
-            onHighlightChanged: (value) => setState(() => _pressed = value),
-            borderRadius: BorderRadius.circular(AppRadius.lg),
-            child: AnimatedContainer(
-              duration: AppMotion.fast,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(AppRadius.lg),
-                gradient: AppDepth.sheen(
-                  palette.card,
-                  sensoryMode: sensory,
-                  strength: 0.7,
-                ),
-                border: Border.all(
-                  color: accent,
-                  width: _pressed ? 4 : 2,
-                ),
-              ),
-              child: Column(
-                children: [
-                  // Word-class band: the colour code, kept off the symbol.
-                  Container(
-                    height: 10,
-                    decoration: BoxDecoration(
-                      color: accent,
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(AppRadius.lg - 2),
-                      ),
-                    ),
+            color: palette.card,
+            borderRadius: radius,
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: _handleTap,
+              onLongPress: widget.onLongPress,
+              onHighlightChanged: (value) =>
+                  setState(() => _pressed = value),
+              child: AnimatedContainer(
+                duration: AppMotion.fast,
+                curve: AppMotion.curve,
+                decoration: BoxDecoration(
+                  borderRadius: radius,
+                  gradient: AppDepth.sheen(
+                    // Pressing washes the whole tile toward its own accent.
+                    // A border change alone is invisible under a finger,
+                    // which is precisely where the finger is.
+                    _pressed
+                        ? palette.accentTint(accent, 0.90)
+                        : palette.card,
+                    sensoryMode: sensory,
+                    strength: 0.7,
                   ),
-                  if (widget.literacy.showsSymbol)
-                    Expanded(
-                      flex: 7,
-                      child: Opacity(
-                        opacity: widget.literacy.symbolOpacity,
-                        child: Padding(
-                      padding: const EdgeInsets.all(AppSpacing.xs),
-                      child: widget.imagePath != null
-                          ? ClipRRect(
-                              borderRadius:
-                                  BorderRadius.circular(AppRadius.sm),
-                              child: Image.file(
-                                File(widget.imagePath!),
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                errorBuilder: (_, __, ___) => Icon(
-                                  widget.card.icon,
-                                  size: 56,
-                                  color: accent,
-                                ),
-                              ),
-                            )
-                          : FittedBox(
-                              child: Icon(
-                                widget.card.icon,
-                                size: 64,
-                                color: accent,
-                              ),
-                            ),
+                  color: sensory && _pressed
+                      ? palette.accentTint(accent, 0.90)
+                      : null,
+                  border: Border.all(
+                    color: accent,
+                    width: _pressed ? 4 : 2,
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    _band(accent),
+                    if (widget.literacy.showsSymbol)
+                      Expanded(
+                        flex: 7,
+                        child: Opacity(
+                          opacity: widget.literacy.symbolOpacity,
+                          child: _symbol(context, accent, palette),
                         ),
                       ),
+                    Expanded(
+                      flex: widget.literacy.showsSymbol ? 4 : 11,
+                      child: _caption(context, primary, secondary),
                     ),
-                  Expanded(
-                    flex: widget.literacy.showsSymbol ? 4 : 11,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.xxs,
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          _LiteracyWord(
-                            word: primary,
-                            level: widget.literacy,
-                            flash: _flash,
-                            sensoryMode: widget.sensoryMode,
-                          ),
-                          // The second language drops away once the word is
-                          // leading: two scripts at once defeats the point of
-                          // narrowing attention onto one written form.
-                          if (widget.literacy.wordWeight < 0.8)
-                          Text(
-                            secondary,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 14,
-                              height: 1.25,
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.xs),
-                ],
+                    const SizedBox(height: AppSpacing.xs),
+                  ],
+                ),
               ),
             ),
           ),
         ),
-        ),
       ),
     );
   }
+
+  /// The word-class stripe.
+  ///
+  /// Inset rather than edge-to-edge so it reads as part of the card instead
+  /// of a label stuck on top of it, and slightly taller when pressed so the
+  /// colour code is still legible under a hand.
+  Widget _band(Color accent) => Padding(
+    padding: const EdgeInsets.fromLTRB(
+      AppSpacing.xs,
+      AppSpacing.xxs,
+      AppSpacing.xs,
+      0,
+    ),
+    child: AnimatedContainer(
+      duration: AppMotion.fast,
+      height: _pressed ? 8 : 6,
+      decoration: BoxDecoration(
+        color: accent,
+        borderRadius: BorderRadius.circular(AppRadius.pill),
+      ),
+    ),
+  );
+
+  /// The symbol, and the two small badges that explain the card.
+  Widget _symbol(BuildContext context, Color accent, AppPalette palette) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: Center(
+              child: widget.imagePath != null
+                  ? _photo(accent)
+                  : _glyph(accent, palette),
+            ),
+          ),
+          // Badges sit at the top-start corner, out of the symbol's way and
+          // out of the thumb's way.
+          if (widget.isCustom || widget.hasRecordedVoice)
+            PositionedDirectional(
+              top: 0,
+              start: 0,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (widget.isCustom)
+                    _badge(Icons.edit_outlined, accent, palette),
+                  if (widget.hasRecordedVoice)
+                    _badge(Icons.mic, palette.success, palette),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  /// A glyph on a soft tinted disc.
+  ///
+  /// The disc is what makes the symbol read as an object sitting on the
+  /// card rather than a mark floating on it, and it gives a thin outline
+  /// icon enough visual weight to hold the tile.
+  Widget _glyph(Color accent, AppPalette palette) => LayoutBuilder(
+    builder: (context, constraints) {
+      final size = constraints.biggest.shortestSide;
+      return Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          color: palette.accentTint(accent, 0.88),
+          shape: BoxShape.circle,
+        ),
+        child: Center(
+          child: Icon(
+            widget.card.icon,
+            size: size * 0.58,
+            color: accent,
+          ),
+        ),
+      );
+    },
+  );
+
+  /// A caregiver photo, framed so it matches the glyph's footprint.
+  Widget _photo(Color accent) => LayoutBuilder(
+    builder: (context, constraints) {
+      final size = constraints.biggest.shortestSide;
+      return Container(
+        width: size,
+        height: size,
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(color: accent.withValues(alpha: 0.45), width: 2),
+        ),
+        child: Image.file(
+          File(widget.imagePath!),
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) =>
+              Icon(widget.card.icon, size: size * 0.55, color: accent),
+        ),
+      );
+    },
+  );
+
+  Widget _badge(IconData icon, Color colour, AppPalette palette) => Container(
+    margin: const EdgeInsetsDirectional.only(end: 3),
+    padding: const EdgeInsets.all(3),
+    decoration: BoxDecoration(
+      color: palette.card,
+      shape: BoxShape.circle,
+      border: Border.all(color: colour.withValues(alpha: 0.5)),
+    ),
+    child: Icon(icon, size: 11, color: colour),
+  );
+
+  Widget _caption(BuildContext context, String primary, String secondary) =>
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxs),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _LiteracyWord(
+              word: primary,
+              level: widget.literacy,
+              flash: _flash,
+              sensoryMode: widget.sensoryMode,
+            ),
+            // The second language drops away once the word is leading: two
+            // scripts at once defeats the point of narrowing attention onto
+            // one written form.
+            if (widget.literacy.wordWeight < 0.8)
+              Text(
+                secondary,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
+                  height: 1.25,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+          ],
+        ),
+      );
 }
 
 /// The written word on an AAC tile, weighted by the T2L level.

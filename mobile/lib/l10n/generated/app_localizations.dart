@@ -2437,6 +2437,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} activities completed'**
   String achievementSessions(int count);
+
+  /// No description provided for @legendTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What the colours mean'**
+  String get legendTitle;
+
+  /// No description provided for @legendCarrier.
+  ///
+  /// In en, this message translates to:
+  /// **'Starters'**
+  String get legendCarrier;
+
+  /// No description provided for @legendPeople.
+  ///
+  /// In en, this message translates to:
+  /// **'People'**
+  String get legendPeople;
+
+  /// No description provided for @legendVerb.
+  ///
+  /// In en, this message translates to:
+  /// **'Doing words'**
+  String get legendVerb;
+
+  /// No description provided for @legendDescriptor.
+  ///
+  /// In en, this message translates to:
+  /// **'Describing words'**
+  String get legendDescriptor;
+
+  /// No description provided for @legendNoun.
+  ///
+  /// In en, this message translates to:
+  /// **'Things'**
+  String get legendNoun;
+
+  /// No description provided for @legendNeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs'**
+  String get legendNeed;
+
+  /// No description provided for @legendHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Colours group words by the job they do in a sentence.'**
+  String get legendHint;
 }
 
 class _AppLocalizationsDelegate

@@ -485,5 +485,13 @@
   "achievementFirstActivity": "پہلی {type} سرگرمی",
   "achievementBadge": "سنگِ میل حاصل",
   "achievementStreak": "بہترین سلسلہ: {days} دن",
-  "achievementSessions": "{count} سرگرمیاں مکمل"
+  "achievementSessions": "{count} سرگرمیاں مکمل",
+  "legendTitle": "رنگوں کا مطلب",
+  "legendCarrier": "شروعاتی",
+  "legendPeople": "لوگ",
+  "legendVerb": "کام کے الفاظ",
+  "legendDescriptor": "وضاحت کے الفاظ",
+  "legendNoun": "چیزیں",
+  "legendNeed": "ضروریات",
+  "legendHint": "رنگ الفاظ کو جملے میں ان کے کام کے مطابق گروپ کرتے ہیں۔"
 }

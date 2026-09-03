@@ -153,6 +153,11 @@ class _BoardOptionsScreenState extends State<BoardOptionsScreen> {
               style: Theme.of(context).textTheme.labelSmall,
             ),
 
+            // The colour system explained once, for the adult meeting the
+            // board for the first time. Collapsed by default.
+            const SizedBox(height: AppSpacing.md),
+            const WordClassLegend(),
+
             // --- suggestions ----------------------------------------------
             const SizedBox(height: AppSpacing.xl),
             SectionHeader(

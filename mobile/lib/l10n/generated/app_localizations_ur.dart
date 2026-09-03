@@ -1337,4 +1337,29 @@ class AppLocalizationsUr extends AppLocalizations {
   String achievementSessions(int count) {
     return '$count سرگرمیاں مکمل';
   }
+
+  @override
+  String get legendTitle => 'رنگوں کا مطلب';
+
+  @override
+  String get legendCarrier => 'شروعاتی';
+
+  @override
+  String get legendPeople => 'لوگ';
+
+  @override
+  String get legendVerb => 'کام کے الفاظ';
+
+  @override
+  String get legendDescriptor => 'وضاحت کے الفاظ';
+
+  @override
+  String get legendNoun => 'چیزیں';
+
+  @override
+  String get legendNeed => 'ضروریات';
+
+  @override
+  String get legendHint =>
+      'رنگ الفاظ کو جملے میں ان کے کام کے مطابق گروپ کرتے ہیں۔';
 }

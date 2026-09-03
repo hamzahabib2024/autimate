@@ -1342,4 +1342,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String achievementSessions(int count) {
     return '$count activities completed';
   }
+
+  @override
+  String get legendTitle => 'What the colours mean';
+
+  @override
+  String get legendCarrier => 'Starters';
+
+  @override
+  String get legendPeople => 'People';
+
+  @override
+  String get legendVerb => 'Doing words';
+
+  @override
+  String get legendDescriptor => 'Describing words';
+
+  @override
+  String get legendNoun => 'Things';
+
+  @override
+  String get legendNeed => 'Needs';
+
+  @override
+  String get legendHint =>
+      'Colours group words by the job they do in a sentence.';
 }

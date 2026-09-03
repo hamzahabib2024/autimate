@@ -1,7 +1,12 @@
 # Test Coverage & Gap Review
 
-**Measured:** `flutter test --coverage` · **245 tests passing** ·
-`flutter analyze` clean · **82.8% line coverage (4,889 / 5,905)**
+**Measured:** `flutter test --coverage` · **405 tests passing** ·
+`flutter analyze` clean · **78.6% line coverage (6,777 / 8,625)**
+
+The percentage moved down from 82.8% as the feature surface roughly
+half-again grew; the absolute covered lines rose from 4,889 to 6,777. The
+remaining gaps are the same two categories as before — platform adapters
+that need a device, and the composition root.
 
 Regenerate with:
 
