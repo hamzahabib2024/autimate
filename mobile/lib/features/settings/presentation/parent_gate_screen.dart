@@ -139,56 +139,72 @@ class _ParentGateScreenState extends State<ParentGateScreen> {
   }
 
   Widget _pad(BuildContext context) {
-    final width = MediaQuery.sizeOf(context).width;
-    final buttonExtent =
-        ((width.clamp(240.0, 420.0) - 48) / 3).toDouble();
-    Widget keyButton(int digit) => Padding(
-          padding: const EdgeInsets.all(6),
-          child: SizedBox(
-            width: buttonExtent,
-            height: 64,
-            child: FilledButton.tonal(
-              key: ValueKey('pin-digit-$digit'),
-              onPressed: () => _appendDigit(digit),
+    // Sized from the width this widget is actually given, not the screen's.
+    //
+    // It previously measured `MediaQuery.sizeOf(context).width`, which is
+    // wider than the padded column the pad sits in — so on a wide phone the
+    // three keys added up to more than the row could hold and Flutter
+    // reported an overflow. LayoutBuilder asks the parent instead, which is
+    // correct at any width and inside any padding.
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const gap = 6.0;
+        final available = constraints.maxWidth.isFinite
+            ? constraints.maxWidth
+            : MediaQuery.sizeOf(context).width;
+        // Three keys, each with `gap` padding on both sides.
+        final extent = ((available - gap * 6) / 3).clamp(56.0, 132.0);
+        final height = (extent * 0.62).clamp(56.0, 72.0);
+
+        Widget slot({Widget? child, Key? key}) => Padding(
+          padding: const EdgeInsets.all(gap),
+          child: SizedBox(width: extent, height: height, child: child),
+        );
+
+        Widget keyButton(int digit) => slot(
+          child: FilledButton.tonal(
+            key: ValueKey('pin-digit-$digit'),
+            onPressed: () => _appendDigit(digit),
+            child: FittedBox(
+              // The glyph shrinks rather than clipping when a large system
+              // text scale meets a small key.
               child: Text('$digit', style: const TextStyle(fontSize: 22)),
             ),
           ),
         );
 
-    return Column(
-      children: [
-        for (final row in const [
-          [1, 2, 3],
-          [4, 5, 6],
-          [7, 8, 9],
-        ])
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [for (final digit in row) keyButton(digit)],
-          ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        return Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(6),
-              child: SizedBox(width: buttonExtent, height: 64),
-            ),
-            keyButton(0),
-            Padding(
-              padding: const EdgeInsets.all(6),
-              child: SizedBox(
-                width: buttonExtent,
-                height: 64,
-                child: IconButton.filledTonal(
-                  key: const ValueKey('pin-delete'),
-                  onPressed: _deleteDigit,
-                  icon: const Icon(Icons.backspace_outlined),
-                ),
+            for (final row in const [
+              [1, 2, 3],
+              [4, 5, 6],
+              [7, 8, 9],
+            ])
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [for (final digit in row) keyButton(digit)],
               ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Empty slot keeps zero centred under the 8.
+                slot(),
+                keyButton(0),
+                slot(
+                  child: IconButton.filledTonal(
+                    key: const ValueKey('pin-delete'),
+                    onPressed: _deleteDigit,
+                    icon: const Icon(Icons.backspace_outlined),
+                  ),
+                ),
+              ],
             ),
           ],
-        ),
-      ],
+        );
+      },
     );
   }
 }

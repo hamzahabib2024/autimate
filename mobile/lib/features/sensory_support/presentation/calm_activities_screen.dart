@@ -172,11 +172,15 @@ class _BreathingScreenState extends State<BreathingScreen>
     final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(title: Text(l10n.breathingTitle)),
-      body: Center(
-        child: Column(
+      body: LayoutBuilder(
+        builder: (context, constraints) => SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(
+            SizedBox(
+              height: 300,
               child: Center(
                 child: Builder(
                   builder: (context) {
@@ -231,6 +235,8 @@ class _BreathingScreenState extends State<BreathingScreen>
               ),
             ),
           ],
+        ),
+          ),
         ),
       ),
     );

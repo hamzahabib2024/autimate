@@ -8,6 +8,7 @@ import '../../core/theme/app_motion.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../features/communication/domain/aac_catalog.dart';
 import '../../features/communication/domain/literacy_support.dart';
+import '../../features/communication/domain/symbol_colors.dart';
 import '../../features/communication/domain/sentence_realiser.dart';
 
 /// Maps a card's word class to its Fitzgerald-key colour.
@@ -113,9 +114,20 @@ class _SymbolTileState extends State<SymbolTile>
   @override
   Widget build(BuildContext context) {
     final palette = context.palette;
+    // Two colours, doing two different jobs. The band and border carry the
+    // word class so grammar stays learnable across a whole category; the
+    // symbol carries what the thing actually is, because a child recognises
+    // an apple by its redness long before they know it is a noun.
     final accent = wordClassColor(context, widget.card);
     final sensory =
         widget.sensoryMode || Theme.of(context).cardTheme.elevation == 0;
+    // Sensory mode takes the same 40% out of the natural colour that it
+    // takes out of every palette accent. Leaving it saturated would make
+    // the symbols the loudest thing on a screen built to be quiet.
+    final rawNatural = SymbolColors.forCard(widget.card.id);
+    final natural = rawNatural == null
+        ? accent
+        : (sensory ? AppPalette.desaturate(rawNatural, 0.40) : rawNatural);
     final grammar = widget.card.grammar;
     final primary = widget.showUrdu ? grammar.labelUr : grammar.labelEn;
     final secondary = widget.showUrdu ? grammar.labelEn : grammar.labelUr;
@@ -179,7 +191,7 @@ class _SymbolTileState extends State<SymbolTile>
                         flex: 7,
                         child: Opacity(
                           opacity: widget.literacy.symbolOpacity,
-                          child: _symbol(context, accent, palette),
+                          child: _symbol(context, natural, palette),
                         ),
                       ),
                     Expanded(
@@ -220,6 +232,9 @@ class _SymbolTileState extends State<SymbolTile>
   );
 
   /// The symbol, and the two small badges that explain the card.
+  ///
+  /// [accent] here is the *natural* colour when the card has one, so this
+  /// method never needs to know which of the two systems it is drawing.
   Widget _symbol(BuildContext context, Color accent, AppPalette palette) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
@@ -313,7 +328,9 @@ class _SymbolTileState extends State<SymbolTile>
   );
 
   Widget _caption(BuildContext context, String primary, String secondary) =>
-      Padding(
+      MediaQuery.withClampedTextScaling(
+        maxScaleFactor: 1.15,
+        child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxs),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -342,6 +359,7 @@ class _SymbolTileState extends State<SymbolTile>
               ),
           ],
         ),
+      ),
       );
 }
 

@@ -192,19 +192,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                   const SizedBox(height: 20),
                   Card(
-                    child: SizedBox(
-                      height: 210,
-                      child: Padding(
-                        padding: const EdgeInsets.all(AppSpacing.lg),
-                        child: Column(
+                    child: Padding(
+                      // The card sizes to its content rather than to a fixed
+                      // height. Only the bar row is measured; a Spacer here
+                      // needed a bounded height, which a growing header at a
+                      // large text scale no longer left it.
+                      padding: const EdgeInsets.all(AppSpacing.lg),
+                      child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             SectionHeader(
                               title: l10n.activitiesThisWeek,
                               accent: context.palette.communicate,
                             ),
-                            const Spacer(),
-                            Row(
+                            const SizedBox(height: AppSpacing.md),
+                            SizedBox(
+                              height: 120,
+                              child: Row(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
@@ -215,10 +220,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     count: bucket.count,
                                   ),
                               ],
+                              ),
                             ),
                           ],
                         ),
-                      ),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -360,12 +365,11 @@ class _TrendCard extends StatelessWidget {
         if (trend[i].accuracy != null) (index: i, point: trend[i]),
     ];
     return Card(
-      child: SizedBox(
-        height: 190,
-        child: Padding(
+      child: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Row(
                 children: [
@@ -379,7 +383,7 @@ class _TrendCard extends StatelessWidget {
                     ),
                 ],
               ),
-              const Spacer(),
+              const SizedBox(height: AppSpacing.md),
               SizedBox(
                 key: const ValueKey('emotion-trend'),
                 height: 80,
@@ -408,7 +412,6 @@ class _TrendCard extends StatelessWidget {
             ],
           ),
         ),
-      ),
     );
   }
 }
