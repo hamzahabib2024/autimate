@@ -15,7 +15,11 @@ class AppConfig {
 
   /// Builds the configuration from `--dart-define` entries.
   factory AppConfig.fromEnvironment() => AppConfig(
-    environment: const String.fromEnvironment('AUTIMATE_ENVIRONMENT'),
+    // environment: const String.fromEnvironment('AUTIMATE_ENVIRONMENT'),
+    environment: const String.fromEnvironment(
+      'AUTIMATE_ENVIRONMENT',
+      defaultValue: 'mock',
+    ),
     firebaseApiKey: const String.fromEnvironment('AUTIMATE_FIREBASE_API_KEY'),
     firebaseAppId: const String.fromEnvironment('AUTIMATE_FIREBASE_APP_ID'),
     firebaseProjectId: const String.fromEnvironment(

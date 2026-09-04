@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "394246049460",
+    "firebase_url": "https://auth-eb2cf-default-rtdb.firebaseio.com",
+    "project_id": "auth-eb2cf",
+    "storage_bucket": "auth-eb2cf.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:394246049460:android:51b455353039e7405a11e1",
+        "android_client_info": {
+          "package_name": "com.autimate.autimate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHuwHlOUvBop67VngaltNBjxXxbdRpMQg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
