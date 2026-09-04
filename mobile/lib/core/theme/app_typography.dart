@@ -35,6 +35,29 @@ class AppTypography {
   static const double urduScale = 1.08;
   static const double latinLineHeight = 1.5;
 
+  /// Ceiling on the operating system's text scaler.
+  ///
+  /// Beyond roughly this point Material's own components stop fitting —
+  /// a chip cannot wrap, and an input decorator's prefix icon plus its
+  /// content overflows a narrow screen by a fraction. Chasing those pixels
+  /// individually is endless; capping once is honest and predictable.
+  ///
+  /// The cap costs this app less than it would cost most, because AutiMate
+  /// already provides better-targeted size controls than the OS scaler:
+  /// the child text scale, the symbol-size setting, and the T2L ladder all
+  /// enlarge the things a user actually needs enlarged, and resize their
+  /// containers to match instead of bursting them.
+  static const double maxSystemTextScale = 1.4;
+
+  /// Applies [maxSystemTextScale] to a subtree.
+  static Widget clampTextScale({required Widget child}) =>
+      Builder(
+        builder: (context) => MediaQuery.withClampedTextScaling(
+          maxScaleFactor: maxSystemTextScale,
+          child: child,
+        ),
+      );
+
   static bool isUrdu(Locale locale) => locale.languageCode == 'ur';
 
   static String familyFor(Locale locale) =>

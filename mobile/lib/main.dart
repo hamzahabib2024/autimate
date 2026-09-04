@@ -14,6 +14,7 @@ import 'core/data/local_store.dart';
 import 'features/communication/data/image_source_service.dart';
 import 'features/communication/data/voice_recording_service.dart';
 import 'core/theme/app_theme.dart';
+import 'core/theme/app_typography.dart';
 import 'features/home/presentation/app_shell.dart';
 import 'features/onboarding/presentation/onboarding_screen.dart';
 import 'features/onboarding/presentation/splash_screen.dart';
@@ -112,6 +113,10 @@ class _AutiMateAppState extends State<AutiMateApp> {
           locale: appState.locale,
         ),
         themeMode: appState.themeMode,
+        // One place caps the OS text scaler for the whole app — see
+        // AppTypography.maxSystemTextScale for why.
+        builder: (context, child) =>
+            AppTypography.clampTextScale(child: child ?? const SizedBox()),
         locale: appState.locale,
         supportedLocales: const [Locale('en'), Locale('ur')],
         localizationsDelegates: AppLocalizations.localizationsDelegates,

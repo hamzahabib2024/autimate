@@ -132,7 +132,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         ])
                           ChoiceChip(
                             key: ValueKey('onboard-level-$level'),
-                            label: Text(_levelLabel(l10n, level)),
+                            // A chip cannot wrap, so at a large system text
+                            // scale the longest label ("Intermediate support
+                            // level") is wider than a 320dp screen. Bounding
+                            // it lets the chip ellipsize instead of pushing
+                            // past the edge.
+                            label: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                maxWidth:
+                                    MediaQuery.sizeOf(context).width - 120,
+                              ),
+                              child: Text(
+                                _levelLabel(l10n, level),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
                             selected: _supportLevel == level,
                             onSelected: (_) =>
                                 setState(() => _supportLevel = level),
@@ -166,8 +181,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         key: const ValueKey('onboard-start'),
                         onPressed: _valid ? () => _start(l10n) : null,
                         icon: const Icon(Icons.arrow_forward),
+                        // maxLines with ellipsis, and no Flexible of our
+                        // own: FilledButton.icon already wraps its label in
+                        // one, and a second competing ParentDataWidget on
+                        // the same render object is an error. Letting the
+                        // text ellipsize gives that existing Flexible the
+                        // give it needs at a large system text scale.
                         label: Text(
                           l10n.getStarted,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                       ),

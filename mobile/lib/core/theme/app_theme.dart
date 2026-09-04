@@ -195,6 +195,23 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: palette.card,
+        // A prefix icon defaults to a 48dp minimum box. At a large system
+        // text scale on a narrow screen that leaves the decorator's own row
+        // a fraction short and it overflows. Trimming the icon box reclaims
+        // the width without shrinking the field's height, so the 56dp touch
+        // target survives.
+        prefixIconConstraints: const BoxConstraints(
+          minWidth: 40,
+          minHeight: 40,
+        ),
+        suffixIconConstraints: const BoxConstraints(
+          minWidth: 40,
+          minHeight: 40,
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.sm,
+          vertical: AppSpacing.md,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.sm),
         ),
