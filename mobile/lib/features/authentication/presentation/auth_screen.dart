@@ -40,6 +40,9 @@ class _AuthScreenState extends State<AuthScreen> {
       loading = false;
       error = valid ? null : AppLocalizations.of(context).authErrorRequired;
     });
+    // The shell watches AppState, not this screen, so a successful sign-in
+    // has to be reported or the caregiver stays on the form.
+    if (valid) widget.appState.markSignedIn();
   }
 
   @override

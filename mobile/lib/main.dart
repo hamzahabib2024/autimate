@@ -1,11 +1,13 @@
 import 'dart:async';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/config/app_config.dart';
 import 'core/data/firebase/firebase_bootstrap.dart';
+import 'firebase_options.dart';
 import 'core/providers/app_providers.dart';
 import 'core/services/app_services.dart';
 import 'core/services/tts_service.dart';
@@ -20,6 +22,21 @@ import 'features/onboarding/presentation/onboarding_screen.dart';
 import 'features/onboarding/presentation/splash_screen.dart';
 import 'l10n/generated/app_localizations.dart';
 
+/// The FlutterFire-generated options for this platform, or null when the
+/// current platform has none configured.
+///
+/// Wrapped because `DefaultFirebaseOptions.currentPlatform` throws for an
+/// unconfigured platform rather than returning null, and an unconfigured
+/// desktop run must fall back to local repositories rather than crash on
+/// launch.
+FirebaseOptions? _generatedFirebaseOptions() {
+  try {
+    return DefaultFirebaseOptions.currentPlatform;
+  } catch (_) {
+    return null;
+  }
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -33,16 +50,35 @@ Future<void> main() async {
   // time, and a failure here is not fatal: the app falls back to local
   // repositories so a misconfigured backend can never cost a child the app.
   final config = AppConfig.fromEnvironment();
-  final firebaseReady = await FirebaseBootstrap.ensureInitialised(config);
+  // The generated options win when present; dart-defines remain the
+  // alternative for a build that keeps configuration out of the repository.
+  final firebaseReady = await FirebaseBootstrap.ensureInitialised(
+    config,
+    generatedOptions: _generatedFirebaseOptions(),
+  );
+
+  // A holder, because the override has to exist before the container is
+  // built while AppState can only be read out of it afterwards — and
+  // AppState itself depends on the progress repository that reads this.
+  // Safe because the closure is only ever called during a write, long
+  // after the assignment below.
+  AppState? activeState;
 
   final container = ProviderContainer(
     overrides: [
       keyValueStoreProvider.overrideWithValue(keyValueStore),
       firebaseReadyProvider.overrideWithValue(firebaseReady),
+      // Without this the Firestore repositories wrote against an empty
+      // child id, which their own guards treat as "no child selected" —
+      // so every remote write silently did nothing.
+      currentChildIdProvider.overrideWithValue(
+        () => activeState?.selectedChild.id ?? '',
+      ),
     ],
   );
 
   final appState = container.read(appStateProvider);
+  activeState = appState;
   await appState.loadPersistedSettings();
   appState.startListeningToConnectivity();
 

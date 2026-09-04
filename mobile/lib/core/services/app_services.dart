@@ -47,6 +47,16 @@ class ChildProfile {
 abstract interface class AuthRepository {
   Future<bool> signIn(String email, String password);
   Future<void> signOut();
+
+  /// Whether a real credential is required before the app is usable.
+  ///
+  /// This is the boundary between the two ways the app can run. With no
+  /// backend the answer is false and the app opens straight into the child
+  /// experience, which is what keeps it working offline. With Firebase up
+  /// the answer is true until a caregiver has signed in, because their uid
+  /// is the ownership key every Firestore rule checks — without it the
+  /// repositories drop writes silently.
+  bool get requiresSignIn;
 }
 
 abstract interface class FeatureRepository {
@@ -60,6 +70,10 @@ class MockAuthRepository implements AuthRepository {
 
   @override
   Future<void> signOut() async {}
+
+  /// Never. The offline app must not present a sign-in wall.
+  @override
+  bool get requiresSignIn => false;
 }
 
 class MockTtsService implements TtsService {
@@ -132,7 +146,11 @@ class AppState extends ChangeNotifier {
         ambientSoundService =
             ambientSoundService ?? SilentAmbientSoundService(),
         _settings = settingsStore,
-        _connectivity = connectivityService;
+        _connectivity = connectivityService {
+    // Signed-in defaults to true so the offline app opens straight into the
+    // child experience; a backend that needs a real caregiver says so.
+    _signedIn = !authRepository.requiresSignIn;
+  }
 
   static RoutineRepository _defaultRoutineRepository() {
     // Overridden by composition root; keeps tests and previews working.
@@ -800,9 +818,21 @@ class AppState extends ChangeNotifier {
   Future<void> recordCardUsage(CardUsageEvent event) =>
       progressRepository.recordCardUsage(event);
 
+  /// Records that the caregiver authenticated.
+  ///
+  /// Called by the sign-in screen. Without it a correct password left the
+  /// caregiver on the form forever, because nothing else flips this flag.
+  void markSignedIn() {
+    if (_signedIn) return;
+    _signedIn = true;
+    notifyListeners();
+  }
+
   Future<void> signOut() async {
     await authRepository.signOut();
-    _signedIn = false;
+    // Only meaningful where a credential is actually required; with no
+    // backend this would lock the child out of an app that has no way back.
+    _signedIn = !authRepository.requiresSignIn;
     notifyListeners();
   }
 }
