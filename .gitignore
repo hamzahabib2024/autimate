@@ -6,6 +6,14 @@ build/
 # Coverage output
 coverage/
 
+# Firebase service-account keys. These are the genuine secret: unlike the
+# client config files, a service account contains a private key and grants
+# admin access that bypasses every security rule. One must never be
+# committed, so the pattern is ignored rather than left to vigilance.
+*serviceAccount*.json
+*-adminsdk-*.json
+firebase-adminsdk-*.json
+
 # Local environment files. The tracked template is .env.example; a real one
 # must never be committed.
 .env

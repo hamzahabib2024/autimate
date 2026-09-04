@@ -1,11 +1,20 @@
-# Firebase Setup — credentials only
+# Firebase Setup
 
-Everything on the app side is built and tested. This document is the whole
-of what remains, and it is deliberately short: **create a project, paste six
-values, deploy the rules.** No Dart code needs writing, no files need
-generating, and nothing needs committing.
+**Status: credentials are in place.** Project `auth-eb2cf` has been
+configured with the FlutterFire CLI, which generated
+`mobile/lib/firebase_options.dart`, `mobile/android/app/google-services.json`
+and `mobile/ios/Runner/GoogleService-Info.plist`. The app reads those
+automatically — there is nothing left to paste.
 
-If you are the person holding the credentials, this is your page.
+**Two things still have to happen in the Firebase console, and until they do
+the app will run but not sync:**
+
+1. **Deploy the security rules** (Step 5). Until then every read and write
+   is refused, and an undeployed default may leave the database open.
+2. **Enable the Email/Password sign-in provider.** Without it every
+   caregiver sign-in fails.
+
+Both are console actions, not code. The rest of this page is reference.
 
 ---
 
@@ -13,8 +22,8 @@ If you are the person holding the credentials, this is your page.
 
 | Piece | Where | State |
 |---|---|---|
-| Firebase initialisation | `core/data/firebase/firebase_bootstrap.dart` | Built. Reads credentials from `--dart-define`, never throws. |
-| Caregiver auth | `features/authentication/data/firebase_auth_repository.dart` | Built. Email/password, auto-registers a new caregiver on first sign-in. |
+| Firebase initialisation | `core/data/firebase/firebase_bootstrap.dart` | Built. Prefers the generated `firebase_options.dart`, falls back to `--dart-define`. Never throws. |
+| Caregiver auth | `features/authentication/data/firebase_auth_repository.dart` | Built. Email/password, auto-registers a new caregiver on first sign-in, and handles email-enumeration protection. |
 | Progress store | `core/data/firebase/firestore_progress_repository.dart` | Built. Sessions, card usage, observations. Append-only. |
 | Child profiles | `core/data/firebase/firestore_child_repository.dart` | Built, including teacher/therapist assignment. |
 | Offline sync | `core/data/firebase/firestore_sync_backend.dart` | Built. Drains `OfflineSyncQueue` on reconnect, idempotent on replay. |
@@ -64,6 +73,19 @@ From **Project settings → General → Your apps → SDK setup and configuratio
 
 ## Step 4 — Run it
 
+Because this project was configured with the FlutterFire CLI, the plain
+command is now enough — the generated `firebase_options.dart` is read
+automatically:
+
+```powershell
+cd mobile
+flutter run
+```
+
+The dart-define route below still works and remains the way to point a build
+at a *different* project without regenerating anything. Values passed this
+way are only used when no generated file is present.
+
 ```powershell
 cd mobile
 flutter run `
@@ -84,11 +106,18 @@ repository root lists the names with empty values as a reference.
 
 ## Step 5 — Deploy the rules
 
+Run from the **repository root**, where `firebase.json` and `.firebaserc`
+point at `firestore.rules` and project `auth-eb2cf`:
+
 ```bash
 npm install -g firebase-tools
 firebase login
-firebase deploy --only firestore:rules --project <your-project-id>
+firebase deploy --only firestore:rules
 ```
+
+Note `mobile/firebase.json` is a different file, written by the FlutterFire
+CLI to record app ids. It has no rules section and cannot deploy them, which
+is why the root config exists.
 
 The rules live in `firestore.rules` and are already written against the
 document layout the app uses. **Read them before deploying** — they are the
@@ -98,8 +127,15 @@ only thing standing between one family's data and another's.
 
 ## How the gate works
 
-`AppConfig.firebaseConfigured` is true only when the API key, app id, and
-project id are all non-empty. Two consequences worth understanding:
+Firebase comes up when **either** route supplies options: the generated
+`firebase_options.dart` (this project's route, and it wins when present) or
+all three of API key, app id and project id as dart-defines.
+
+Supporting only the second route was a real defect, fixed in
+`firebase_bootstrap.dart`: a project could add every file the CLI produces
+and still find Firebase silently switched off, with no error explaining why.
+
+Three consequences worth understanding:
 
 - **With no credentials, nothing Firebase-related is ever constructed.**
   The app uses local repositories and works completely offline. This is not
@@ -110,9 +146,24 @@ project id are all non-empty. Two consequences worth understanding:
   crashing. A misconfigured backend must never cost a child the app
   mid-sentence.
 
+- **A platform with no generated entry falls back rather than crashing.**
+  The CLI configured Android, iOS and Windows. On web, macOS or Linux
+  `DefaultFirebaseOptions.currentPlatform` throws, so `main.dart` catches it
+  and runs local-only. A desktop run is a demo, not a failure.
+
 You can force local-only even with credentials present by passing
 `--dart-define=AUTIMATE_ENVIRONMENT=mock`. Useful for a demo on a flaky
 network.
+
+### Sign-in is now required when Firebase is up
+
+With a backend attached, the caregiver's uid is the ownership key every
+Firestore rule checks, so the app shows the sign-in screen until they
+authenticate. With no backend it does not, and the app opens straight into
+the child experience — objective O7 depends on that staying true.
+
+Firebase persists the session across launches, so a returning caregiver is
+not asked again.
 
 ---
 
@@ -170,23 +221,28 @@ worth writing next.
 
 ---
 
-## Optional: `google-services.json` instead of dart-defines
+## On the committed config files — the route this project took
 
-The dart-define route is the default because it keeps secrets out of the
-repository by construction rather than by remembering to gitignore a file.
+`google-services.json`, `GoogleService-Info.plist` and `firebase_options.dart`
+are committed. That is a deliberate, defensible choice and worth stating
+plainly rather than leaving as a worry:
 
-If you prefer the file:
+- **They are not secrets.** They hold client identifiers — an API key that
+  identifies the project to Google, an app id, a sender id. Google documents
+  them as safe to include in client code, which is unavoidable anyway since
+  they ship inside every APK. There is no service-account key or private key
+  in any of them.
+- **What actually protects the data is the security rules**, which is why
+  deploying them is step one at the top of this page and not an afterthought.
+  An unauthenticated request with a valid API key still gets nothing.
+- **The trade-off accepted:** with the Google Services Gradle plugin applied,
+  an Android build *fails* if `google-services.json` is missing. Committing it
+  is what keeps every other developer able to build. The dart-define route
+  has no such coupling, which is why it remains supported above.
 
-1. Put `google-services.json` in `mobile/android/app/`.
-2. Add the Google Services Gradle plugin to
-   `mobile/android/settings.gradle.kts` and `mobile/android/app/build.gradle.kts`.
-3. Add both paths to `.gitignore` — **the file contains project identifiers
-   and must not be committed.**
-
-Note the trade-off: with the plugin applied, a build **fails** if the file is
-missing, so every other developer on the project then needs a copy before
-they can build at all. The dart-define route has no such coupling, which is
-why it is the default here.
+What must **never** be committed is a service-account JSON (it contains
+`private_key` and grants admin access, bypassing all rules). None is present,
+and `.gitignore` excludes `*serviceAccount*.json` and `*-adminsdk-*.json`.
 
 ---
 
@@ -194,7 +250,9 @@ why it is the default here.
 
 | Symptom | Cause |
 |---|---|
-| App runs but nothing syncs | Credentials not detected. Check all three of api key, app id, project id are non-empty — the gate needs all three. |
+| App runs but nothing syncs | Firebase did not come up. Confirm `firebase_options.dart` exists and the platform has an entry, or that all three dart-defines are non-empty. |
+| Sign-in screen never appears | Expected with no backend. It appears only when Firebase is up and no caregiver is signed in. |
+| First-ever caregiver cannot sign in | Email/Password provider not enabled in the console. |
 | `PERMISSION_DENIED` in logs | Rules not deployed, or the caregiver is not in the child's `caregiverIds`. |
 | Sign-in always fails | Email/Password provider not enabled in the console. |
 | Data written but dashboard empty | Signed out. Repositories no-op rather than throw when there is no uid; check `FirebaseAuth.instance.currentUser`. |

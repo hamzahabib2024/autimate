@@ -25,6 +25,11 @@ class FirebaseAuthRepository implements AuthRepository {
 
   bool get isSignedIn => _auth.currentUser != null;
 
+  /// True until a caregiver has authenticated. Firebase persists sessions
+  /// across launches, so a returning caregiver is not asked again.
+  @override
+  bool get requiresSignIn => !isSignedIn;
+
   /// Emits on sign-in and sign-out so the shell can react.
   Stream<bool> get signedInChanges =>
       _auth.authStateChanges().map((user) => user != null);
@@ -40,7 +45,21 @@ class FirebaseAuthRepository implements AuthRepository {
       return credential.user != null;
     } on FirebaseAuthException catch (error) {
       // An unknown caregiver on first run is the expected path, not a fault.
-      if (error.code == 'user-not-found') {
+      //
+      // Both codes have to be handled. Firebase projects created since 2023
+      // have email enumeration protection on by default, and it deliberately
+      // collapses "no such account" and "wrong password" into the single
+      // ambiguous `invalid-credential` so an attacker cannot use the error
+      // to discover which addresses are registered. Matching only
+      // `user-not-found` therefore works on an older project and silently
+      // locks every first-time caregiver out of a new one.
+      if (error.code == 'user-not-found' ||
+          error.code == 'invalid-credential' ||
+          error.code == 'INVALID_LOGIN_CREDENTIALS') {
+        // Because the code is ambiguous, registration is also how we find
+        // out which case it was: `email-already-in-use` coming back means
+        // the account exists and the password was simply wrong, which
+        // [register] reports as false. No account is ever overwritten.
         return register(email, password);
       }
       debugPrint('Caregiver sign-in refused: ${error.code}');
@@ -61,6 +80,15 @@ class FirebaseAuthRepository implements AuthRepository {
         password: password,
       );
       return credential.user != null;
+    } on FirebaseAuthException catch (error) {
+      // Reached routinely via the ambiguous-credential path above, where it
+      // means "existing account, wrong password" rather than a fault.
+      if (error.code == 'email-already-in-use') {
+        debugPrint('Caregiver sign-in refused: wrong password');
+        return false;
+      }
+      debugPrint('Caregiver registration failed: ${error.code}');
+      return false;
     } catch (error) {
       debugPrint('Caregiver registration failed: $error');
       return false;

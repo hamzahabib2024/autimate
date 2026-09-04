@@ -23,11 +23,34 @@ class FirebaseBootstrap {
 
   /// Attempts initialisation. Returns true only when Firebase is genuinely
   /// usable; callers should treat false as "run local-only".
-  static Future<bool> ensureInitialised(AppConfig config) async {
-    if (!config.firebaseConfigured) return false;
+  ///
+  /// Two routes are supported, because both are legitimate and a project
+  /// will have taken one or the other:
+  ///
+  /// * [generatedOptions] — what the FlutterFire CLI writes into
+  ///   `firebase_options.dart`. This wins when present, since a team that
+  ///   ran the CLI expects the file they generated to be the one used.
+  /// * `--dart-define` values in [config] — the route that keeps
+  ///   configuration out of source control entirely.
+  ///
+  /// Supporting only the dart-define route was a real defect: a project
+  /// could add every credential the CLI produces and still find Firebase
+  /// silently dormant, with no error to explain why.
+  static Future<bool> ensureInitialised(
+    AppConfig config, {
+    FirebaseOptions? generatedOptions,
+  }) async {
+    // A build can force local-only even with credentials present, which is
+    // useful for a demo on a flaky network.
+    if (config.environment == 'mock') return false;
+
+    final options = generatedOptions ??
+        (config.firebaseConfigured ? optionsFrom(config) : null);
+    if (options == null) return false;
+
     try {
       if (Firebase.apps.isNotEmpty) return true;
-      await Firebase.initializeApp(options: optionsFrom(config));
+      await Firebase.initializeApp(options: options);
       return true;
     } catch (error, stack) {
       debugPrint('Firebase unavailable, continuing offline-only: $error');
