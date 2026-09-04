@@ -73,7 +73,7 @@ dependencies:
   # a card. A parent's real voice is more motivating than synthesis and
   # sidesteps poor Urdu TTS on low-end devices. Only behind
   # `VoiceRecordingService`.
-  record: ^5.2.0
+  record: ^6.2.1
   # Justification (2.4): hands the exported backup to whatever the caregiver
   # already uses — email, Drive, a cable. Avoids inventing a transfer
   # mechanism the project would then have to maintain.
