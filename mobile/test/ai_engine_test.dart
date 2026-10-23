@@ -47,8 +47,9 @@ void main() {
     test('closed eyes are reported before any expression is claimed', () {
       // Even with a high smile score, shut eyes make the reading
       // unreliable — asserting "smiling" here would overstate the data.
-      final result =
-          classifier.classify(_reading(smile: 0.95, leftEye: 0.05, rightEye: 0.05));
+      final result = classifier.classify(
+        _reading(smile: 0.95, leftEye: 0.05, rightEye: 0.05),
+      );
       expect(result.label, ExpressionLabel.eyesClosed);
     });
 
@@ -115,8 +116,15 @@ void main() {
       // doing, never an inner state. Guard it in code so a future rename
       // cannot quietly cross it.
       const feelings = [
-        'happy', 'sad', 'angry', 'afraid', 'scared',
-        'excited', 'upset', 'anxious', 'feeling',
+        'happy',
+        'sad',
+        'angry',
+        'afraid',
+        'scared',
+        'excited',
+        'upset',
+        'anxious',
+        'feeling',
       ];
       for (final label in ExpressionLabel.values) {
         for (final feeling in feelings) {
@@ -205,8 +213,11 @@ void main() {
       await sub.cancel();
       await service.stop();
 
-      expect(feedback, isNotEmpty,
-          reason: 'the simulated source must actually drive the engine');
+      expect(
+        feedback,
+        isNotEmpty,
+        reason: 'the simulated source must actually drive the engine',
+      );
       expect(feedback.any((f) => f.faceDetected), isTrue);
       expect(engine.smoothedSmile, greaterThan(0));
       // The ramp crosses the threshold, so at least one hold should land.
@@ -242,7 +253,11 @@ void main() {
         CameraPermissionStatus.permanentlyDenied,
         isNot(CameraPermissionStatus.denied),
       );
-      expect(CameraPermissionStatus.values, hasLength(4));
+      expect(
+        CameraPermissionStatus.restricted,
+        isNot(CameraPermissionStatus.permanentlyDenied),
+      );
+      expect(CameraPermissionStatus.values, hasLength(5));
     });
   });
 }

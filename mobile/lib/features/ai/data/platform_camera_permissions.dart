@@ -46,6 +46,7 @@ class PlatformCameraPermissionService implements CameraPermissionService {
 
   /// Sends the caregiver to the OS settings page for this app. The only
   /// route out of a permanent denial.
+  @override
   Future<bool> openSettings() async {
     try {
       return await handler.openAppSettings();
@@ -61,14 +62,13 @@ class PlatformCameraPermissionService implements CameraPermissionService {
       switch (status) {
         handler.PermissionStatus.granted ||
         handler.PermissionStatus.limited ||
-        handler.PermissionStatus.provisional =>
-          CameraPermissionStatus.granted,
+        handler.PermissionStatus.provisional => CameraPermissionStatus.granted,
         handler.PermissionStatus.permanentlyDenied =>
           CameraPermissionStatus.permanentlyDenied,
         // A device policy that blocks the camera outright is not something
         // the caregiver can resolve in settings, so it is not "denied".
         handler.PermissionStatus.restricted =>
-          CameraPermissionStatus.unsupported,
+          CameraPermissionStatus.restricted,
         handler.PermissionStatus.denied => CameraPermissionStatus.denied,
       };
 }

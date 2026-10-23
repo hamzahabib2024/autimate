@@ -37,6 +37,9 @@ class ScriptedPermissions implements CameraPermissionService {
 
   CameraPermissionStatus _status;
   int requests = 0;
+  int settingsOpened = 0;
+
+  void setStatus(CameraPermissionStatus status) => _status = status;
 
   @override
   Future<CameraPermissionStatus> status() async => _status;
@@ -47,6 +50,12 @@ class ScriptedPermissions implements CameraPermissionService {
     // Grant on request, like a caregiver accepting the OS prompt.
     _status = CameraPermissionStatus.granted;
     return _status;
+  }
+
+  @override
+  Future<bool> openSettings() async {
+    settingsOpened++;
+    return true;
   }
 }
 
@@ -59,8 +68,8 @@ void main() {
     var ticks = 0;
     return ExpressionSessionEngine(
       config: ExpressionPracticeConfig(repsTarget: repsTarget),
-      clock: () => DateTime(2026, 8, 22, 10)
-          .add(Duration(milliseconds: 100 * ticks++)),
+      clock: () =>
+          DateTime(2026, 8, 22, 10).add(Duration(milliseconds: 100 * ticks++)),
     );
   }
 
@@ -72,8 +81,9 @@ void main() {
   }
 
   group('camera permission flow', () {
-    testWidgets('rationale dialog explains, deny lands in denied state',
-        (tester) async {
+    testWidgets('rationale dialog explains, deny lands in denied state', (
+      tester,
+    ) async {
       final permissions = ScriptedPermissions(CameraPermissionStatus.denied);
       final service = FakeExpressionService();
       await tester.pumpWidget(
@@ -115,8 +125,9 @@ void main() {
       expect(find.text('Start practice'), findsOneWidget);
     });
 
-    testWidgets('unsupported permission status skips the dialog',
-        (tester) async {
+    testWidgets('unsupported permission status skips the dialog', (
+      tester,
+    ) async {
       final permissions = ScriptedPermissions(
         CameraPermissionStatus.unsupported,
       );
@@ -133,9 +144,91 @@ void main() {
 
       expect(find.text('Why the camera?'), findsNothing);
       expect(
-        find.byKey(const ValueKey('permission-denied-panel')),
+        find.byKey(const ValueKey('permission-unsupported-panel')),
         findsOneWidget,
       );
+    });
+
+    testWidgets('permanent denial routes to settings instead of re-prompting', (
+      tester,
+    ) async {
+      final permissions = ScriptedPermissions(
+        CameraPermissionStatus.permanentlyDenied,
+      );
+      await tester.pumpWidget(
+        testApp(
+          ExpressionPracticeScreen(
+            appState: appState(),
+            service: FakeExpressionService(),
+            permissions: permissions,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // No rationale loop: the OS will not show a prompt again.
+      expect(find.text('Why the camera?'), findsNothing);
+      expect(
+        find.byKey(const ValueKey('permission-permanently-denied-panel')),
+        findsOneWidget,
+      );
+
+      await tester.tap(find.byKey(const ValueKey('permission-open-settings')));
+      await tester.pumpAndSettle();
+      expect(permissions.settingsOpened, 1);
+      expect(permissions.requests, 0);
+    });
+
+    testWidgets('returning from settings re-checks without a new prompt', (
+      tester,
+    ) async {
+      final permissions = ScriptedPermissions(
+        CameraPermissionStatus.permanentlyDenied,
+      );
+      await tester.pumpWidget(
+        testApp(
+          ExpressionPracticeScreen(
+            appState: appState(),
+            service: FakeExpressionService(),
+            permissions: permissions,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('permission-permanently-denied-panel')),
+        findsOneWidget,
+      );
+
+      // The caregiver grants access in Settings, then comes back.
+      permissions.setStatus(CameraPermissionStatus.granted);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Start practice'), findsOneWidget);
+      expect(permissions.requests, 0);
+    });
+
+    testWidgets('a camera-in-use failure lands on the busy panel with retry', (
+      tester,
+    ) async {
+      final service = FakeExpressionService();
+      await startPractice(
+        tester,
+        ExpressionPracticeScreen(
+          appState: appState(),
+          service: service,
+          permissions: const AutoGrantCameraPermissions(),
+        ),
+      );
+
+      service.controller.addError(
+        const ExpressionPracticeException(ExpressionCameraFailure.cameraInUse),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const ValueKey('camera-busy-panel')), findsOneWidget);
+      expect(find.text('Try again'), findsOneWidget);
     });
   });
 
@@ -154,6 +247,7 @@ void main() {
           appState: state,
           service: service,
           engine: engine,
+          permissions: const AutoGrantCameraPermissions(),
         ),
       );
 
@@ -174,8 +268,7 @@ void main() {
 
       // Returning to the foreground reattaches the same session.
       final stopsBeforeResume = service.stops;
-      tester.binding
-          .handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
       await tester.pump(const Duration(milliseconds: 50));
 
       expect(service.starts, 2);
@@ -198,6 +291,7 @@ void main() {
         appState: appState(),
         service: service,
         engine: tickingEngine(),
+        permissions: const AutoGrantCameraPermissions(),
       );
       await startPractice(tester, screen);
 
@@ -218,6 +312,7 @@ void main() {
           appState: appState(),
           service: service,
           engine: tickingEngine(),
+          permissions: const AutoGrantCameraPermissions(),
         ),
       );
 
@@ -270,11 +365,10 @@ ExpressionReading _reading(
   double leftEye = 0.9,
   double rightEye = 0.9,
   double headTilt = 0,
-}) =>
-    ExpressionReading(
-      faceDetected: faceDetected,
-      smile: smile,
-      leftEyeOpen: leftEye,
-      rightEyeOpen: rightEye,
-      headTiltDegrees: headTilt,
-    );
+}) => ExpressionReading(
+  faceDetected: faceDetected,
+  smile: smile,
+  leftEyeOpen: leftEye,
+  rightEyeOpen: rightEye,
+  headTiltDegrees: headTilt,
+);

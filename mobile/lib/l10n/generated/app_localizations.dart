@@ -491,7 +491,7 @@ abstract class AppLocalizations {
   /// No description provided for @cameraPracticeMessage.
   ///
   /// In en, this message translates to:
-  /// **'On-device smile detection logic is implemented; the ML Kit camera adapter lands after physical-device verification. A simulated demo is available now.'**
+  /// **'Practice a smile with the camera. Frames stay on this device and are never saved or uploaded.'**
   String get cameraPracticeMessage;
 
   /// No description provided for @expressionTitle.
@@ -523,6 +523,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Camera permission is needed. A caregiver can allow it in device settings.'**
   String get expressionPermissionDenied;
+
+  /// No description provided for @expressionPermissionPermanentlyDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera access is off for AutiMate. A caregiver can turn it on in device settings.'**
+  String get expressionPermissionPermanentlyDenied;
+
+  /// No description provided for @expressionOpenSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open settings'**
+  String get expressionOpenSettings;
+
+  /// No description provided for @expressionCameraBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'The camera is busy in another app. Close that app, then try again.'**
+  String get expressionCameraBusy;
+
+  /// No description provided for @expressionTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get expressionTryAgain;
+
+  /// No description provided for @expressionPreviewLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Live camera preview'**
+  String get expressionPreviewLabel;
 
   /// No description provided for @expressionLoadingCamera.
   ///
