@@ -25,18 +25,33 @@ class FakeExpressionService implements ExpressionPracticeService {
   Future<void> stop() async {}
 }
 
+class PreviewExpressionService extends FakeExpressionService
+    implements CameraPreviewSource {
+  @override
+  Widget? buildPreview({Widget? placeholder}) =>
+      const SizedBox(key: ValueKey('fake-preview'));
+}
+
+class DeniedPermissions implements CameraPermissionService {
+  @override
+  Future<CameraPermissionStatus> status() async =>
+      CameraPermissionStatus.permanentlyDenied;
+
+  @override
+  Future<CameraPermissionStatus> request() async =>
+      CameraPermissionStatus.permanentlyDenied;
+
+  @override
+  Future<bool> openSettings() async => true;
+}
+
 void main() {
   AppState appState() => AppState(MockAuthRepository(), MockTtsService());
 
   testWidgets('unsupported devices see the unsupported state', (tester) async {
     final service = FakeExpressionService()..supported = false;
     await tester.pumpWidget(
-      testApp(
-        ExpressionPracticeScreen(
-          appState: appState(),
-          service: service,
-        ),
-      ),
+      testApp(ExpressionPracticeScreen(appState: appState(), service: service)),
     );
     await tester.pumpAndSettle();
 
@@ -50,7 +65,11 @@ void main() {
     final service = FakeExpressionService();
     await tester.pumpWidget(
       testApp(
-        ExpressionPracticeScreen(appState: appState(), service: service),
+        ExpressionPracticeScreen(
+          appState: appState(),
+          service: service,
+          permissions: const AutoGrantCameraPermissions(),
+        ),
       ),
     );
     await tester.pumpAndSettle();
@@ -66,8 +85,8 @@ void main() {
     // Every engine.feed call advances 100 ms so holds complete in tests.
     final engine = ExpressionSessionEngine(
       config: const ExpressionPracticeConfig(repsTarget: 1),
-      clock: () => DateTime(2026, 8, 22, 10)
-          .add(Duration(milliseconds: 100 * ticks++)),
+      clock: () =>
+          DateTime(2026, 8, 22, 10).add(Duration(milliseconds: 100 * ticks++)),
     );
     final state = appState();
     final starsBefore = state.stars;
@@ -78,6 +97,7 @@ void main() {
           appState: state,
           service: service,
           engine: engine,
+          permissions: const AutoGrantCameraPermissions(),
         ),
       ),
     );
@@ -97,6 +117,45 @@ void main() {
 
     expect(find.text('Great smiling! 1 stars earned'), findsOneWidget);
     expect(state.stars, starsBefore + 1);
+  });
+
+  testWidgets('a preview-capable service replaces the icon placeholder', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      testApp(
+        ExpressionPracticeScreen(
+          appState: appState(),
+          service: PreviewExpressionService(),
+          permissions: const AutoGrantCameraPermissions(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Start practice'));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('fake-preview')), findsOneWidget);
+  });
+
+  testWidgets('Urdu permanent-denial fallback renders right-to-left', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      testApp(
+        ExpressionPracticeScreen(
+          appState: appState(),
+          service: FakeExpressionService(),
+          permissions: DeniedPermissions(),
+        ),
+        locale: const Locale('ur'),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final settings = find.text('ترتیبات کھولیں');
+    expect(settings, findsOneWidget);
+    expect(Directionality.of(tester.element(settings)), TextDirection.rtl);
   });
 }
 

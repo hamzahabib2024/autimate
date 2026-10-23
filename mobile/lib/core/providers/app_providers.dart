@@ -49,9 +49,7 @@ final offlineSyncQueueProvider = Provider<OfflineSyncQueue>(
 );
 
 /// Platform TTS. A test/demo override can supply [MockTtsService].
-final ttsServiceProvider = Provider<TtsService>(
-  (ref) => QueuedTtsService(),
-);
+final ttsServiceProvider = Provider<TtsService>((ref) => QueuedTtsService());
 
 /// Whether Firebase actually came up this run.
 ///
@@ -70,9 +68,7 @@ final firestoreProvider = Provider<FirebaseFirestore>(
 /// Caregiver authentication. Falls back to the mock repository whenever
 /// Firebase is not up, so sign-in still works offline for demos.
 final firebaseAuthRepositoryProvider = Provider<FirebaseAuthRepository?>(
-  (ref) => ref.watch(firebaseReadyProvider)
-      ? FirebaseAuthRepository()
-      : null,
+  (ref) => ref.watch(firebaseReadyProvider) ? FirebaseAuthRepository() : null,
 );
 
 /// The signed-in caregiver's id, or empty. Firestore repositories call this
@@ -89,13 +85,13 @@ final currentUidProvider = Provider<String Function()>((ref) {
 /// provider rather than a constructor argument because the active child
 /// changes while the app is running.
 final currentChildIdProvider = Provider<String Function()>(
-  (ref) => () => '',
+  (ref) =>
+      () => '',
 );
 
 /// Authentication boundary.
 final authRepositoryProvider = Provider<AuthRepository>(
-  (ref) =>
-      ref.watch(firebaseAuthRepositoryProvider) ?? MockAuthRepository(),
+  (ref) => ref.watch(firebaseAuthRepositoryProvider) ?? MockAuthRepository(),
 );
 
 /// Progress store.
@@ -170,17 +166,16 @@ final cameraPermissionServiceProvider = Provider<CameraPermissionService>(
 
 /// Expression practice source.
 ///
-/// The ML Kit adapter is the real one; `SimulatedExpressionService` stays as
-/// the fallback so the flow is demonstrable on a machine with no camera and
-/// so a camera failure never leaves the screen dead. Which one is live is
-/// decided at runtime by [MlKitExpressionService.isSupported].
-final expressionPracticeServiceProvider =
-    Provider<ExpressionPracticeService>((ref) => MlKitExpressionService());
+/// The ML Kit adapter is the real one. `SimulatedExpressionService` stays
+/// available separately for an explicit demo; the screen never swaps to it
+/// silently, so a child is never shown fake detection as if it were real.
+final expressionPracticeServiceProvider = Provider<ExpressionPracticeService>(
+  (ref) => MlKitExpressionService(),
+);
 
 /// The offline stand-in, provided separately so a caller can fall back to
 /// it explicitly rather than by catching an error.
-final simulatedExpressionServiceProvider =
-    Provider<ExpressionPracticeService>(
+final simulatedExpressionServiceProvider = Provider<ExpressionPracticeService>(
   (ref) => SimulatedExpressionService(),
 );
 
@@ -205,8 +200,7 @@ final phraseBankRepositoryProvider = Provider<PhraseBankRepository>(
 
 /// Publishes urgent phrases to the home-screen widget. The native side is
 /// written but has never run on a device.
-final quickPhraseWidgetServiceProvider =
-    Provider<QuickPhraseWidgetService>(
+final quickPhraseWidgetServiceProvider = Provider<QuickPhraseWidgetService>(
   (ref) => const QuickPhraseWidgetService(),
 );
 

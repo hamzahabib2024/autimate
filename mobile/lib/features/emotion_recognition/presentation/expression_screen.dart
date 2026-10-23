@@ -1,13 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/providers/app_providers.dart';
 import '../../../core/services/app_services.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/app_widgets.dart';
-import '../../ai/data/simulated_expression_service.dart';
 import '../../ai/domain/ai_contracts.dart';
 import '../../ai/domain/expression_practice_engine.dart';
 
@@ -15,13 +16,15 @@ enum ExpressionPhase {
   checking,
   unsupported,
   permissionDenied,
+  permissionPermanentlyDenied,
+  cameraBusy,
   loading,
   error,
   practicing,
   complete,
 }
 
-class ExpressionPracticeScreen extends StatefulWidget {
+class ExpressionPracticeScreen extends ConsumerStatefulWidget {
   const ExpressionPracticeScreen({
     required this.appState,
     this.service,
@@ -32,23 +35,24 @@ class ExpressionPracticeScreen extends StatefulWidget {
 
   final AppState appState;
 
-  /// Overridable for tests; defaults to the offline simulated source until
-  /// the ML Kit camera adapter lands on physical hardware.
+  /// Overridable for tests. In the app the ML Kit adapter comes from
+  /// [expressionPracticeServiceProvider].
   final ExpressionPracticeService? service;
 
   /// Overridable for tests so time-dependent holds are deterministic.
   final ExpressionSessionEngine? engine;
 
-  /// Overridable for tests; defaults to always-granted so the simulated
-  /// flow needs no OS interaction.
+  /// Overridable for tests. In the app the real OS permission service comes
+  /// from [cameraPermissionServiceProvider].
   final CameraPermissionService? permissions;
 
   @override
-  State<ExpressionPracticeScreen> createState() =>
+  ConsumerState<ExpressionPracticeScreen> createState() =>
       _ExpressionPracticeScreenState();
 }
 
-class _ExpressionPracticeScreenState extends State<ExpressionPracticeScreen>
+class _ExpressionPracticeScreenState
+    extends ConsumerState<ExpressionPracticeScreen>
     with WidgetsBindingObserver {
   late final ExpressionPracticeService _service;
   late final ExpressionSessionEngine _engine;
@@ -67,9 +71,10 @@ class _ExpressionPracticeScreenState extends State<ExpressionPracticeScreen>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _service = widget.service ?? SimulatedExpressionService();
+    _service = widget.service ?? ref.read(expressionPracticeServiceProvider);
     _engine = widget.engine ?? ExpressionSessionEngine();
-    _permissions = widget.permissions ?? const AutoGrantCameraPermissions();
+    _permissions =
+        widget.permissions ?? ref.read(cameraPermissionServiceProvider);
     _checkSupport();
   }
 
@@ -89,7 +94,7 @@ class _ExpressionPracticeScreenState extends State<ExpressionPracticeScreen>
       case AppLifecycleState.hidden:
         _pauseCamera();
       case AppLifecycleState.resumed:
-        _resumeCamera();
+        _onResumed();
       case AppLifecycleState.detached:
         break;
     }
@@ -105,16 +110,44 @@ class _ExpressionPracticeScreenState extends State<ExpressionPracticeScreen>
     unawaited(_service.stop());
   }
 
-  /// Reattaches the stream without resetting session progress.
-  void _resumeCamera() {
+  /// Returns from background. A paused practice reattaches its stream; a
+  /// permission screen re-checks the OS (the caregiver may just have
+  /// granted access in Settings), so no restart is needed.
+  void _onResumed() {
     final wasPaused = _cameraPausedByLifecycle;
     _cameraPausedByLifecycle = false;
-    if (!wasPaused ||
-        !mounted ||
-        _phase != ExpressionPhase.practicing) {
+    if (!mounted) return;
+
+    if (wasPaused && _phase == ExpressionPhase.practicing) {
+      unawaited(_attachStream());
       return;
     }
-    unawaited(_attachStream());
+    if (_phase == ExpressionPhase.permissionDenied ||
+        _phase == ExpressionPhase.permissionPermanentlyDenied) {
+      unawaited(_recheckPermission());
+    }
+  }
+
+  /// Re-reads permission without prompting, which is what a return from
+  /// Settings needs. A still-denied state stays calm and unchanged.
+  Future<void> _recheckPermission() async {
+    try {
+      final status = await _permissions.status();
+      if (!mounted) return;
+      switch (status) {
+        case CameraPermissionStatus.granted:
+          setState(() => _phase = ExpressionPhase.loading);
+        case CameraPermissionStatus.permanentlyDenied:
+          setState(() => _phase = ExpressionPhase.permissionPermanentlyDenied);
+        case CameraPermissionStatus.restricted:
+          setState(() => _phase = ExpressionPhase.unsupported);
+        case CameraPermissionStatus.denied:
+        case CameraPermissionStatus.unsupported:
+          break;
+      }
+    } catch (_) {
+      // A failed re-check must not turn a calm screen into an error.
+    }
   }
 
   Future<void> _checkSupport() async {
@@ -133,23 +166,55 @@ class _ExpressionPracticeScreenState extends State<ExpressionPracticeScreen>
   }
 
   Future<void> _resolvePermission() async {
-    var status = await _permissions.status();
-    // The rationale loop keeps showing until the child/caregiver grants
-    // access or opts out; denial lands in [ExpressionPhase.permissionDenied].
-    while (status != CameraPermissionStatus.granted && mounted) {
-      if (status == CameraPermissionStatus.unsupported) {
-        setState(() => _phase = ExpressionPhase.permissionDenied);
-        return;
-      }
-      final afterRequest = await _showRationaleDialog();
-      if (!mounted) return;
-      if (afterRequest == null) {
-        setState(() => _phase = ExpressionPhase.permissionDenied);
-        return;
-      }
-      status = afterRequest;
+    CameraPermissionStatus status;
+    try {
+      status = await _permissions.status();
+    } catch (_) {
+      if (mounted) setState(() => _phase = ExpressionPhase.unsupported);
+      return;
     }
-    if (mounted) setState(() => _phase = ExpressionPhase.loading);
+    if (!mounted) return;
+
+    switch (status) {
+      case CameraPermissionStatus.granted:
+        setState(() => _phase = ExpressionPhase.loading);
+      case CameraPermissionStatus.permanentlyDenied:
+        setState(() => _phase = ExpressionPhase.permissionPermanentlyDenied);
+      case CameraPermissionStatus.restricted:
+      case CameraPermissionStatus.unsupported:
+        setState(() => _phase = ExpressionPhase.unsupported);
+      case CameraPermissionStatus.denied:
+        await _requestPermission();
+    }
+  }
+
+  /// Asks once, then resolves to a terminal state. Re-prompting after a
+  /// permanent denial is a no-op on both platforms, so that case routes to
+  /// Settings instead of looping the dialog.
+  Future<void> _requestPermission() async {
+    final result = await _showRationaleDialog();
+    if (!mounted) return;
+    if (result == null) {
+      setState(() => _phase = ExpressionPhase.permissionDenied);
+      return;
+    }
+    switch (result) {
+      case CameraPermissionStatus.granted:
+        setState(() => _phase = ExpressionPhase.loading);
+      case CameraPermissionStatus.permanentlyDenied:
+        setState(() => _phase = ExpressionPhase.permissionPermanentlyDenied);
+      case CameraPermissionStatus.restricted:
+      case CameraPermissionStatus.unsupported:
+        setState(() => _phase = ExpressionPhase.unsupported);
+      case CameraPermissionStatus.denied:
+        setState(() => _phase = ExpressionPhase.permissionDenied);
+    }
+  }
+
+  /// Opens this app's settings so a caregiver can undo a permanent denial.
+  /// The resume observer re-checks the permission when they come back.
+  Future<void> _openSettings() async {
+    await _permissions.openSettings();
   }
 
   /// Explains why the camera is needed and returns the resulting status,
@@ -202,17 +267,34 @@ class _ExpressionPracticeScreenState extends State<ExpressionPracticeScreen>
 
   Future<void> _attachStream() async {
     try {
-      final frames = _service.start();
+      // Cancel the old subscription *before* opening a new session: its
+      // onCancel calls stop(), which must not race the new stream.
       await _subscription?.cancel();
+      _subscription = null;
+      final frames = _service.start();
       _subscription = frames.listen(
         _onReading,
-        onError: (Object _) {
-          if (mounted) setState(() => _phase = ExpressionPhase.error);
+        onError: (Object error) {
+          if (mounted) setState(() => _phase = _phaseForFailure(error));
         },
       );
-    } catch (_) {
-      if (mounted) setState(() => _phase = ExpressionPhase.error);
+    } catch (error) {
+      if (mounted) setState(() => _phase = _phaseForFailure(error));
     }
+  }
+
+  /// Maps a typed service failure onto a calm screen. Unknown errors still
+  /// land somewhere recoverable rather than escaping to Flutter's error UI.
+  ExpressionPhase _phaseForFailure(Object error) {
+    final reason = error is ExpressionPracticeException ? error.reason : null;
+    return switch (reason) {
+      ExpressionCameraFailure.permissionDenied =>
+        ExpressionPhase.permissionDenied,
+      ExpressionCameraFailure.noCamera => ExpressionPhase.unsupported,
+      ExpressionCameraFailure.cameraInUse => ExpressionPhase.cameraBusy,
+      ExpressionCameraFailure.initialisationFailed => ExpressionPhase.error,
+      null => ExpressionPhase.error,
+    };
   }
 
   void _onReading(ExpressionReading reading) {
@@ -248,7 +330,7 @@ class _ExpressionPracticeScreenState extends State<ExpressionPracticeScreen>
             ExpressionPhase.loading => Column(
               children: [
                 StatePanel(
-              accent: context.palette.emotions,
+                  accent: context.palette.emotions,
                   title: l10n.expressionTitle,
                   message: l10n.expressionHoldSmile,
                   icon: Icons.sentiment_very_satisfied_outlined,
@@ -265,6 +347,7 @@ class _ExpressionPracticeScreenState extends State<ExpressionPracticeScreen>
             ),
             ExpressionPhase.unsupported => StatePanel(
               accent: context.palette.emotions,
+              key: const ValueKey('permission-unsupported-panel'),
               title: l10n.expressionTitle,
               message: l10n.expressionUnsupported,
               icon: Icons.videocam_off_outlined,
@@ -272,7 +355,7 @@ class _ExpressionPracticeScreenState extends State<ExpressionPracticeScreen>
             ExpressionPhase.permissionDenied => Column(
               children: [
                 StatePanel(
-              accent: context.palette.emotions,
+                  accent: context.palette.emotions,
                   key: const ValueKey('permission-denied-panel'),
                   title: l10n.expressionTitle,
                   message: l10n.expressionPermissionDenied,
@@ -288,16 +371,67 @@ class _ExpressionPracticeScreenState extends State<ExpressionPracticeScreen>
                 ),
               ],
             ),
-            ExpressionPhase.error => StatePanel(
-              accent: context.palette.emotions,
-              title: l10n.expressionTitle,
-              message: l10n.expressionCameraError,
-              icon: Icons.error_outline,
+            ExpressionPhase.permissionPermanentlyDenied => Column(
+              children: [
+                StatePanel(
+                  accent: context.palette.emotions,
+                  key: const ValueKey('permission-permanently-denied-panel'),
+                  title: l10n.expressionTitle,
+                  message: l10n.expressionPermissionPermanentlyDenied,
+                  icon: Icons.no_photography_outlined,
+                ),
+                const SizedBox(height: 16),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 64),
+                  child: FilledButton(
+                    key: const ValueKey('permission-open-settings'),
+                    onPressed: _openSettings,
+                    child: Text(l10n.expressionOpenSettings),
+                  ),
+                ),
+              ],
+            ),
+            ExpressionPhase.cameraBusy => Column(
+              children: [
+                StatePanel(
+                  accent: context.palette.emotions,
+                  key: const ValueKey('camera-busy-panel'),
+                  title: l10n.expressionTitle,
+                  message: l10n.expressionCameraBusy,
+                  icon: Icons.videocam_off_outlined,
+                ),
+                const SizedBox(height: 16),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 64),
+                  child: OutlinedButton(
+                    onPressed: _start,
+                    child: Text(l10n.expressionTryAgain),
+                  ),
+                ),
+              ],
+            ),
+            ExpressionPhase.error => Column(
+              children: [
+                StatePanel(
+                  accent: context.palette.emotions,
+                  title: l10n.expressionTitle,
+                  message: l10n.expressionCameraError,
+                  icon: Icons.error_outline,
+                ),
+                const SizedBox(height: 16),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 64),
+                  child: OutlinedButton(
+                    onPressed: _start,
+                    child: Text(l10n.expressionTryAgain),
+                  ),
+                ),
+              ],
             ),
             ExpressionPhase.complete => Column(
               children: [
                 StatePanel(
-              accent: context.palette.emotions,
+                  accent: context.palette.emotions,
                   title: l10n.expressionSessionComplete(_engine.starsEarned),
                   message: l10n.expressionPrivacyNote,
                   icon: Icons.stars_outlined,
@@ -320,22 +454,7 @@ class _ExpressionPracticeScreenState extends State<ExpressionPracticeScreen>
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const SizedBox(height: 20),
-                Card(
-                  child: SizedBox(
-                    height: 160,
-                    child: Center(
-                      child: AnimatedScale(
-                        scale: _holding ? 1.15 : 1,
-                        duration: const Duration(milliseconds: 200),
-                        child: Icon(
-                          Icons.sentiment_very_satisfied,
-                          size: 110,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                _cameraPreview(context, l10n),
                 const SizedBox(height: 16),
                 Semantics(
                   label: l10n.expressionHoldSmile,
@@ -366,12 +485,45 @@ class _ExpressionPracticeScreenState extends State<ExpressionPracticeScreen>
           },
           const SizedBox(height: 24),
           StatePanel(
-              accent: context.palette.emotions,
+            accent: context.palette.emotions,
             title: l10n.expressionPrivacyTitle,
             message: l10n.expressionPrivacyNote,
             icon: Icons.shield_outlined,
           ),
         ],
+      ),
+    );
+  }
+
+  /// Shows the live camera when the service supports it, otherwise the warm
+  /// icon placeholder. Presentation only sees [CameraPreviewSource], never the
+  /// camera plugin itself.
+  Widget _cameraPreview(BuildContext context, AppLocalizations l10n) {
+    final placeholder = Center(
+      child: AnimatedScale(
+        scale: _holding ? 1.15 : 1,
+        duration: const Duration(milliseconds: 200),
+        child: Icon(
+          Icons.sentiment_very_satisfied,
+          size: 110,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+      ),
+    );
+    Widget? preview;
+    if (_service case final CameraPreviewSource source) {
+      preview = source.buildPreview(placeholder: placeholder);
+    }
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: SizedBox(
+        height: 200,
+        width: double.infinity,
+        child: Semantics(
+          label: l10n.expressionPreviewLabel,
+          image: true,
+          child: preview ?? placeholder,
+        ),
       ),
     );
   }

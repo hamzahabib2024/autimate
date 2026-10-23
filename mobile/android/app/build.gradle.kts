@@ -42,6 +42,11 @@ android {
     }
 }
 
+dependencies {
+    implementation("androidx.concurrent:concurrent-futures:1.2.0")
+    implementation("com.google.guava:listenablefuture:1.0")
+}
+
 flutter {
     source = "../.."
 }

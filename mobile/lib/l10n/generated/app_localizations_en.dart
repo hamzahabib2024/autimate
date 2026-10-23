@@ -223,7 +223,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cameraPracticeMessage =>
-      'On-device smile detection logic is implemented; the ML Kit camera adapter lands after physical-device verification. A simulated demo is available now.';
+      'Practice a smile with the camera. Frames stay on this device and are never saved or uploaded.';
 
   @override
   String get expressionTitle => 'Expression practice';
@@ -241,6 +241,23 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get expressionPermissionDenied =>
       'Camera permission is needed. A caregiver can allow it in device settings.';
+
+  @override
+  String get expressionPermissionPermanentlyDenied =>
+      'Camera access is off for AutiMate. A caregiver can turn it on in device settings.';
+
+  @override
+  String get expressionOpenSettings => 'Open settings';
+
+  @override
+  String get expressionCameraBusy =>
+      'The camera is busy in another app. Close that app, then try again.';
+
+  @override
+  String get expressionTryAgain => 'Try again';
+
+  @override
+  String get expressionPreviewLabel => 'Live camera preview';
 
   @override
   String get expressionLoadingCamera => 'Starting the camera...';

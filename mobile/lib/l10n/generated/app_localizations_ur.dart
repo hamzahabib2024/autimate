@@ -219,7 +219,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get cameraPracticeMessage =>
-      'آلے پر مسکراہٹ کی شناخت کا منطق مکمل ہے؛ ML Kit کیمرہ ایڈاپٹر فزیکل ویریفیکیشن کے بعد آئے گا۔ ابھی سمیولیٹڈ ڈیمو دستیاب ہے۔';
+      'کیمرے کے سامنے مسکرانے کی مشق کریں۔ فریم اسی آلے پر رہتے ہیں اور کبھی محفوظ یا اپ لوڈ نہیں ہوتے۔';
 
   @override
   String get expressionTitle => 'اظہار کی مشق';
@@ -236,6 +236,23 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get expressionPermissionDenied =>
       'کیمرے کی اجازت درکار ہے۔ نگہبان آلے کی ترتیبات سے اجازت دے سکتے ہیں۔';
+
+  @override
+  String get expressionPermissionPermanentlyDenied =>
+      'AutiMate کے لیے کیمرے تک رسائی بند ہے۔ نگہبان آلے کی ترتیبات میں اسے آن کر سکتے ہیں۔';
+
+  @override
+  String get expressionOpenSettings => 'ترتیبات کھولیں';
+
+  @override
+  String get expressionCameraBusy =>
+      'کیمرہ کسی دوسری ایپ میں مصروف ہے۔ وہ ایپ بند کریں، پھر دوبارہ کوشش کریں۔';
+
+  @override
+  String get expressionTryAgain => 'دوبارہ کوشش کریں';
+
+  @override
+  String get expressionPreviewLabel => 'کیمرے کا براہِ راست منظر';
 
   @override
   String get expressionLoadingCamera => 'کیمرہ شروع ہو رہا ہے...';
